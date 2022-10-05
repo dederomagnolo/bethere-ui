@@ -1,0 +1,69 @@
+.menuContainer {
+  background-color: #0DA1BC; //turn it global
+  height: 80vh;
+  width: 100px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  box-shadow:0 1px 3px rgba(0,0,0,0.2), 0 3px 5px rgba(0,0,0,0.1); // turn it global
+  border-radius: 0 20px 20px 0;
+  transition: all 0.3s;
+
+  &.expandedMenu {
+    width: 240px;
+  }
+
+  .menuItems {
+    padding-inline-start: 0;
+    list-style-type: none;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    height: 100%;
+    margin: 0;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .menuItem {
+    list-style-type: none;
+    color: white;
+    font-size: 16px;
+  
+    a {
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+
+      &:visited {
+        color: white;
+      }
+
+      &:hover {
+        font-weight: 600;
+      }
+    }
+
+    svg {
+      color: white;
+      margin-right: 15px;
+    }
+  }
+
+  button.menuItem {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    background-color: transparent;
+    border: none;
+  }
+
+  .logoContainer {
+    display: flex;
+    flex-direction: column;
+    .logo {
+      padding: 20px;
+      width: 150px;
+    }
+  }
+}

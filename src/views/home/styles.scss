@@ -1,0 +1,23 @@
+.homeView {
+  .genericCard {
+    display: flex;
+    box-shadow:0 1px 3px rgba(0,0,0,0.2), 0 3px 5px rgba(0,0,0,0.1);
+    border-radius: 15px;
+    width: 200px;
+    height: 60px;
+    color: #6B6B6B;
+    padding: 12px;
+    justify-content: space-between;
+    background-color: #F1F1F1;
+
+    .infos {
+      font-size: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .data {
+    }
+  }
+}
