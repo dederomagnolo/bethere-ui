@@ -1,0 +1,66 @@
+.genericCard {
+  box-sizing: border-box;
+  display: flex;
+  box-shadow:0 1px 3px rgba(0,0,0,0.2), 0 3px 5px rgba(0,0,0,0.1);
+  border-radius: 15px;
+  width: 200px;
+  height: 80px;
+  color: #6B6B6B;
+  padding: 12px;
+  justify-content: space-between;
+  background-color: #F1F1F1;
+
+  .cardLabel {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    height: 100%;
+
+    .iconContainer {
+      margin-bottom: 5px;
+    }
+
+    span {
+      font-size: 20px;
+    }
+  }
+
+  &--watering {
+    height: 200px;
+    width: 420px;
+
+    svg {
+      color: #a3da5a63;
+    }
+  }
+
+  &--humidity {
+    height: 200px;
+    width: 200px;
+
+    svg {
+      color: #0da2bc66;
+    }
+  }
+
+  &--temperature {
+    height: 200px;
+    width: 200px;
+
+    svg {
+      color: #F9C78D;
+    }
+  }
+
+  .cardInfos {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .cardData {
+    &--default {
+      color: #0C9C7A;
+    }
+  }
+}

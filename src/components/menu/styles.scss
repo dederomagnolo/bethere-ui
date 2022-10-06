@@ -14,6 +14,8 @@
   }
 
   .menuItems {
+    box-sizing: border-box;
+    width: 100%;
     padding-inline-start: 0;
     list-style-type: none;
     display: flex;
@@ -22,13 +24,15 @@
     height: 100%;
     margin: 0;
     justify-content: center;
-    width: 100%;
+    padding: 0 15px 20px;
   }
 
   .menuItem {
     list-style-type: none;
     color: white;
     font-size: 16px;
+    display: flex;
+    padding: 8px;
   
     a {
       text-decoration: none;
@@ -38,15 +42,18 @@
       &:visited {
         color: white;
       }
-
-      &:hover {
-        font-weight: 600;
-      }
     }
 
     svg {
       color: white;
       margin-right: 15px;
+    }
+
+
+    &:hover {
+      border-radius: 20px;
+      border: solid 2px #FFF;
+      font-weight: 600;
     }
   }
 
@@ -61,8 +68,12 @@
   .logoContainer {
     display: flex;
     flex-direction: column;
+    padding: 20px;
     .logo {
-      padding: 20px;
+      width: 70px;
+    }
+
+    .logo.expandedMenu {
       width: 150px;
     }
   }

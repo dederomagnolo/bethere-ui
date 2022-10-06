@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import _ from 'lodash'
 import { NavLink } from 'react-router-dom'
 import cx from 'classnames'
+
 import {
   HiHome as Home,
   HiClock as Clock,
@@ -17,6 +18,7 @@ import {
   MenuItemProps
 } from './interface'
 
+import whale from '../../assets/bethere_whale.png'
 import logo from '../../assets/bethere_logo.png'
 import './styles.scss'
 
@@ -42,12 +44,11 @@ const menuItems = {
     name: 'Configurações',
     icon: () => renderIcon(Cog),
     path: 'configuracoes'
+  },
+  exit: {
+    name: 'Sair',
+    icon: () => renderIcon(SignOut)
   }
-}
-
-const exitItem = {
-  name: 'Sair',
-  icon: () => renderIcon(SignOut)
 }
 
 const MenuItem = ({
@@ -86,6 +87,7 @@ const renderMenuItemList = (expanded: boolean) => {
     const { name, icon } = item
     return (
       <MenuItem
+        key={name}
         expanded={expanded}
         name={name}
         Icon={icon}
@@ -104,7 +106,12 @@ const renderMenuItemList = (expanded: boolean) => {
 
 export const Menu: React.FunctionComponent<MenuProps> = () => {
   const [expandedMenu, setExpandedMenu] = useState(false)
+
   const menuContainerClassname = cx('menuContainer', {
+    expandedMenu
+  })
+
+  const logoClassname = cx('logo', {
     expandedMenu
   })
 
@@ -113,28 +120,17 @@ export const Menu: React.FunctionComponent<MenuProps> = () => {
       <button onClick={() => setExpandedMenu(!expandedMenu)}>O</button>
     )
   }
-
-  const renderExitItem = () => {
-    const { name, icon } = exitItem
-    return (
-      <MenuItem
-        expanded={expandedMenu}
-        name={name}
-        Icon={icon} />
-    )
-  }
   
   return (
     <div className={menuContainerClassname}>
       {renderExpandMenuButton()}
       <div className='logoContainer'>
         <img
-        className='logo'
-        src={logo}
-        alt='logo bethere' />
+          className={logoClassname}
+          src={expandedMenu ? logo : whale}
+          alt='logo bethere' />
       </div>
       {renderMenuItemList(expandedMenu)}
-      {renderExitItem()}
     </div>
   )
 }

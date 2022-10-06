@@ -1,23 +1,15 @@
 import React from 'react'
-import _ from 'lodash'
-import { 
-  HiCog as Cog
-} from 'react-icons/hi'
+
+import { GenericCard } from '../../components/card'
+
+import {
+  FaTint as Tint,
+  FaThermometerHalf as Thermometer,
+  FaLeaf as Leaf
+} from 'react-icons/fa'
 
 import '../styles.scss'
 import './styles.scss'
-
-interface CardLabelProps {
-  label: string
-}
-
-interface GenericCardProps {
-  className?: string
-  settingsButtonAvailable?: boolean
-  label?: string
-  type?: string
-  data?: any
-}
 
 const WateringCardData = () => {
   return (
@@ -36,57 +28,30 @@ const WateringCardData = () => {
   )
 }
 
-const cards = {
+const cards: any = {
   humidity: {
-    type: 'data',
     label: 'Umidade',
-    icon: () => {}
+    icon: Tint
   },
   temperature: {
-    type: 'data',
     label: 'Temperatura',
-    icon: () => {}
+    icon: Thermometer
   },
   watering: {
-    type: 'watering',
     label: 'Irrigação',
-    icon: () => {},
+    icon: Leaf,
     data: WateringCardData
   }
 }
 
-const CardLabel = ({ label } : CardLabelProps) => {
+const renderGenericCard = (type: string) => {
+  const { label, icon, data } = cards[type]
   return (
-    <div className='cardLabel'>
-      <></>
-      <span>{label}</span>
-    </div>
-  )
-}
-
-const GenericCard = ({
-  type = 'default',
-  className,
-  settingsButtonAvailable,
-  data,
-  label
-} : GenericCardProps) => {
-  const mockedStatusLabel = 'Online'
-
-  const renderSettingsButton = () => settingsButtonAvailable && <Cog />
-  const renderCustomData = () => data ? data() : mockedStatusLabel
-  const labelToRender = label ? label : _.get(cards, `${type}.label`)
-
-  return (
-    <div className={`genericCard ${className}`}>
-      <div className='infos'>
-        {renderSettingsButton()}
-        <CardLabel label={labelToRender} />
-      </div>
-      <div className='data'>
-        {renderCustomData()}
-      </div>
-    </div>
+    <GenericCard
+      type={type}
+      icon={icon}
+      label={label}
+      data={data} />
   )
 }
 
@@ -94,11 +59,18 @@ const renderPageContent = () => {
   const mockDeviceName = 'Jardim 1'
   return (
     <>
-      <GenericCard settingsButtonAvailable label={mockDeviceName} />
-      <div className='sensors'>
-        <GenericCard type='humidity' />
+      <h2>Dispositivo</h2>
+      <GenericCard
+        settingsButtonAvailable
+        label={mockDeviceName} />
+      <h2>Resumo</h2>
+      <div className='dashboard'>
+        <div className='sensors'>
+          {renderGenericCard('humidity')}
+          {renderGenericCard('temperature')}
+        </div>
+        {renderGenericCard('watering')}
       </div>
-      <GenericCard type='watering' />
     </>
   )
 }
