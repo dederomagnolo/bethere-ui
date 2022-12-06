@@ -13,6 +13,7 @@ export const LoginCard = () => {
   let iconStyles = { color: "#dadada" };
   const [username, setUsername] = useState('kumaa')
   const [password, setPassword] = useState('testing123')
+  const [iconShow, setIconShow] = useState(true);
 
   const handleOnChange = (e: any) => {
     const state = e.target.value
@@ -35,28 +36,33 @@ export const LoginCard = () => {
 
   return (
     <div className="LoginCard">
-      <div className="content">
-        <div className="logo">
+      <div className="Content">
+        <div className="Logo">
           <img src={logo}></img>
           <p>Seu jardim inteligente</p>
         </div>
 
-        <div className="form-group">
+        <div className="FormGroup">
           <div className="IconUser">
-            <User className="User" style={iconStyles} />
+            {iconShow && <User className="User" style={iconStyles} />}
             <input
               onChange={handleOnChange}
               type="name"
-              placeholder="">
-
+              placeholder=""
+              onFocus={()=>setIconShow(false)}
+              onBlur={()=>setIconShow(true)}
+              >
               </input>
           </div>
           <div className="IconPassword">
-            <Lock style={iconStyles} />
-            <input type="email" placeholder="">
-            </input>
+            {iconShow && <Lock style={iconStyles} />}
+            <input type="email" 
+            placeholder=""
+            onFocus={()=>setIconShow(false)}
+            onBlur={()=>setIconShow(true)}
+            />
+          {iconShow && <Eye style={iconStyles} />}
           </div>
-          <Eye style={iconStyles} />
         </div>
 
         <button onClick={handleLoginRequest}>Entrar</button>
