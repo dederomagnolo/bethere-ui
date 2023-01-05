@@ -7,10 +7,12 @@ interface LayoutProps {
   children?: any
 }
 
+const auth = true // mock
+
 export const Layout: React.FunctionComponent<LayoutProps> = ({ children }) => {
   return (
     <div className='appLayout'>
-      <Menu />
+      {auth && <Menu />}
       <div className='pageContainer'>
         {children}
       </div>
