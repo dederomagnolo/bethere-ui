@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import _ from 'lodash';
 import "./styles.scss";
 import logo from "../../assets/bethere_logo.png";
 import {
@@ -13,11 +14,15 @@ export const LoginCard = () => {
   let iconStyles = { color: "#dadada" };
   const [username, setUsername] = useState('kumaa')
   const [password, setPassword] = useState('testing123')
-  const [iconShow, setIconShow] = useState(true);
-
-  const handleOnChange = (e: any) => {
+  const [iconShow, setIconShow] = useState(true)
+  const handleUsernameChange = (e: any) => {
     const state = e.target.value
     setUsername(state)
+  }
+
+  const handlePasswordChange = (e: any) => {
+    const password = e.target.value
+    setPassword(password)
   }
 
   const handleLoginRequest = async () => {
@@ -27,7 +32,7 @@ export const LoginCard = () => {
         payload: { username, password },
         service: '/auth/authenticate'
       })
-
+      const token = _.get(res, 'token')
       console.log(res)
     } catch (err) {
       console.error('deu pau')
@@ -35,38 +40,38 @@ export const LoginCard = () => {
   }
 
   return (
-    <div className="LoginCard">
-      <div className="Content">
-        <div className="Logo">
+    <div className="login-card">
+      <div className="login-card__container">
+        <div className="logo">
           <img src={logo}></img>
           <p>Seu jardim inteligente</p>
         </div>
 
-        <div className="FormGroup">
-          <div className="IconUser">
-            {iconShow && <User className="User" style={iconStyles} />}
+        <div className="form-group">
+          <div className="user-icon">
+            {iconShow && <User className="user" style={iconStyles} />}
             <input
-              onChange={handleOnChange}
-              type="name"
+              onChange={handleUsernameChange}
+              type='email'
               placeholder=""
-              onFocus={()=>setIconShow(false)}
-              onBlur={()=>setIconShow(true)}
+              onFocus={() => setIconShow(false)}
+              onBlur={() => setIconShow(true)}
               >
-              </input>
+            </input>
           </div>
-          <div className="IconPassword">
+          <div className="password-icon">
             {iconShow && <Lock style={iconStyles} />}
-            <input type="email" 
-            placeholder=""
-            onFocus={()=>setIconShow(false)}
-            onBlur={()=>setIconShow(true)}
+            <input
+              onChange={handlePasswordChange}
+              type='password'
+              placeholder=''
+              onFocus={() => setIconShow(false)}
+              onBlur={() => setIconShow(true)}
             />
-          {iconShow && <Eye style={iconStyles} />}
+            {iconShow && <Eye style={iconStyles} />}
           </div>
         </div>
-
         <button onClick={handleLoginRequest}>Entrar</button>
-
         <a href="">Esqueceu sua senha?</a>
       </div>
     </div>

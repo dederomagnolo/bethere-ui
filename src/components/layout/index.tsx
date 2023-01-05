@@ -7,7 +7,7 @@ interface LayoutProps {
   children?: any
 }
 
-const auth = false // mock
+const auth = true // mock
 
 export const Layout: React.FunctionComponent<LayoutProps> = ({ children }) => {
   return (

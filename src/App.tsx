@@ -1,9 +1,12 @@
 import React from 'react'
 import _ from 'lodash'
 import { Routes, Route, BrowserRouter } from 'react-router-dom'
+import { Provider } from 'react-redux'
+import { RecoilRoot } from 'recoil';
 
 import { Layout } from './components/layout';
-import { Charts, Login, Home, Settings, History, } from './views'
+import { Charts, Login, Home, Settings, History } from './views'
+import { store } from './redux/store'
 
 
 const routesList = [
@@ -36,13 +39,17 @@ const App: React.FC = () => {
   })
 
   return (
-    <BrowserRouter>
-      <Layout>
-        <Routes>
-          {routes}
-        </Routes>
-      </Layout>
-    </BrowserRouter>
+    <Provider store={store}>
+      <RecoilRoot>
+        <BrowserRouter>
+          <Layout>
+            <Routes>
+              {routes}
+            </Routes>
+          </Layout>
+        </BrowserRouter>
+      </RecoilRoot>
+    </Provider>
   )
 }
 
