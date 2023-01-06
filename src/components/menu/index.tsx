@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import _ from 'lodash'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import cx from 'classnames'
+import { useDispatch } from 'react-redux'
 
 import {
   HiHome as Home,
@@ -18,38 +19,13 @@ import {
   MenuItemProps
 } from './interface'
 
+import { clearUserState } from '../../redux/user/actions'
+
 import whale from '../../assets/bethere_whale.png'
 import logo from '../../assets/bethere_logo.png'
 import './styles.scss'
 
 const renderIcon = (BaseIcon: any) => <BaseIcon size={28} />
-
-const menuItems = {
-  home: {
-    name: 'Início',
-    icon: () => renderIcon(Home),
-    path: '/'
-  },
-  history: {
-    name: 'Histórico',
-    icon: () => renderIcon(Clock),
-    path: '/historico'
-  },
-  charts: {
-    name: 'Gráficos',
-    icon: () => renderIcon(Chart),
-    path: '/graficos'
-  },
-  settings: {
-    name: 'Configurações',
-    icon: () => renderIcon(Cog),
-    path: 'configuracoes'
-  },
-  exit: {
-    name: 'Sair',
-    icon: () => renderIcon(SignOut)
-  }
-}
 
 const MenuItem = ({
   name,
@@ -59,6 +35,7 @@ const MenuItem = ({
   onClick
 }: MenuItemProps) => {
   const renderItemName = expanded && name
+
   return (
     path ? (
       <li className='menuItem'>
@@ -73,7 +50,7 @@ const MenuItem = ({
       </li>) : (
         <button
           className='menuItem'
-          onClick={onClick && onClick()}>
+          onClick={() => onClick && onClick()}>
           <Icon />
           {renderItemName}
         </button>
@@ -81,17 +58,18 @@ const MenuItem = ({
   )
 }
 
-const renderMenuItemList = (expanded: boolean) => {
+const renderMenuItemList = (expanded: boolean, menuItems: any) => {
   const mapMenuItems = _.map(menuItems, (item) => {
     const path = _.get(item, 'path')
-    const { name, icon } = item
+    const { name, icon, onClick } = item
     return (
       <MenuItem
         key={name}
         expanded={expanded}
         name={name}
         Icon={icon}
-        path={path} />
+        path={path}
+        onClick={onClick} />
     )
   })
 
@@ -106,6 +84,41 @@ const renderMenuItemList = (expanded: boolean) => {
 
 export const Menu: React.FunctionComponent<MenuProps> = () => {
   const [expandedMenu, setExpandedMenu] = useState(false)
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+
+  const handleLogout = () => {
+    dispatch(clearUserState())
+    navigate('/login')
+  }
+  
+  const menuItems = {
+    home: {
+      name: 'Início',
+      icon: () => renderIcon(Home),
+      path: '/'
+    },
+    history: {
+      name: 'Histórico',
+      icon: () => renderIcon(Clock),
+      path: '/historico'
+    },
+    charts: {
+      name: 'Gráficos',
+      icon: () => renderIcon(Chart),
+      path: '/graficos'
+    },
+    settings: {
+      name: 'Configurações',
+      icon: () => renderIcon(Cog),
+      path: 'configuracoes'
+    },
+    exit: {
+      name: 'Sair',
+      icon: () => renderIcon(SignOut),
+      onClick: () => handleLogout()
+    }
+  }
 
   const menuContainerClassname = cx('menuContainer', {
     expandedMenu
@@ -130,7 +143,7 @@ export const Menu: React.FunctionComponent<MenuProps> = () => {
           src={expandedMenu ? logo : whale}
           alt='logo bethere' />
       </div>
-      {renderMenuItemList(expandedMenu)}
+      {renderMenuItemList(expandedMenu, menuItems)}
     </div>
   )
 }

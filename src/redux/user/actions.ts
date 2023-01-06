@@ -4,3 +4,9 @@ export const setToken = (token: String) => {
     payload: token
   }
 }
+
+export const clearUserState = () => {
+  return {
+    type: 'USER_CLEAR_STATE'
+  }
+}

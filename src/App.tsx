@@ -7,7 +7,6 @@ import { Layout } from './components/layout';
 import { Charts, Login, Home, Settings, History } from './views'
 import { store } from './redux/store'
 
-
 const routesList = [
   {
     path: 'login',

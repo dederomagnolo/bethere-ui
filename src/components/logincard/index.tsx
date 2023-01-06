@@ -1,20 +1,30 @@
-import React, { useState } from "react";
-import _ from 'lodash';
-import "./styles.scss";
-import logo from "../../assets/bethere_logo.png";
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import _ from 'lodash'
 import {
   BsFillPersonFill as User,
   BsLockFill as Lock,
   BsFillEyeFill as Eye,
-} from "react-icons/bs";
+} from 'react-icons/bs'
+
+import { setToken } from '../../redux/user/actions'
+import { getToken } from '../../redux/user/selectors'
 
 import callApi from '../../services/callApi'
 
+import './styles.scss'
+import logo from '../../assets/bethere_logo.png'
+
 export const LoginCard = () => {
-  let iconStyles = { color: "#dadada" };
+  let iconStyles = { color: '#dadada' }
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [username, setUsername] = useState('kumaa')
   const [password, setPassword] = useState('testing123')
   const [iconShow, setIconShow] = useState(true)
+  const token = useSelector(getToken)
+
   const handleUsernameChange = (e: any) => {
     const state = e.target.value
     setUsername(state)
@@ -33,6 +43,11 @@ export const LoginCard = () => {
         service: '/auth/authenticate'
       })
       const token = _.get(res, 'token')
+
+      if (token) {
+        dispatch(setToken(token))
+        navigate('/')
+      }
       console.log(res)
     } catch (err) {
       console.error('deu pau')

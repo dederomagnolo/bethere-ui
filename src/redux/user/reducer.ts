@@ -21,6 +21,10 @@ export const UserReducer = (
           ...state,
           token: action.payload
         }
+      case('USER_CLEAR_STATE'):
+        return {
+          ...initialState
+        }
       default:
         return state
     }
