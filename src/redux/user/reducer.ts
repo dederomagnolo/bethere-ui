@@ -1,5 +1,3 @@
-import { PayloadAction } from '@reduxjs/toolkit'
-
 interface UserState {
   token: String
   username: String

@@ -9,6 +9,8 @@ import {
 } from 'react-icons/bs'
 
 import { setToken } from '../../redux/user/actions'
+import { setUserDevices } from '../../redux/device/actions'
+
 import { getToken } from '../../redux/user/selectors'
 
 import callApi from '../../services/callApi'
@@ -42,12 +44,17 @@ export const LoginCard = () => {
         payload: { username, password },
         service: '/auth/authenticate'
       })
+
       const token = _.get(res, 'token')
 
       if (token) {
         dispatch(setToken(token))
+
+        const devices = _.get(res, 'user.devices')
+        dispatch(setUserDevices(devices))
         navigate('/')
       }
+
       console.log(res)
     } catch (err) {
       console.error('deu pau')
