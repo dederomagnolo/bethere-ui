@@ -10,21 +10,30 @@
   transition: all 0.3s;
 
   &.expandedMenu {
-    width: 240px;
+    width: 250px;
+  }
+
+  .expandButton {
+    border: 0;
+    background: transparent;
+
+    svg {
+      
+    }
   }
 
   .menuItems {
     box-sizing: border-box;
-    width: 100%;
     padding-inline-start: 0;
     list-style-type: none;
     display: flex;
     flex-direction: column;
     gap: 20px;
-    height: 100%;
+    height: 80%;
     margin: 0;
     justify-content: center;
-    padding: 0 15px 20px;
+    width: 100%;
+    padding: 8px;
   }
 
   .menuItem {
@@ -32,12 +41,12 @@
     color: white;
     font-size: 16px;
     display: flex;
-    padding: 8px;
   
     a {
       text-decoration: none;
       display: flex;
       align-items: center;
+      padding: 8px;
 
       &:visited {
         color: white;
@@ -52,7 +61,7 @@
 
     &:hover {
       border-radius: 20px;
-      border: solid 2px #FFF;
+      outline: solid 2px #FFF;
       font-weight: 600;
     }
   }
@@ -63,9 +72,11 @@
     align-items: center;
     background-color: transparent;
     border: none;
+    padding: 8px;
   }
 
   .logoContainer {
+    height: 20%;
     display: flex;
     flex-direction: column;
     padding: 20px;

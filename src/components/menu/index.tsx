@@ -8,11 +8,15 @@ import {
   HiHome as Home,
   HiClock as Clock,
   HiChartBar as Chart,
-  HiCog as Cog
+  HiCog as Cog,
 } from 'react-icons/hi'
 import {
   FaSignOutAlt as SignOut
 } from 'react-icons/fa'
+
+import {
+  IoIosArrowBack as Arrow
+} from 'react-icons/io'
 
 import {
   MenuProps,
@@ -130,7 +134,11 @@ export const Menu: React.FunctionComponent<MenuProps> = () => {
 
   const renderExpandMenuButton = () => {
     return (
-      <button onClick={() => setExpandedMenu(!expandedMenu)}>O</button>
+      <button
+        className='expandButton'
+        onClick={() => setExpandedMenu(!expandedMenu)}>
+        <Arrow size={28} />
+      </button>
     )
   }
   
