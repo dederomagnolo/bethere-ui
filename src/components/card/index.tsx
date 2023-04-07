@@ -6,15 +6,16 @@ import {
 import './styles.scss'
 
 interface CardLabelProps {
-  label: string,
+  label: string
   Icon?: any
 }
 interface GenericCardProps {
+  columnOrientation?: string
   className?: string
   settingsButtonAvailable?: boolean
   label: string
   type?: string
-  data?: any,
+  CustomData?: any
   icon?: any
 }
 
@@ -22,13 +23,13 @@ const renderIcon = (BaseIcon: any) => <BaseIcon size={22} />
 
 const CardLabel = ({ label, Icon } : CardLabelProps) => {
   const icon = Icon && (
-    <div className='iconContainer'>
+    <div className='icon-container'>
       {renderIcon(Icon)}
     </div>
   )
 
   return (
-    <div className='cardLabel'>
+    <div className='card-label'>
       {icon}
       <span>{label}</span>
     </div>
@@ -39,23 +40,21 @@ export const GenericCard = ({
   type = 'default',
   className,
   settingsButtonAvailable,
-  data,
+  CustomData,
   label,
-  icon
+  icon,
+  columnOrientation
 } : GenericCardProps) => {
-  const mockedStatusLabel = 'Online'
-
   const renderSettingsButton = () => settingsButtonAvailable && <Cog size='28px' />
-  const renderCustomData = () => data ? data() : mockedStatusLabel
 
   return (
-    <div className={`genericCard genericCard--${type} ${className}`}>
-      <div className='cardInfos'>
+    <div className={`generic-card generic-card--${type} ${className}`}>
+      <div className='card-infos'>
         {renderSettingsButton()}
         <CardLabel Icon={icon} label={label} />
       </div>
-      <div className={`cardData cardData--${type}`}>
-        {renderCustomData()}
+      <div className={`card-data card-data--${type}`}>
+        {CustomData && <CustomData />}
       </div>
     </div>
   )

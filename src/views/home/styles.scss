@@ -1,4 +1,15 @@
 .home-view {
+
+  .device-status {
+    &--online {
+      color: #0C9C7A;
+    }
+
+    &--offline {
+      color: #f53a17;
+    }
+  }
+
   .dashboard {
     display: flex;
     flex-direction: column;
@@ -8,6 +19,11 @@
       display: flex;
       gap: 20px;
     }
+  }
+
+  .measures {
+    display: flex;
+    flex-direction: column;
   }
 }
 

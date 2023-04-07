@@ -29,7 +29,7 @@ import whale from '../../assets/bethere_whale.png'
 import logo from '../../assets/bethere_logo.png'
 import './styles.scss'
 
-const renderIcon = (BaseIcon: any) => <BaseIcon size={28} />
+const renderIcon = (BaseIcon: any) => <BaseIcon size={22} />
 
 const MenuItem = ({
   name,
@@ -42,10 +42,10 @@ const MenuItem = ({
 
   return (
     path ? (
-      <li className='menuItem'>
+      <li className='menu-item'>
         <NavLink
           className={({ isActive }) =>
-            isActive ? 'selectedItem' : undefined
+            isActive ? 'selected-item' : undefined
           }
           to={path}>
             <Icon />
@@ -53,7 +53,7 @@ const MenuItem = ({
         </NavLink>
       </li>) : (
         <button
-          className='menuItem'
+          className='menu-item'
           onClick={() => onClick && onClick()}>
           <Icon />
           {renderItemName}
@@ -79,7 +79,7 @@ const renderMenuItemList = (expanded: boolean, menuItems: any) => {
 
   return (
     <ul
-      className='menuItems'
+      className='menu-items'
       role='menu'>
       {mapMenuItems}
     </ul>
@@ -124,20 +124,20 @@ export const Menu: React.FunctionComponent<MenuProps> = () => {
     }
   }
 
-  const menuContainerClassname = cx('menuContainer', {
-    expandedMenu
+  const menuContainerClassname = cx('menu-container', {
+    'expanded-menu': expandedMenu
   })
 
   const logoClassname = cx('logo', {
-    expandedMenu
+    'expanded-menu': expandedMenu
   })
 
   const renderExpandMenuButton = () => {
     return (
       <button
-        className='expandButton'
+        className={`expand-button expand-button--${expandedMenu ? 'expanded' : 'closed'}`}
         onClick={() => setExpandedMenu(!expandedMenu)}>
-        <Arrow size={28} />
+        <Arrow size={16} />
       </button>
     )
   }
@@ -145,7 +145,7 @@ export const Menu: React.FunctionComponent<MenuProps> = () => {
   return (
     <div className={menuContainerClassname}>
       {renderExpandMenuButton()}
-      <div className='logoContainer'>
+      <div className='logo-container'>
         <img
           className={logoClassname}
           src={expandedMenu ? logo : whale}

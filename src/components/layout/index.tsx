@@ -17,7 +17,7 @@ export const Layout: React.FunctionComponent<LayoutProps> = ({ children }) => {
   return (
     <div className='appLayout'>
       {token && <Menu />}
-      <div className='pageContainer'>
+      <div className='page-container'>
         {children}
       </div>
     </div>
