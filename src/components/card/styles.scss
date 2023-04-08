@@ -10,6 +10,10 @@
   justify-content: space-between;
   background-color: #F1F1F1;
 
+  .card-data {
+    height: 100%;
+  }
+  
   .card-label {
     display: flex;
     flex-direction: column;
@@ -21,11 +25,12 @@
     }
 
     span {
-      font-size: 18px;
+      font-size: 14px;
     }
   }
 
   &--watering {
+    flex-direction: column-reverse;
     height: 200px;
     width: 420px;
 

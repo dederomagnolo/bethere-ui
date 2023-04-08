@@ -1,7 +1,7 @@
-export const setToken = (token: String) => {
+export const setUserInfo = ({ token, userId}: { token: String, userId: String }) => {
   return {
-    type: 'USER_SET_TOKEN',
-    payload: token
+    type: 'SET_USER_INFO',
+    payload: { token, userId }
   }
 }
 

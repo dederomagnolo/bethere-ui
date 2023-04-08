@@ -1,64 +1,31 @@
-import React, { useEffect, useState } from 'react'
-import Switch from 'react-switch';
+import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux';
 import useWebSocket from 'react-use-websocket';
 import _ from 'lodash'
 
 import { GenericCard } from '../../components/card'
+import { WateringCardData } from './blocks/watering-card-data'
 
-import {
-  FaTint as Tint,
-  FaThermometerHalf as Thermometer,
-  FaLeaf as Leaf
-} from 'react-icons/fa'
+import BeatLoader from 'react-spinners/BeatLoader'
 
 import { getToken } from '../../redux/user/selectors'
 import { getUserDevices } from '../../redux/device/selectors'
+
+import {
+  RiSignalWifiErrorFill as WiFiErrorIcon
+} from 'react-icons/ri'
+
+import {
+  MdOutlineSpeakerPhone as BroadcastingIcon,
+  MdOutlinePhonelinkErase as OfflineBroadcastIcon
+} from 'react-icons/md'
+
+import { cards } from './utils/constants'
 
 import '../styles.scss'
 import './styles.scss'
 
 const websocketUrl = 'ws://localhost:8080';
-
-const WateringCardData = () => {
-  return (
-    <div className='wateringCardData'>
-      <div className='option'>
-        <span>Status</span>
-        <span>Online</span>
-      </div>
-      <div className='option'>
-        <Switch 
-          checked={true}
-          onChange={() => {}}
-        />
-        <span>Auto</span>
-      </div>
-      <div className='option'>
-          <Switch 
-            checked={true}
-            onChange={() => {}}
-          />
-        <span>Manual</span>
-      </div>
-    </div>
-  )
-}
-
-const cards: any = {
-  humidity: {
-    label: 'Umidade',
-    icon: Tint
-  },
-  temperature: {
-    label: 'Temperatura',
-    icon: Thermometer
-  },
-  watering: {
-    label: 'Irrigação',
-    icon: Leaf,
-  }
-}
 
 const renderGenericCard = (type: string, CustomData?: any) => {
   const { label, icon } = cards[type]
@@ -71,22 +38,29 @@ const renderGenericCard = (type: string, CustomData?: any) => {
   )
 }
 
-const renderMeasures = (measures: any) => { // type here
-  const MeasureLabel = () => {
-    const internalHumidity = _.get(measures, 'internalHumidity')
-    const externalHumidity = _.get(measures, 'externalHumidity')
-    const internalTemperature = _.get(measures, 'internalTemperature')
-    const externalTemperature = _.get(measures, 'externalTemperature')
+const renderMeasures = (measures: any, loading: boolean) => { // type here
+  const MeasureLabel = ({ type }: { type: any } ) => {
+    let internal = _.get(measures, 'internalHumidity') 
+    let external = _.get(measures, 'externalHumidity')
+
+    if (type == 'temperature') {
+      internal = _.get(measures, 'internalTemperature')
+      external = _.get(measures, 'externalTemperature')
+    }
+
+    const renderMeasure = (data: number) => {
+      return loading ? <BeatLoader size={5} /> : <span>{data}</span>
+    }
     
     return (
-      <div className='measures'>
-        <div>
-          <span>Interna</span>
-          <span>{internalHumidity}</span>
+      <div className='measures' key={type}>
+        <div className='measure'>
+          <span className='measure-category'>Interna</span>
+          <span className='measure-data'>{renderMeasure(internal)}</span>
         </div>
-        <div>
-          <span>Externa</span>
-          <span>{externalHumidity}</span>
+        <div className='measure'>
+          <span className='measure-category'>Externa</span>
+          <span className='measure-data'>{renderMeasure(external)}</span>
         </div>
       </div>
     )
@@ -94,72 +68,117 @@ const renderMeasures = (measures: any) => { // type here
 
   return (
     <div className='sensors'>
-      {renderGenericCard('humidity', MeasureLabel)}
-      {renderGenericCard('temperature', MeasureLabel)}
+      {renderGenericCard('humidity', () => <MeasureLabel type='humidity' />)}
+      {renderGenericCard('temperature', () => <MeasureLabel type='temperature' />)}
     </div>
   )
-
 }
-
 
 export const Home = () => {
   const userDevices = useSelector(getUserDevices)
   const token = useSelector(getToken)
-  const [defaultDeviceStatus, setDefaultDeviceStatus] = useState(false)
-  const [dynamicMeasures, setDynamicMeasures] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
+  const [deviceRealTimeData, setDeviceRealTimeData] = useState({
+    defaultDeviceStatus: false,
+    measures: [],
+    lastCommandReceived: ''
+  })
 
   const defaultDevice = _.find(userDevices, (device) => device.defaultDevice)
   const deviceName = defaultDevice && defaultDevice.deviceName
 
   const { 
-    sendMessage,
-    lastJsonMessage,
     lastMessage,
     readyState,
     } = useWebSocket(websocketUrl, {
     onMessage: (event) => console.log(event),
-    onOpen: () => console.log(`Connected to WebSocket Server`),
+    onOpen: () => {
+      console.log(`Connected to WebSocket Server`)
+      setLoading(true)
+    },
     onError: (event) => { console.error(event); },
     shouldReconnect: (closeEvent) => true,
-    reconnectInterval: 3000,
+    reconnectInterval: 10000,
     queryParams: {
       uiClient: token 
     }}
   );
 
+  const handleDeviceNonResponding = () => {
+    setLoading(false)
+    setError(true)
+  }
+
   useEffect(() => {
     const receivedData = lastMessage && lastMessage.data
     const parsedData = JSON.parse(receivedData)
 
-    const userConnectedDevices = parsedData && parsedData.connectedDevices
-    const measures = parsedData && parsedData.measures
-    setDynamicMeasures(measures)
-   
-    let connectedDeviceData // lets type devices!
+    setTimeout(() => {
+      handleDeviceNonResponding()
+    }, 18000)
 
-    _.every(userConnectedDevices, (connectedDevice) => {
-      const existsInUserCollection =
-        _.find(userDevices, (userDevice) => connectedDevice === userDevice.deviceSerialKey)
-      connectedDeviceData = existsInUserCollection
-      return existsInUserCollection
-    })
+    if(parsedData) {
+      const {
+        connectedDevices,
+        measures,
+        lastCommandReceived
+      } = parsedData
 
-    const isConnectedDeviceDefault = _.get(connectedDeviceData, 'defaultDevice')
-    
-    if(userConnectedDevices && userConnectedDevices.length && isConnectedDeviceDefault) {
-      setDefaultDeviceStatus(true)
-    } else {
-      setDefaultDeviceStatus(false)
+      // need to get last command received from DB while this is loading
+
+      let connectedDeviceData // lets type devices!
+
+      // check user devices connected if it exists in the collection
+      _.every(connectedDevices, (connectedDevice) => {
+        const existsInUserCollection =
+          _.find(userDevices, (userDevice) => connectedDevice === userDevice.deviceSerialKey)
+        connectedDeviceData = existsInUserCollection
+        return existsInUserCollection
+      })
+
+      const isConnectedDeviceDefault = _.get(connectedDeviceData, 'defaultDevice', false)
+      
+      setDeviceRealTimeData({
+        measures,
+        lastCommandReceived,
+        defaultDeviceStatus: isConnectedDeviceDefault
+      })
+
+      setLoading(false)
     }
   }, [lastMessage])
 
   const renderPageContent = () => {
+    const {
+      defaultDeviceStatus,
+      measures,
+    } = deviceRealTimeData
 
-    const StatusLabel = () =>
-      <span
-        className={`device-status device-status--${defaultDeviceStatus ? 'online' : 'offline'}`}>
-          {defaultDeviceStatus ? 'Online' : 'Offline'}
-      </span>
+    const StatusLabel = () => {
+      if (loading) {
+        return <BeatLoader size={10} />
+      }
+
+      const offlineLabel = (
+        <div>
+          <div>
+            {error && <WiFiErrorIcon className='wifi-error-icon'/>}
+            <span>Offline</span>
+          </div>
+          {/* {<span className='reconnect-label'>Reconnecting </span>} */}
+        </div>
+
+      )
+
+
+      return (
+        <span
+          className={`device-status device-status--${defaultDeviceStatus ? 'online' : 'offline'}`}>
+          {defaultDeviceStatus ? 'Online' : offlineLabel}
+        </span>
+      )
+    }
 
     return (
       <>
@@ -170,8 +189,16 @@ export const Home = () => {
           label={deviceName} />
         <h2>Medições</h2>
         <div className='dashboard'>
-          {renderMeasures(dynamicMeasures)}
-          {renderGenericCard('watering', WateringCardData)}
+          {renderMeasures(measures, loading)}
+          <GenericCard
+            type='watering'
+            icon={cards['watering'].icon}
+            label={cards['watering'].label}
+            CustomData={() => 
+              <WateringCardData
+                deviceRealTimeData={deviceRealTimeData}
+                device={defaultDevice}
+                wsStatus={readyState} />} />
         </div>
       </>
     )

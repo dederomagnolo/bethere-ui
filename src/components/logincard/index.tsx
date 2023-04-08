@@ -8,7 +8,7 @@ import {
   BsFillEyeFill as Eye,
 } from 'react-icons/bs'
 
-import { setToken } from '../../redux/user/actions'
+import { setUserInfo } from '../../redux/user/actions'
 import { setUserDevices } from '../../redux/device/actions'
 
 import { getToken } from '../../redux/user/selectors'
@@ -46,9 +46,10 @@ export const LoginCard = () => {
       })
 
       const token = _.get(res, 'token')
+      const userId = _.get(res, 'user._id')
 
       if (token) {
-        dispatch(setToken(token))
+        dispatch(setUserInfo({ token, userId }))
 
         const devices = _.get(res, 'user.devices')
         dispatch(setUserDevices(devices))

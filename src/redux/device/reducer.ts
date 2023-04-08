@@ -1,9 +1,11 @@
+import _ from 'lodash'
+
 interface DeviceState {
-  devices: any
+  userDevices: any
 }
 
 const initialState = {
-  devices: []
+  userDevices: []
 }
 
 export const DeviceReducer = (
@@ -14,12 +16,18 @@ export const DeviceReducer = (
     case('SET_USER_DEVICES'):
       return {
         ...state,
-        devices: action.payload
+        userDevices: action.payload
       }
     case('CLEAR_DEVICES_STATE'):
       return {
         ...initialState
       }
+    case "persist/REHYDRATE": {
+      return {
+          ...state,
+          ..._.get(action.payload, 'devices')
+      }
+    }
     default:
       return state
   }
