@@ -1,0 +1,124 @@
+.settings-view {
+  padding-right: 80px;
+  .select-device {
+    &__container {
+      margin: 20px 0 50px;
+
+      .react-select-container {
+        width: 300px;
+      }
+    }
+  }
+
+  .collapsible-section {
+    width: 100%;
+    padding: 18px 0 18px;
+    border-bottom: 1px solid #D0D0D0;
+  }
+
+  .collapsible-options {
+    display: flex;
+    flex-direction: column;
+
+    .options {
+      font-size: 14px;
+      margin-left: 8px;
+      padding: 10px 0 10px;
+
+      &--manual-watering {
+        display: flex;
+        flex-direction: column;
+  
+        .title {
+          font-weight: bold;
+          font-size: 14px;
+          margin-right: 10px;
+        }
+  
+        .description {
+          margin: 10px 0 10px;
+          font-size: 12px;
+        }
+      }
+
+      &--auto-watering {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+
+        .cycle-period {
+          display: flex;
+          gap: 10px;
+          overflow: visible;
+          &__time-select-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+          }
+
+          .react-select-container {
+            width: 120px;
+          }
+        }
+
+        .input-option {
+          display: flex;
+          gap: 8px;
+          align-items: center;
+
+          input {
+            width: 120px;
+          }
+        }
+      }
+    }
+  }
+  
+  
+  .collapsible {
+    &__title {
+      h2 {
+        font-weight: normal;
+        font-size: 18px;
+      }
+      display: flex;
+      width: 100%;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+  
+  .reset-section {
+    p {
+      font-size: 12px;
+    }
+
+    &__button-container {
+      margin-top: 14px;
+      width: 100%;
+      display: flex;
+      justify-content: flex-end;
+
+      button {
+        border-radius: 6px;
+        color: white;
+        background-color: rgba(110, 0, 0, 0.684);
+        border: 0;
+        padding: 8px;
+        width: 100px;
+      }
+    }
+  }
+}
+
+.react-select {
+  &__control { 
+    border-radius: 6px !important;
+  }
+
+  &__menu {
+    overflow: visible;
+    z-index: 2;
+  }
+}
+

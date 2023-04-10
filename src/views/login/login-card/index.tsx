@@ -8,15 +8,15 @@ import {
   BsFillEyeFill as Eye,
 } from 'react-icons/bs'
 
-import { setUserInfo } from '../../redux/user/actions'
-import { setUserDevices } from '../../redux/device/actions'
+import { setUserInfo } from '../../../redux/user/actions'
+import { setUserDevices } from '../../../redux/device/actions'
 
-import { getToken } from '../../redux/user/selectors'
+import { getToken } from '../../../redux/user/selectors'
 
-import callApi from '../../services/callApi'
+import callApi from '../../../services/callApi'
 
 import './styles.scss'
-import logo from '../../assets/bethere_logo.png'
+import logo from '../../../assets/bethere_logo.png'
 
 export const LoginCard = () => {
   let iconStyles = { color: '#dadada' }

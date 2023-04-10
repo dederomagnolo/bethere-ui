@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { LoginCard } from '../../components/loginCard';
+import { LoginCard } from './login-card';
 
 import '../styles.scss'
 import './styles.scss'

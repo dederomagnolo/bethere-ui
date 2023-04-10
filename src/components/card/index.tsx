@@ -12,7 +12,7 @@ interface CardLabelProps {
 interface GenericCardProps {
   columnOrientation?: string
   className?: string
-  settingsButtonAvailable?: boolean
+  settingsButtonRoute?: string
   label: string
   type?: string
   CustomData?: any
@@ -39,18 +39,22 @@ const CardLabel = ({ label, Icon } : CardLabelProps) => {
 export const GenericCard = ({
   type = 'default',
   className,
-  settingsButtonAvailable,
+  settingsButtonRoute,
   CustomData,
   label,
-  icon,
-  columnOrientation
+  icon
 } : GenericCardProps) => {
-  const renderSettingsButton = () => settingsButtonAvailable && <Cog size='28px' />
+  const renderSettingsButton = () =>
+    settingsButtonRoute && (
+      <div className='generic-card__settings'>
+        <Cog size='22px' />
+      </div>
+    )
 
   return (
     <div className={`generic-card generic-card--${type} ${className}`}>
+      {renderSettingsButton()}
       <div className='card-infos'>
-        {renderSettingsButton()}
         <CardLabel Icon={icon} label={label} />
       </div>
       <div className={`card-data card-data--${type}`}>

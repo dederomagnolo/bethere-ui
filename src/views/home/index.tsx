@@ -171,7 +171,6 @@ export const Home = () => {
 
       )
 
-
       return (
         <span
           className={`device-status device-status--${defaultDeviceStatus ? 'online' : 'offline'}`}>
@@ -185,12 +184,13 @@ export const Home = () => {
         <h2>Estação local</h2>
         <GenericCard
           CustomData={StatusLabel}
-          settingsButtonAvailable
+          settingsButtonRoute='/configuracoes'
           label={deviceName} />
         <h2>Medições</h2>
         <div className='dashboard'>
           {renderMeasures(measures, loading)}
           <GenericCard
+            settingsButtonRoute='configuracoes'
             type='watering'
             icon={cards['watering'].icon}
             label={cards['watering'].label}
