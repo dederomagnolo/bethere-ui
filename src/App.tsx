@@ -2,11 +2,11 @@ import React from 'react'
 import _ from 'lodash'
 import { Routes, Route, BrowserRouter } from 'react-router-dom'
 import { Provider } from 'react-redux'
+import { PersistGate } from 'redux-persist/integration/react';
 
 import { Layout } from './components/layout';
 import { Charts, Login, Home, Settings, History } from './views'
-import { store } from './redux/store'
-
+import { store, persistor } from './redux/store'
 
 const routesList = [
   {
@@ -39,13 +39,15 @@ const App: React.FC = () => {
 
   return (
     <Provider store={store}>
-      <BrowserRouter>
-        <Layout>
-          <Routes>
-            {routes}
-          </Routes>
-        </Layout>
-      </BrowserRouter>
+      <PersistGate loading={null} persistor={persistor}>
+        <BrowserRouter>
+          <Layout>
+            <Routes>
+              {routes}
+            </Routes>
+          </Layout>
+        </BrowserRouter>
+      </PersistGate>
     </Provider>
   )
 }

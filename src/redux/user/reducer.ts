@@ -1,13 +1,15 @@
-import { PayloadAction } from '@reduxjs/toolkit'
+import _ from 'lodash'
 
 interface UserState {
   token: String
-  username: String
+  username: String,
+  userId: String,
 }
 
 const initialState = {
   token: '',
-  username: ''
+  username: '',
+  userId: ''
 }
 
 
@@ -16,11 +18,21 @@ export const UserReducer = (
   action: any
 ) => {
     switch(action.type) {
-      case('USER_SET_TOKEN'):
+      case('SET_USER_INFO'):
         return {
           ...state,
-          token: action.payload
+          ...action.payload
         }
+      case('USER_CLEAR_STATE'):
+        return {
+          ...initialState
+        }
+      case "persist/REHYDRATE": {
+        return {
+          ...state,
+          ..._.get(action.payload, 'user')
+        }
+      }
       default:
         return state
     }

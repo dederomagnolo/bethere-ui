@@ -1,4 +1,4 @@
-.genericCard {
+.generic-card {
   box-sizing: border-box;
   display: flex;
   box-shadow:0 1px 3px rgba(0,0,0,0.2), 0 3px 5px rgba(0,0,0,0.1);
@@ -10,22 +10,27 @@
   justify-content: space-between;
   background-color: #F1F1F1;
 
-  .cardLabel {
+  .card-data {
+    height: 100%;
+  }
+  
+  .card-label {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
     height: 100%;
 
-    .iconContainer {
+    .icon-container {
       margin-bottom: 5px;
     }
 
     span {
-      font-size: 20px;
+      font-size: 14px;
     }
   }
 
   &--watering {
+    flex-direction: column-reverse;
     height: 200px;
     width: 420px;
 
@@ -35,6 +40,7 @@
   }
 
   &--humidity {
+    flex-direction: column-reverse;
     height: 200px;
     width: 200px;
 
@@ -44,6 +50,7 @@
   }
 
   &--temperature {
+    flex-direction: column-reverse;
     height: 200px;
     width: 200px;
 
@@ -52,15 +59,9 @@
     }
   }
 
-  .cardInfos {
+  .card-infos {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-  }
-
-  .cardData {
-    &--default {
-      color: #0C9C7A;
-    }
   }
 }

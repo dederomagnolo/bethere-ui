@@ -1,4 +1,4 @@
-.menuContainer {
+.menu-container {
   background-color: #0DA1BC; //turn it global
   height: 80vh;
   width: 100px;
@@ -9,35 +9,89 @@
   border-radius: 0 20px 20px 0;
   transition: all 0.3s;
 
-  &.expandedMenu {
-    width: 240px;
+  &.expanded-menu {
+    width: 250px;
+
+    .menu-item {
+      align-items: flex-start;
+
+      a {
+        justify-content: flex-start;
+      }
+
+      svg {
+        margin-right: 15px;
+      }
+    }
+
+    button.menu-item {
+      align-items: center;
+      justify-content: flex-start;
+    }
   }
 
-  .menuItems {
+  .expand-button {
+    box-shadow:0 1px 3px rgba(0,0,0,0.2), 0 3px 5px rgba(0,0,0,0.1);
+    margin-top: -10px;
+    border-radius: 50%;
+    background: #005868;
+    width: 22px;
+    height: 22px;
+    border: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+
+    &--expanded {
+      svg {
+        transform: rotate(0);
+        transition: transform 0.3s linear;
+      }
+    }
+
+    &--closed {
+      svg {
+        transform: rotate(180deg);
+        transition: transform 0.3s linear;
+      }
+    }
+
+    svg {
+      color: white;
+    }
+  }
+
+  .menu-items {
     box-sizing: border-box;
-    width: 100%;
     padding-inline-start: 0;
     list-style-type: none;
     display: flex;
     flex-direction: column;
     gap: 20px;
-    height: 100%;
+    height: 80%;
     margin: 0;
     justify-content: center;
-    padding: 0 15px 20px;
+    width: 100%;
+    padding: 8px;
   }
 
-  .menuItem {
+  .menu-item {
+    width: 100%;
     list-style-type: none;
     color: white;
-    font-size: 16px;
+    font-size: 12px;
     display: flex;
-    padding: 8px;
+    justify-content: center;
+    align-items: flex-start;
   
     a {
+      width: 100%;
       text-decoration: none;
       display: flex;
       align-items: center;
+      padding: 8px;
+      justify-content: center;
 
       &:visited {
         color: white;
@@ -46,34 +100,38 @@
 
     svg {
       color: white;
-      margin-right: 15px;
     }
 
 
     &:hover {
       border-radius: 20px;
-      border: solid 2px #FFF;
+      outline: solid 2px #FFF;
       font-weight: 600;
     }
   }
 
-  button.menuItem {
+  button.menu-item {
     display: flex;
     width: 100%;
     align-items: center;
     background-color: transparent;
     border: none;
+    padding: 8px;
   }
 
-  .logoContainer {
+  .logo-container {
+    justify-content: center;
+    height: 20%;
     display: flex;
     flex-direction: column;
-    padding: 20px;
+    width: 100%;
+    align-items: center;
+
     .logo {
       width: 70px;
     }
 
-    .logo.expandedMenu {
+    .logo.expanded-menu {
       width: 150px;
     }
   }

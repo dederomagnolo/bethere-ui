@@ -1,1 +1,1 @@
-declare module 'react-translate'
+declare module 'react-styled-toggle'

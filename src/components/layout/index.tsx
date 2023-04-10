@@ -1,4 +1,7 @@
 import React from 'react'
+import { useSelector } from 'react-redux'
+
+import { getToken } from '../../redux/user/selectors'
 import { Menu } from '../menu'
 
 import './styles.scss'
@@ -10,10 +13,11 @@ interface LayoutProps {
 const auth = true // mock
 
 export const Layout: React.FunctionComponent<LayoutProps> = ({ children }) => {
+  const token = useSelector(getToken)
   return (
     <div className='appLayout'>
-      {auth && <Menu />}
-      <div className='pageContainer'>
+      {token && <Menu />}
+      <div className='page-container'>
         {children}
       </div>
     </div>
