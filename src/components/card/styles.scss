@@ -1,3 +1,5 @@
+@import '../../styles/breakpoints.scss';
+
 .generic-card {
   box-sizing: border-box;
   display: flex;
@@ -32,7 +34,11 @@
   &--watering {
     flex-direction: column-reverse;
     height: 200px;
-    width: 420px;
+    width: 100%;
+
+    @include md {
+      width: 420px;
+    }
 
     svg {
       color: #a3da5a63;

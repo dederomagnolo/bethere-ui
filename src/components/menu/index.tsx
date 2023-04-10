@@ -40,25 +40,30 @@ const MenuItem = ({
 }: MenuItemProps) => {
   const renderItemName = expanded && name
 
-  return (
-    path ? (
-      <li className='menu-item'>
-        <NavLink
-          className={({ isActive }) =>
-            isActive ? 'selected-item' : undefined
-          }
-          to={path}>
-            <Icon />
-            {renderItemName}
-        </NavLink>
-      </li>) : (
-        <button
-          className='menu-item'
-          onClick={() => onClick && onClick()}>
+  const Item = () => path ? (
+    <li className='menu-item__content'>
+      <NavLink
+        className={({ isActive }) =>
+          isActive ? 'selected-item' : undefined
+        }
+        to={path}>
           <Icon />
           {renderItemName}
-        </button>
-      )
+      </NavLink>
+    </li>) : (
+      <button
+        className='menu-item__content'
+        onClick={() => onClick && onClick()}>
+        <Icon />
+        {renderItemName}
+      </button>
+    )
+
+  return (
+   <div className='menu-item__container'>
+    <Item />
+    <span className='menu-item__label'>{name}</span>
+   </div>
   )
 }
 
@@ -137,7 +142,7 @@ export const Menu: React.FunctionComponent<MenuProps> = () => {
       <button
         className={`expand-button expand-button--${expandedMenu ? 'expanded' : 'closed'}`}
         onClick={() => setExpandedMenu(!expandedMenu)}>
-        <Arrow size={16} />
+        <Arrow size={12} />
       </button>
     )
   }

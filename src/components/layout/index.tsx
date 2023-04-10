@@ -10,10 +10,11 @@ interface LayoutProps {
   children?: any
 }
 
-const auth = true // mock
+const token = true // mock
 
 export const Layout: React.FunctionComponent<LayoutProps> = ({ children }) => {
-  const token = useSelector(getToken)
+  //const token = useSelector(getToken)
+
   return (
     <div className='appLayout'>
       {token && <Menu />}

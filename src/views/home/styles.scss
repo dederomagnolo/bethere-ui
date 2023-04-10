@@ -18,6 +18,7 @@
   }
 
   .dashboard {
+    margin-top: 12px;
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -28,14 +29,17 @@
     }
 
     .watering-card {
+      padding-top: 10px;
       width: 100%;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 18px;
+      align-items: flex-end;
 
       .option {
         display: flex;
         align-items: center;
+        justify-content: flex-end;
         width: 100%;
 
         &--toggle {

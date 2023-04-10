@@ -1,7 +1,13 @@
+@import '../styles/breakpoints.scss';
+
 .page-container {
   display: block;
   box-sizing: border-box;
   height: 100%;
   width: 100%;
-  padding: 10vh 30px 20px;
+  padding: 5vh 30px 20px;
+
+  @include md {
+    padding-top: 10vh;
+  }
 }
