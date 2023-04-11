@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import Switch from 'react-switch'
 import _ from 'lodash'
 
@@ -58,8 +58,11 @@ export const WateringCardData = ({
     lastCommandReceived
   } = deviceRealTimeData
   const isRealTimeWateringStateEnabled = lastCommandReceived === COMMANDS.MANUAL_WATERING.OPTIONS.ON
+  const deviceSettings = _.get(device, 'settings[0]')
+  const autoWateringEnabled = _.get(deviceSettings, 'wateringRoutine.enabled')
 
   const [wateringEnabled, setWateringEnabled] = useState(isRealTimeWateringStateEnabled)
+  const [autoModeEnabled, setAutoModeEnabled] = useState(autoWateringEnabled)
 
   const deviceId = _.get(device, '_id')
 
@@ -110,7 +113,7 @@ export const WateringCardData = ({
       <div className='option option--toggle'>
         <CustomSwitch
           disabled={!defaultDeviceStatus}
-          checked={true}
+          checked={autoModeEnabled}
           onChange={() => {}}
         />
         <span>Auto</span>

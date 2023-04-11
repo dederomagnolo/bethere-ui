@@ -16,16 +16,14 @@ export const Input: React.FC<InputProps> = ({
   placeholder,
   name,
   className,
-  value,
-  autoFocus
+  value
 }) => {
   return (
     <input
-      autoFocus={autoFocus}
       value={value}
       className={`app-input ${className}`}
       name={name}
       placeholder={placeholder}
-      onChange={(e: any) => onChange(e)} />
+      onChange={onChange} />
   )
 }

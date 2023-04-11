@@ -1,18 +1,21 @@
 import React, { useState } from 'react';
 import Select from  'react-select'
-import _ from 'lodash'
+import _, { initial } from 'lodash'
+import { useSelector } from 'react-redux';
 
-import { Input } from '../../components/input';
+import { Input, AppCollapsible, Button } from 'components';
 import { getTimeOptions } from './functions';
-import { AppCollapsible } from '../../components/collapsible'
 
 import './styles.scss'
+import { getUserDevices } from 'redux/device/selectors';
+import { getDeviceOptionsToSelect } from 'global/functions';
 
-const CustomSelect = ({ options }: any) => {
+const CustomSelect = ({ options, defaultValue }: any) => {
   return (
     <Select
-    menuPortalTarget={document.querySelector('body')}
-      defaultMenuIsOpen
+      isSearchable={false}
+      defaultValue={defaultValue}
+      menuPortalTarget={document.querySelector('body')}
       className='react-select-container'
       classNamePrefix='react-select'
       options={options} />
@@ -20,77 +23,103 @@ const CustomSelect = ({ options }: any) => {
 }
 
 export const Settings = () => {
-  const timeOptions = getTimeOptions()
+  const userDevices = useSelector(getUserDevices)
 
-  const [settings, setSettings] = useState({
+  const timeOptions = getTimeOptions()
+  const defaultDevice = _.find(userDevices, (device) => device.defaultDevice)
+  const deviceSelectOptions = getDeviceOptionsToSelect(userDevices)
+  const indexOfDefaultDeviceInOptions = _.findIndex(deviceSelectOptions, (device) => device.value === defaultDevice._id)
+  const settingsInitialState = {
     startTime: '',
     endTime: '',
     interval: '',
     duration: '',
     pumpTimer: '',
     remoteMeasureInterval: ''
+  }
+
+  const defaultDeviceSettings = _.get(defaultDevice, 'settings[0]', settingsInitialState)
+
+  const {
+    wateringRoutine: {
+      startTime,
+      endTime,
+      interval,
+      duration,
+    },
+    pumpTimer,
+    remoteMeasureInterval
+  } = defaultDeviceSettings
+
+  const [settings, setSettings] = useState({
+    startTime,
+    endTime,
+    interval,
+    duration,
+    pumpTimer,
+    remoteMeasureInterval
   })
 
   const handleChangeSettings = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
-    setSettings({...settings, [e.target.name]: value})
+    setSettings({ ...settings, [e.target.name]: value })
   }
 
-  const AutoWateringConfig = () => {
-    return (
-      <div className='options options--auto-watering'>
-        <span>Período de atividade</span>
-        <div className='cycle-period'>
-          <div className='cycle-period__time-select-container'>
-            De
-            <CustomSelect options={timeOptions} />
-          </div>
-          <div className='cycle-period__time-select-container'>
-            até
-            <CustomSelect options={timeOptions} />
-          </div>
+  const AutoWateringConfig = (
+    <div className='options options--auto-watering'>
+      <div className='cycle-period'>
+        <div className='cycle-period__time-select-container'>
+          <span className='title'>Período de atividade</span> de
+          <CustomSelect options={timeOptions} />
         </div>
-        <div className='input-option'>
-          Intervalo
-          <Input
-            name='interval'
-            onChange={handleChangeSettings}
-            value={settings.interval} />
-        </div>
-        <div className='input-option'>
-          Tempo de irrigação
-          <Input
-            name='duration'
-            onChange={handleChangeSettings}
-            value={settings.duration} />
+        <div className='cycle-period__time-select-container'>
+          até
+          <CustomSelect options={timeOptions} />
         </div>
       </div>
-    )
-  }
-
-  const ManualWateringConfig = () => {
-    return (
-      <div className='options options--manual-watering'>
-        <div>
-          <span className='title'>Timer da irrigação manual</span>
-          <Input value={settings.pumpTimer} name='pumpTimer' onChange={handleChangeSettings} />
-        </div>
-        <span className='description'>Tempo que a irrigação permanece ligada após o acionamento pelo botão.</span>
+      <div className='description'>
+        O período de atividade é o intervalo do dia em que a estação local irá fazer o ciclo de automação.
       </div>
-    )
-  }
-
-  const MeasuresConfig = () => {
-    return (
       <div className='input-option'>
-          Intervalo de envio
-          <Input
-            name='remoteMeasureInterval'
-            onChange={() => {}}
-            value={settings.remoteMeasureInterval} />
-        </div>
-    )
-  }
+        <span className='title'>Intervalo</span>
+        <Input
+          name='interval'
+          onChange={handleChangeSettings}
+          value={settings.interval} />
+      </div>
+      <div className='description'>O intervalo é o tempo entre um ciclo de irrigação e outro.</div>
+      <div className='input-option'>
+        <span className='title'>Tempo de irrigação</span>
+        <Input
+          name='duration'
+          onChange={handleChangeSettings}
+          value={settings.duration} />
+      </div>
+      <div className='description'>
+        O tempo de irrigação corresponde ao tempo em que a irrigação permanece ligada quando é dado o tempo de intervalo.
+      </div>
+    </div>
+  )
+
+  const ManualWateringConfig = (
+    <div className='options options--manual-watering'>
+      <div className='input-option'>
+        <span className='title'>Timer da irrigação manual</span>
+        <Input value={settings.pumpTimer} name='pumpTimer' onChange={handleChangeSettings} />
+      </div>
+      <span className='description'>Tempo que a irrigação permanece ligada após o acionamento pelo botão.</span>
+    </div>
+  )
+
+  const MeasuresConfig = (
+    <div className='input-option'>
+      <span className='title'>Intervalo de envio</span>
+      <Input
+        name='remoteMeasureInterval'
+        onChange={handleChangeSettings}
+        value={settings.remoteMeasureInterval} />
+    </div>
+  )
 
   const collapsibleOptions = [
     {
@@ -107,11 +136,11 @@ export const Settings = () => {
     }
   ]
 
-  const renderCollapsibleOptions = () => _.map(collapsibleOptions, (option) => {
+  const renderCollapsibleOptions = _.map(collapsibleOptions, (option) => {
     const { title, component } = option
     return (
       <div className='collapsible-section' key={title}>
-        <AppCollapsible title={title} InnerComponent={component}/>
+        <AppCollapsible title={title} innerComponent={component}/>
       </div>
     )
   })
@@ -120,11 +149,13 @@ export const Settings = () => {
     <div className='settings-view'>
       <div className='select-device__container'>
         <h1>Dispositivo</h1>
-        <CustomSelect />
+        <CustomSelect
+          defaultValue={deviceSelectOptions[indexOfDefaultDeviceInOptions]}
+          options={deviceSelectOptions} />
       </div>
       <h1>Configurações</h1>
       <div className='collapsible-options'>
-        {renderCollapsibleOptions()}
+        {renderCollapsibleOptions}
       </div>
       <div className='reset-section'>
         <div>
@@ -134,8 +165,9 @@ export const Settings = () => {
             Verifique a sua conexão com a internet antes de reiniciar.
           </p>
         </div>
+        <Input name='duration' value={settings.duration} onChange={handleChangeSettings} />
         <div className='reset-section__button-container'>
-          <button>Reiniciar</button>
+          <Button variant='cancel'>Reiniciar</Button>
         </div>
       </div>
     </div>

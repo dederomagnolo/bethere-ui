@@ -1,0 +1,24 @@
+.app-button {
+  border-radius: 6px;
+  color: white;
+  border: 0;
+  padding: 8px;
+  width: 100px;
+  transition: all 300ms ease, opacity 200ms linear;
+  font-weight: bold;
+
+  &--primary {
+    background-color: #114B5F;
+  }
+
+  &--cancel {
+    background-color: rgb(255 244 244);
+    color:rgba(110, 0, 0, 0.684);
+    outline: solid 1px rgba(110, 0, 0, 0.684);
+
+    &:hover {
+      color: white;
+      background-color: rgba(110, 0, 0, 0.684);
+    }
+  }
+}

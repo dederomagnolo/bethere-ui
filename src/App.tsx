@@ -4,8 +4,8 @@ import { Routes, Route, BrowserRouter } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import { PersistGate } from 'redux-persist/integration/react';
 
-import { Layout } from './components/layout';
-import { Charts, Login, Home, Settings, History } from './views'
+import { Layout } from 'components';
+import { Charts, Login, Home, Settings, History } from 'views'
 import { store, persistor } from './redux/store'
 
 const routesList = [

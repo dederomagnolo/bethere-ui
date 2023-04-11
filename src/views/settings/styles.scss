@@ -19,37 +19,56 @@
   .collapsible-options {
     display: flex;
     flex-direction: column;
+    font-size: 14px;
+
+    .title {
+      font-weight: bold;
+      margin-right: 10px;
+    }
+
+    .description {
+      font-size: 12px;
+    }
+
+    .input-option {
+      margin-top: 10px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+
+      input {
+        width: 50px;
+      }
+    }
 
     .options {
-      font-size: 14px;
       margin-left: 8px;
       padding: 10px 0 10px;
 
       &--manual-watering {
         display: flex;
         flex-direction: column;
-  
-        .title {
-          font-weight: bold;
-          font-size: 14px;
-          margin-right: 10px;
-        }
-  
+
         .description {
-          margin: 10px 0 10px;
-          font-size: 12px;
+          margin-top: 8px;
         }
       }
 
       &--auto-watering {
         display: flex;
         flex-direction: column;
-        gap: 16px;
+        gap: 5px;
+
+        .description {
+          margin-bottom: 10px;
+        }
 
         .cycle-period {
+          margin-top: 10px;
           display: flex;
           gap: 10px;
           overflow: visible;
+
           &__time-select-container {
             display: flex;
             align-items: center;
@@ -57,16 +76,6 @@
           }
 
           .react-select-container {
-            width: 120px;
-          }
-        }
-
-        .input-option {
-          display: flex;
-          gap: 8px;
-          align-items: center;
-
-          input {
             width: 120px;
           }
         }
@@ -98,15 +107,6 @@
       width: 100%;
       display: flex;
       justify-content: flex-end;
-
-      button {
-        border-radius: 6px;
-        color: white;
-        background-color: rgba(110, 0, 0, 0.684);
-        border: 0;
-        padding: 8px;
-        width: 100px;
-      }
     }
   }
 }

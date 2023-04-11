@@ -20,11 +20,11 @@ const renderCollapsibleTitle = (title: string, whenOpen?: boolean) => {
 
 interface CollapsibleProps {
   title: string
-  InnerComponent?: any
+  innerComponent: any
   className?: string
 }
 
-export const AppCollapsible: React.FC<CollapsibleProps> = ({ title, InnerComponent, className }) => {
+export const AppCollapsible: React.FC<CollapsibleProps> = ({ title, innerComponent, className }) => {
   return (
     <Collapsible
       className={`app-collapsible ${className}`}
@@ -35,7 +35,7 @@ export const AppCollapsible: React.FC<CollapsibleProps> = ({ title, InnerCompone
       )}
       transitionTime={150}
     >
-      <InnerComponent />
+      {innerComponent}
     </Collapsible>
   )
 }

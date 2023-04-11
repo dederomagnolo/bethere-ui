@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import useWebSocket from 'react-use-websocket';
 import _ from 'lodash'
 
-import { GenericCard } from '../../components/card'
+import { GenericCard } from 'components'
 import { WateringCardData } from './blocks/watering-card-data'
 
 import BeatLoader from 'react-spinners/BeatLoader'

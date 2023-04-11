@@ -1,5 +1,4 @@
-const bethereUrl = 'http://localhost:8080'
-
+const BE_HOST = process.env.REACT_APP_BE_HOST
 interface callApiProps {
   method: String,
   service: String,
@@ -22,7 +21,7 @@ async function callApi({
       "auth-token": token ? token : "",
     },
   }
-  const url = `${bethereUrl}${service}`
+  const url = `${BE_HOST}${service}`
 
   try {
     // @ts-ignore
@@ -36,7 +35,5 @@ async function callApi({
     throw new Error(err.message)
   }
 }
-
-
 
 export default callApi
