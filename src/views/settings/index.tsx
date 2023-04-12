@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Select from  'react-select'
-import _, { initial } from 'lodash'
+import _  from 'lodash'
 import { useSelector } from 'react-redux';
 
 import { Input, AppCollapsible, Button } from 'components';
@@ -165,7 +165,6 @@ export const Settings = () => {
             Verifique a sua conexão com a internet antes de reiniciar.
           </p>
         </div>
-        <Input name='duration' value={settings.duration} onChange={handleChangeSettings} />
         <div className='reset-section__button-container'>
           <Button variant='cancel'>Reiniciar</Button>
         </div>
