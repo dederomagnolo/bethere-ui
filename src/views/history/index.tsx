@@ -1,4 +1,4 @@
-import React from 'react';
+import moment from 'moment'
 
 import {
   ScatterChart,
@@ -11,7 +11,7 @@ import {
 } from "recharts";
 
 
-const dataTo = [
+const mock = [
   {
     "_id": "6435d555f0786a0224de6770",
     "commandName": "MP0",
@@ -85,13 +85,29 @@ const dataTo = [
 ]
 
 const data = [
-  { x: 'MP0', y: '2023-04-11T21:47:01.024Z' },
-  { x: 'MP1', y: '2023-04-11T23:53:47.154Z' },
-  { x: 'MP0', y: '2023-04-11T17:53:47.154Z' },
-  { x: 'MP0', y: '2023-04-11T19:53:47.154Z' },
-  { x: 'MP1', y: '2023-04-11T20:53:47.154Z' },
-  { x: 'MP1', y: '2023-04-11T21:53:47.154Z' }
+  { x: 'MP1', y: '2023-04-13T02:23:47.154Z' },
+  { x: 'MP1', y: '2023-04-13T05:53:47.154Z' },
+  { x: 'MP1', y: '2023-04-13T12:19:47.154Z' },
+  { x: 'MP0', y: '2023-04-13T13:12:47.112Z' },
+  { x: 'MP0', y: '2023-04-13T19:35:47.132Z' },
+  { x: 'MP0', y: '2023-04-13T23:47:01.024Z' },
 ];
+
+const tickTimeStrings = []
+const startDate = moment().startOf('day')
+tickTimeStrings.push(startDate.format())
+
+for (let i = 0; i < 3; i++) {
+  tickTimeStrings.push(startDate.add(6, 'hours').format())
+}
+
+const formattedData = data.map(row => ({
+  x: row.x,
+  y: moment(row.y).valueOf()
+}))
+const tickNumericValues = tickTimeStrings.map(timeString => moment(timeString).valueOf());
+
+console.log({ tickNumericValues, formattedData })
 
 const ScatterGraph = () => {
   return (
@@ -105,10 +121,26 @@ const ScatterGraph = () => {
         }}
       >
         <CartesianGrid />
-        <XAxis allowDuplicatedCategory={false} type='category' dataKey="x" name="command"  />
-        <YAxis  type="category" dataKey="y" name="time" />
-        <Tooltip cursor={{ strokeDasharray: "3 3" }} />
-        <Scatter name="A school" data={data} fill="#8884d8" />
+        <YAxis
+          allowDuplicatedCategory={false}
+          type='category'
+          dataKey='x'
+          name='command' />
+        <XAxis
+          ticks={tickNumericValues}
+          tickFormatter={(t) => moment(t).format('HH:mm')}
+          type='number'
+          dataKey='y'
+          name='time'
+          scale='time'
+          domain={[tickNumericValues[0], tickNumericValues[3]]}
+        />
+        <Tooltip
+          formatter={(value, name, props) => {
+            return typeof(value) === 'string' ? value : moment(value).format('HH:mm')
+          }}
+          cursor={{ strokeDasharray: "3 3" }} />
+        <Scatter name="Commands" data={formattedData} fill="#8884d8" />
       </ScatterChart>
     </ResponsiveContainer>
   );
