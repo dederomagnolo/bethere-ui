@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import _ from 'lodash'
 import { NavLink, useNavigate } from 'react-router-dom'
 import cx from 'classnames'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 import {
   HiHome as Home,
@@ -28,6 +28,7 @@ import { clearUserState } from '../../redux/user/actions'
 import whale from '../../assets/bethere_whale.png'
 import logo from '../../assets/bethere_logo.png'
 import './styles.scss'
+import { getToken } from 'redux/user/selectors'
 
 const renderIcon = (BaseIcon: any) => <BaseIcon size={22} />
 
@@ -95,6 +96,9 @@ export const Menu: React.FunctionComponent<MenuProps> = () => {
   const [expandedMenu, setExpandedMenu] = useState(false)
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  const token = useSelector(getToken)
+
+  if(!token) return null
 
   const handleLogout = () => {
     dispatch(clearUserState())

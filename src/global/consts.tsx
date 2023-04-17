@@ -1,3 +1,5 @@
+import _ from 'lodash'
+
 export const WsReadyState = {
   UNINSTANTIATED: -1,
   CONNECTING: 0,
@@ -10,9 +12,33 @@ export const WsReadyState = {
 export const COMMANDS: any = {
   MANUAL_WATERING: {
     CATEGORY_NAME: 'Manual Watering',
+    CATEGORY_NAME_PT: 'Irrigação Manual',
     OPTIONS: {
       ON: 'MP1',
       OFF: 'MP0'
     }
+  },
+  AUTO_WATERING_MODE: {
+    CATEGORY_NAME: 'Auto Watering Mode',
+    CATEGORY_NAME_PT: 'Irrigação Automática',
+    OPTIONS: {
+      ON: 'WR_ON',
+      OFF: 'WR_OFF'
+    }
   }
 }
+
+export const MAPPED_COMMANDS: any = _.map(COMMANDS, (command) => {
+  const { CATEGORY_NAME, CATEGORY_NAME_PT, OPTIONS } = command
+  const mappedOptions = _.map(OPTIONS, (option, key: any) => {
+    return {
+      command: option,
+      status: key
+    }
+  })
+  return {
+    categoryName: CATEGORY_NAME,
+    categoryNameTranslated: CATEGORY_NAME_PT,
+    options: mappedOptions
+  }
+})

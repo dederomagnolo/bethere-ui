@@ -1,34 +1,19 @@
 import React, { useState } from 'react';
-import Select from  'react-select'
 import _  from 'lodash'
 import { useSelector } from 'react-redux';
 
-import { Input, AppCollapsible, Button } from 'components';
+import { Input, AppCollapsible, Button, CustomSelect} from 'components';
 import { getTimeOptions } from './functions';
 
 import './styles.scss'
 import { getUserDevices } from 'redux/device/selectors';
-import { getDeviceOptionsToSelect } from 'global/functions';
-
-const CustomSelect = ({ options, defaultValue }: any) => {
-  return (
-    <Select
-      isSearchable={false}
-      defaultValue={defaultValue}
-      menuPortalTarget={document.querySelector('body')}
-      className='react-select-container'
-      classNamePrefix='react-select'
-      options={options} />
-  )
-}
+import { DeviceSelector } from 'components/device-selector';
 
 export const Settings = () => {
   const userDevices = useSelector(getUserDevices)
 
   const timeOptions = getTimeOptions()
   const defaultDevice = _.find(userDevices, (device) => device.defaultDevice)
-  const deviceSelectOptions = getDeviceOptionsToSelect(userDevices)
-  const indexOfDefaultDeviceInOptions = _.findIndex(deviceSelectOptions, (device) => device.value === defaultDevice._id)
   const settingsInitialState = {
     startTime: '',
     endTime: '',
@@ -38,6 +23,7 @@ export const Settings = () => {
     remoteMeasureInterval: ''
   }
 
+  // evolution: need to update here to get default settings selected by user
   const defaultDeviceSettings = _.get(defaultDevice, 'settings[0]', settingsInitialState)
 
   const {
@@ -149,9 +135,7 @@ export const Settings = () => {
     <div className='settings-view'>
       <div className='select-device__container'>
         <h1>Dispositivo</h1>
-        <CustomSelect
-          defaultValue={deviceSelectOptions[indexOfDefaultDeviceInOptions]}
-          options={deviceSelectOptions} />
+        <DeviceSelector />
       </div>
       <h1>Configurações</h1>
       <div className='collapsible-options'>

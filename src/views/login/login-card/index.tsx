@@ -42,7 +42,7 @@ export const LoginCard = () => {
       const res = await callApi({
         method: 'POST',
         payload: { username, password },
-        service: '/auth/authenticate'
+        service: '/user/authenticate'
       })
 
       const token = _.get(res, 'token')

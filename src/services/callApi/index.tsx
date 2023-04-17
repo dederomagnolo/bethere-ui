@@ -18,7 +18,7 @@ async function callApi({
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
-      "auth-token": token ? token : "",
+      "authorization": token ? `Bearer ${token}` : "",
     },
   }
   const url = `${BE_HOST}${service}`

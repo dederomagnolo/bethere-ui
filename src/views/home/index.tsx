@@ -99,7 +99,7 @@ export const Home = () => {
     },
     onError: (event) => { console.error(event); },
     shouldReconnect: (closeEvent) => true,
-    reconnectInterval: 3000000000,
+    reconnectInterval: 3000,
     queryParams: {
       uiClient: token 
     }}
