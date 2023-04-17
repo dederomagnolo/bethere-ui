@@ -7,7 +7,7 @@ import './styles.scss'
 
 export const Login = () => {
   return (
-    <div className="Screen">
+    <div className="login-view">
       <LoginCard/>
     </div>
   )
