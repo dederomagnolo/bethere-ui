@@ -1,4 +1,5 @@
 import moment from 'moment'
+import _ from 'lodash'
 
 import {
   ScatterChart,
@@ -7,7 +8,8 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  ResponsiveContainer
+  ResponsiveContainer,
+  Legend
 } from "recharts";
 
 const mock = [
@@ -96,7 +98,7 @@ const startDate = moment().startOf('day')
 
 const startDateToQuery = moment(startDate).utc().format()
 
-console.log({startDateToQuery})
+// console.log({startDateToQuery})
 
 tickTimeStrings.push(startDate.format())
 
@@ -111,9 +113,17 @@ const formattedData = data.map(row => ({
 
 const tickNumericValues = tickTimeStrings.map(timeString => moment(timeString).valueOf());
 
-console.log({ tickNumericValues, formattedData })
+// console.log({ tickNumericValues, formattedData })
+
+const colors = { MP0: '#8884d8', MP1: '#378d32'} as any
 
 export const CustomScatterChart = () => {
+  const generateScatterComponents = () => {
+    const dataPerCommand = _.groupBy(formattedData, (item) => item.x)
+    return _.map(dataPerCommand, (commandData, index) => {
+      return <Scatter key={index} name={`Comando ${index}`} data={commandData} fill={colors[index]} />
+    }
+  )}
   return (
     <ResponsiveContainer width="100%" height={400}>
       <ScatterChart
@@ -144,7 +154,8 @@ export const CustomScatterChart = () => {
             return typeof(value) === 'string' ? value : moment(value).format('HH:mm')
           }}
           cursor={{ strokeDasharray: "3 3" }} />
-        <Scatter name="Commands" data={formattedData} fill="#8884d8" />
+        <Legend />
+        {generateScatterComponents()}
       </ScatterChart>
     </ResponsiveContainer>
   );

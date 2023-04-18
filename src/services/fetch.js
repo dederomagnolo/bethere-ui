@@ -3,9 +3,11 @@ import callApi from './callApi'
 export const fetchCommandHistory = async ({
   dayToRetrieveHistory,
   deviceId,
-  token
+  token,
+  loadingCallback
 }) => {
   try {
+    loadingCallback(true)
     const res = await callApi({
       method: 'POST',
       service: '/commands/history',
@@ -16,8 +18,12 @@ export const fetchCommandHistory = async ({
       token
     })
 
-    return res.historyForDate
+    if(res) {
+      loadingCallback(false)
+      return res.historyForDate
+    }
   } catch (error) {
+    loadingCallback(false)
     console.error(error)
   }
 }

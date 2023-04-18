@@ -17,8 +17,6 @@ export const CommandCard: React.FC<CommandCardProps> = ({ command }) => {
     categoryName
   } = command
 
-  console.log(MAPPED_COMMANDS)
-
   const getCommandTranslatedInfos = ({ 
     commandName, categoryName 
   }: { commandName: string, categoryName: string }) => {

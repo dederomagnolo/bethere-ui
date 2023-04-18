@@ -20,8 +20,11 @@ export const DeviceSelector: React.FC<DeviceSelectorProps> = ({ onChange }) => {
     _.findIndex(deviceSelectOptions, (device) => device.value === defaultDevice._id)
 
   return (
-    <CustomSelect
-      defaultValue={deviceSelectOptions[indexOfDefaultDeviceInOptions]}
-      options={deviceSelectOptions} />
+    <div className='device-selector'>
+      <h1>Dispositivo</h1>
+      <CustomSelect
+        defaultValue={deviceSelectOptions[indexOfDefaultDeviceInOptions]}
+        options={deviceSelectOptions} />
+    </div>
   )
 }

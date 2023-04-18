@@ -1,0 +1,19 @@
+.custom-date-picker {
+  .react-date-picker{
+    &__inputGroup {
+      height: 38px;
+    }
+
+    &__wrapper {
+      border-radius: 6px;
+      padding: 2px 8px;
+      border: 1px solid hsl(0, 0%, 80%);
+    }
+  }
+
+  .react-calendar {
+    border: 1px solid hsl(0, 0%, 80%);
+    border-radius: 6px;
+    font-family: 'Duru Sans', sans-serif;
+  }
+}

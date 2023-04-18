@@ -134,7 +134,6 @@ export const Settings = () => {
   return(
     <div className='settings-view'>
       <div className='select-device__container'>
-        <h1>Dispositivo</h1>
         <DeviceSelector />
       </div>
       <h1>Configurações</h1>
