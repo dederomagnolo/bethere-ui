@@ -10,7 +10,7 @@ import {
   Tooltip,
   ResponsiveContainer,
   Legend
-} from "recharts";
+} from 'recharts';
 
 const data = [
   { x: 'MP1', y: '2023-04-17T05:53:47.154Z' },
@@ -20,17 +20,36 @@ const data = [
   { x: 'MP0', y: '2023-04-17T23:47:01.024Z' },
 ];
 
-
-
 const formattedData = data.map(row => ({
   x: row.x,
   y: (moment(row.y)).valueOf()
 }))
 
+const colors = { 
+  MP0: '#B1027C',
+  MP1: '#0292B1',
+  WR_ON: '#07BB19',
+  WR_OFF: '#FF424D'
+} as any
 
-// console.log({ tickNumericValues, formattedData })
-
-const colors = { MP0: '#8884d8', MP1: '#378d32'} as any
+const fullCommandName = {
+  MP0: {
+    color: '#B1027C',
+    name: 'Desligada'
+  },
+  MP1: {
+    color: '#0292B1',
+    name: 'Ligada'
+  },
+  WR_ON: {
+    color: '#07BB19',
+    name: 'Ligada'
+  },
+  WR_OFF: {
+    color:'#FF424D',
+    name: 'Desligado'
+  }
+} as any
 
 export const CustomScatterChart = ({ dataToPlot }: any) => {
   const tickTimeStrings = []
@@ -40,10 +59,10 @@ export const CustomScatterChart = ({ dataToPlot }: any) => {
   for (let i = 0; i < 3; i++) {
     tickTimeStrings.push(startDate.add(6, 'hours').format())
   }
+  const tickNumericValues = tickTimeStrings.map(timeString => moment(timeString).valueOf());
 
   const startDateToQuery = moment(startDate).utc().format()
   console.log({ startDateToQuery })
-  const tickNumericValues = tickTimeStrings.map(timeString => moment(timeString).valueOf());
 
   const formattedCommandHistory = _.map(dataToPlot, (command) => ({
     x: command.commandName,
@@ -56,6 +75,7 @@ export const CustomScatterChart = ({ dataToPlot }: any) => {
       return <Scatter key={index} name={index} data={commandData} fill={colors[index]} />
     }
   )}
+
   return (
     <ResponsiveContainer width="100%" height={400}>
       <ScatterChart
@@ -65,6 +85,7 @@ export const CustomScatterChart = ({ dataToPlot }: any) => {
           bottom: 20,
           left: 20
         }}
+        data={dataToPlot}
       >
         <CartesianGrid />
         <YAxis

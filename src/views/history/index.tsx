@@ -8,7 +8,7 @@ import { getDefaultDeviceId } from 'redux/device/selectors'
 import { getToken } from 'redux/user/selectors'
 import { fetchCommandHistory } from 'services/fetch'
 
-import { Loading, CustomDatePicker } from 'components'
+import { Loading, CustomDatePicker, CustomSelect } from 'components'
 import { CustomScatterChart } from './custom-scatter-chart'
 import { CommandCard } from './command-card'
 import { CommandType } from './types'
@@ -33,8 +33,7 @@ export const History = () => {
       loadingCallback: setLoadingHistory,
       token
     })
-
-    setCommands(history)
+    setCommands(_.get(history, 'historyForDate'))
   }
 
   useEffect(() => {
@@ -55,11 +54,17 @@ export const History = () => {
     <div className='history'>
       <DeviceSelector />
       <div className='history__page-content'>
-        <div className='history__date-container'>
-          <CustomDatePicker
-            clearIcon={null}
-            onChange={handleDateChange}
-            value={selectedDate} />
+        <div className='history__selections'>
+          <div className='history__date-container'>
+            <CustomDatePicker
+              clearIcon={null}
+              onChange={handleDateChange}
+              value={selectedDate} />
+          </div>
+          <div className='history__command-filter'>
+            <h1>Filtro por comando</h1>
+            <CustomSelect />
+          </div>
         </div>
         {loadingHistory ? <Loading Component={PuffLoader} /> : (
           <div className='history__data'>

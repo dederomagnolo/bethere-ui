@@ -1,3 +1,16 @@
-.react-select-container {
-  width: 300px;
+.device-selector {
+  .react-select-container {
+    width: 300px;
+  }
+
+  &__container {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+
+    input {
+      width: 300px;
+      padding-left: 10px;
+    }
+  }
 }

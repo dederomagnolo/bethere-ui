@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import _  from 'lodash'
 import { useSelector } from 'react-redux';
 
+
 import { Input, AppCollapsible, Button, CustomSelect} from 'components';
 import { getTimeOptions } from './functions';
 
@@ -45,6 +46,8 @@ export const Settings = () => {
     pumpTimer,
     remoteMeasureInterval
   })
+  const [deviceNameEdition, setDeviceNameEdition] = useState(false)
+  const [editedDeviceName, setEditedDeviceName] = useState(defaultDevice.deviceName)
 
   const handleChangeSettings = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
@@ -134,7 +137,7 @@ export const Settings = () => {
   return(
     <div className='settings-view'>
       <div className='select-device__container'>
-        <DeviceSelector />
+        <DeviceSelector allowNameEdition />
       </div>
       <h1>Configurações</h1>
       <div className='collapsible-options'>
