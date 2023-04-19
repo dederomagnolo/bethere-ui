@@ -146,6 +146,7 @@ export const Home = () => {
       })
 
       setLoading(false)
+      setError(!isConnectedDeviceDefault)
     }
   }, [lastMessage])
 

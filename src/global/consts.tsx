@@ -25,6 +25,13 @@ export const COMMANDS: any = {
       ON: 'WR_ON',
       OFF: 'WR_OFF'
     }
+  },
+  RESET_LOCAL_STATION: {
+    CATEGORY_NAME: 'Reset',
+    CATEGORY_NAME_PT: 'Reinicialização',
+    OPTIONS: {
+      SET: 'RESET_ESP'
+    }
   }
 }
 

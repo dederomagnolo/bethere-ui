@@ -65,7 +65,7 @@ export const History = () => {
           <div className='history__data'>
             <div className='history__chart'>
               <h1>Linha do tempo</h1>
-              <CustomScatterChart />
+              <CustomScatterChart dataToPlot={commands} />
             </div>
             <h1>Histórico</h1>
             <div className='history__command-cards'>

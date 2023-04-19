@@ -36,7 +36,8 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start-local": "REACT_APP_BE_HOST=http://localhost:8080 yarn start",
+    "dev": "REACT_APP_BE_HOST=http://localhost:8080 yarn start",
+    "dev-ps": "set \"REACT_APP_BE_HOST=http://localhost:8080\" && yarn start",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",

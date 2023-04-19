@@ -12,79 +12,6 @@ import {
   Legend
 } from "recharts";
 
-const mock = [
-  {
-    "_id": "6435d555f0786a0224de6770",
-    "commandName": "MP0",
-    "categoryName": "Manual Watering",
-    "deviceId": "643588648de6aa7937d36253",
-    "userId": "6435854dd1055c05fbc22776",
-    "changedFrom": "App",
-    "createdAt": "2023-04-11T21:47:01.024Z",
-    "__v": 0
-  },
-  {
-    "_id": "6435d559f0786a0224de6774",
-    "commandName": "MP1",
-    "categoryName": "Manual Watering",
-    "deviceId": "643588648de6aa7937d36253",
-    "userId": "6435854dd1055c05fbc22776",
-    "changedFrom": "App",
-    "createdAt": "2023-04-11T21:47:05.478Z",
-    "__v": 0
-  },
-  {
-    "_id": "6435d55cf0786a0224de6778",
-    "commandName": "MP0",
-    "categoryName": "Manual Watering",
-    "deviceId": "643588648de6aa7937d36253",
-    "userId": "6435854dd1055c05fbc22776",
-    "changedFrom": "App",
-    "createdAt": "2023-04-11T21:47:08.297Z",
-    "__v": 0
-  },
-  {
-    "_id": "6435d566f0786a0224de677c",
-    "commandName": "MP1",
-    "categoryName": "Manual Watering",
-    "deviceId": "643588648de6aa7937d36253",
-    "userId": "6435854dd1055c05fbc22776",
-    "changedFrom": "App",
-    "createdAt": "2023-04-11T21:47:18.687Z",
-    "__v": 0
-  },
-  {
-    "_id": "6435d6c4e6b4410e2d27f3cf",
-    "commandName": "RESET_ESP",
-    "categoryName": "Reset",
-    "deviceId": "643588648de6aa7937d36253",
-    "userId": "6435854dd1055c05fbc22776",
-    "changedFrom": "App",
-    "createdAt": "2023-04-11T21:53:08.161Z",
-    "__v": 0
-  },
-  {
-    "_id": "6435d6ebe6b4410e2d27f3d3",
-    "commandName": "WR_ON",
-    "categoryName": "Watering Routine Mode",
-    "deviceId": "643588648de6aa7937d36253",
-    "userId": "6435854dd1055c05fbc22776",
-    "changedFrom": "App",
-    "createdAt": "2023-04-11T21:53:47.154Z",
-    "__v": 0
-  },
-  {
-    "_id": "6435d6f8e6b4410e2d27f3d7",
-    "commandName": "WR_OFF",
-    "categoryName": "Watering Routine Mode",
-    "deviceId": "643588648de6aa7937d36253",
-    "userId": "6435854dd1055c05fbc22776",
-    "changedFrom": "App",
-    "createdAt": "2023-04-11T21:54:00.253Z",
-    "__v": 0
-  }
-]
-
 const data = [
   { x: 'MP1', y: '2023-04-17T05:53:47.154Z' },
   { x: 'MP1', y: '2023-04-17T12:19:47.154Z' },
@@ -93,35 +20,40 @@ const data = [
   { x: 'MP0', y: '2023-04-17T23:47:01.024Z' },
 ];
 
-const tickTimeStrings = []
-const startDate = moment().startOf('day')
 
-const startDateToQuery = moment(startDate).utc().format()
-
-// console.log({startDateToQuery})
-
-tickTimeStrings.push(startDate.format())
-
-for (let i = 0; i < 3; i++) {
-  tickTimeStrings.push(startDate.add(6, 'hours').format())
-}
 
 const formattedData = data.map(row => ({
   x: row.x,
   y: (moment(row.y)).valueOf()
 }))
 
-const tickNumericValues = tickTimeStrings.map(timeString => moment(timeString).valueOf());
 
 // console.log({ tickNumericValues, formattedData })
 
 const colors = { MP0: '#8884d8', MP1: '#378d32'} as any
 
-export const CustomScatterChart = () => {
+export const CustomScatterChart = ({ dataToPlot }: any) => {
+  const tickTimeStrings = []
+  const startDate = moment().startOf('day')
+  tickTimeStrings.push(startDate.format())
+
+  for (let i = 0; i < 3; i++) {
+    tickTimeStrings.push(startDate.add(6, 'hours').format())
+  }
+
+  const startDateToQuery = moment(startDate).utc().format()
+  console.log({ startDateToQuery })
+  const tickNumericValues = tickTimeStrings.map(timeString => moment(timeString).valueOf());
+
+  const formattedCommandHistory = _.map(dataToPlot, (command) => ({
+    x: command.commandName,
+    y: (moment(command.createdAt)).valueOf()
+  }))
+
   const generateScatterComponents = () => {
-    const dataPerCommand = _.groupBy(formattedData, (item) => item.x)
+    const dataPerCommand = _.groupBy(formattedCommandHistory, (item) => item.x)
     return _.map(dataPerCommand, (commandData, index) => {
-      return <Scatter key={index} name={`Comando ${index}`} data={commandData} fill={colors[index]} />
+      return <Scatter key={index} name={index} data={commandData} fill={colors[index]} />
     }
   )}
   return (

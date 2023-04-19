@@ -87,7 +87,7 @@ export const WateringCardData = ({
       const res = await callApi({
         token,
         method: 'POST',
-        service: '/command/send',
+        service: '/local-station/command',
         payload: commandPayload,
       })
 
