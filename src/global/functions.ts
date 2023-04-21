@@ -39,3 +39,21 @@ export const generateTicks = ({
 
   return tickNumericValues
 }
+
+export const mapMeasureBatchToChartData = (data: any) => {
+  const mappedBatches = [] as any
+
+  _.forEach(data, (batch, key) => {
+    const mappedBatch = _.map(batch, (batchItem) => {
+      return {
+        [key]: batchItem.value,
+        createdAt: batchItem.createdAt
+      }
+    })
+    mappedBatches.push(mappedBatch)
+  })
+  
+  const merged = _.merge(mappedBatches[0], mappedBatches[1])
+
+  return merged
+}
