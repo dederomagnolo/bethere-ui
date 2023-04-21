@@ -8,7 +8,7 @@ import './styles.scss'
 export const CustomDatePicker = ({ onChange, value }: any) => {
   return (
     <div className='custom-date-picker'>
-      <h1>Data</h1>
+      <h2>Data</h2>
       <DatePicker
         clearIcon={null}
         onChange={onChange}

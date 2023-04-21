@@ -3,6 +3,8 @@ import './index.scss';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
+import 'react-tooltip/dist/react-tooltip.css'
+
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
-import { getDeviceOptionsToSelect } from 'global/functions'
 import { useDispatch, useSelector } from 'react-redux'
 import _ from 'lodash'
+import { Tooltip } from 'react-tooltip'
 
 import {
   BiSave as SaveIcon,
@@ -12,11 +12,13 @@ import { getUserDevices } from 'redux/device/selectors'
 
 import { CustomSelect } from '../select'
 
-import './styles.scss'
 import { Input } from 'components'
+import { getDeviceOptionsToSelect } from 'global/functions'
 import { editDeviceName, fetchUserDevices } from 'services/fetch'
 import { getToken } from 'redux/user/selectors'
 import { setUserDevices } from 'redux/device/actions'
+
+import './styles.scss'
 
 interface DeviceSelectorProps {
   onChange?: Function,
@@ -71,9 +73,20 @@ export const DeviceSelector: React.FC<DeviceSelectorProps> = ({
     dispatch(setUserDevices(userDevices))
   }
 
-  const Icon = () => deviceNameEdition
-    ? <SaveIcon onClick={handleSaveNewDeviceName} />
-    : <EditIcon onClick={() => setDeviceNameEdition(true)} />
+  const IconWithTooltip = () => {
+    const Icon = ({ id }: { id: string }) => deviceNameEdition
+      ? <SaveIcon id={id} onClick={handleSaveNewDeviceName} />
+      : <EditIcon id={id} onClick={() => setDeviceNameEdition(true)} />
+
+    return(
+      <div>
+        <Tooltip id='app-tooltip' anchorSelect='#device-name-tooltip-action'>
+          {deviceNameEdition ? 'Salvar alteração' : 'Editar nome'}
+        </Tooltip>
+        <Icon id='device-name-tooltip-action' />
+      </div>
+    )
+  }
 
   const handleChangeDeviceName = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEditedDeviceName(e.target.value)
@@ -81,7 +94,7 @@ export const DeviceSelector: React.FC<DeviceSelectorProps> = ({
 
   return (
     <div className='device-selector'>
-      <h1>Dispositivo</h1>
+      <h2>Dispositivo</h2>
       <div className='device-selector__container'>
         {deviceNameEdition
           ? <Input
@@ -90,7 +103,7 @@ export const DeviceSelector: React.FC<DeviceSelectorProps> = ({
           : <CustomSelect
             defaultValue={deviceSelectOptions[indexOfDefaultDeviceInOptions]}
             options={deviceSelectOptions} />}
-        {allowNameEdition ? <Icon /> : null}
+        {allowNameEdition ? <IconWithTooltip /> : null}
       </div>
     </div>
   )

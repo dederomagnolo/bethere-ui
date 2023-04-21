@@ -11,15 +11,26 @@ export const getDeviceOptionsToSelect = (userDevices: any) => {
 };
 
 export const generateTicks = ({ 
-  valueToIncrement, momentType
+  valueToIncrement,
+  momentType,
+  date
 } : any) => {
-
+  const dateToManipulate = moment(date).startOf('day');
   const tickTimeStrings = []
-  const startDate = moment('2023-04-18T21:00:00Z').startOf('day')
-  tickTimeStrings.push(startDate.format())
+  let numberOfTicks = 0
 
-  for (let i = 0; i < 48; i++) {
-    tickTimeStrings.push(startDate.add(valueToIncrement, momentType).format())
+  if (momentType === 'minutes') {
+    numberOfTicks = (24 * 60) / valueToIncrement  
+  }
+
+  if (momentType === 'hours') {
+    numberOfTicks = 24 / valueToIncrement
+  }
+
+  tickTimeStrings.push(moment(date).format())
+
+  for (let i = 0; i < numberOfTicks; i++) {
+    tickTimeStrings.push(dateToManipulate.add(valueToIncrement, momentType).format())
   }
 
   console.log({ tickTimeStrings })
