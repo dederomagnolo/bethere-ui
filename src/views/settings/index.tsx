@@ -1,18 +1,26 @@
 import React, { useState } from 'react';
 import _  from 'lodash'
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 
-import { Input, AppCollapsible, Button, CustomSelect} from 'components';
+import { AppCollapsible, Button, CustomSelect} from 'components';
 import { getTimeOptions } from './functions';
 
 import './styles.scss'
 import { getUserDevices } from 'redux/device/selectors';
 import { DeviceSelector } from 'components/device-selector';
+import { InputOption } from './input-option';
+
+import { editSettings } from 'services/settings';
+import { getToken } from 'redux/user/selectors';
+import { sendCommandToServer } from 'services/commands';
+import { editSettingsAndSendCommand, fetchUserDevices } from 'services/fetch';
+import { setUserDevices } from 'redux/device/actions';
 
 export const Settings = () => {
+  const dispatch = useDispatch()
   const userDevices = useSelector(getUserDevices)
-
+  const token = useSelector(getToken)
   const timeOptions = getTimeOptions()
   const defaultDevice = _.find(userDevices, (device) => device.defaultDevice)
   const settingsInitialState = {
@@ -20,7 +28,7 @@ export const Settings = () => {
     endTime: '',
     interval: '',
     duration: '',
-    pumpTimer: '',
+    wateringTimer: '',
     remoteMeasureInterval: ''
   }
 
@@ -28,30 +36,51 @@ export const Settings = () => {
   const defaultDeviceSettings = _.get(defaultDevice, 'settings[0]', settingsInitialState)
 
   const {
-    wateringRoutine: {
+    automation: {
       startTime,
       endTime,
       interval,
       duration,
     },
-    pumpTimer,
+    wateringTimer,
     remoteMeasureInterval
   } = defaultDeviceSettings
 
+  const [loading, setLoading] = useState(false)
   const [settings, setSettings] = useState({
     startTime,
     endTime,
     interval,
     duration,
-    pumpTimer,
+    wateringTimer,
     remoteMeasureInterval
   })
-  const [deviceNameEdition, setDeviceNameEdition] = useState(false)
-  const [editedDeviceName, setEditedDeviceName] = useState(defaultDevice.deviceName)
 
   const handleChangeSettings = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
     setSettings({ ...settings, [e.target.name]: value })
+  }
+
+  const saveChanges = async () => {
+    const { startTime, endTime, interval, duration } = settings
+    const automation = {
+      startTime, endTime, interval, duration
+    }
+    const deviceId = defaultDevice._id
+    const settingsId = defaultDeviceSettings._id
+    const res = await editSettingsAndSendCommand({
+        token,
+        settingsPayload: {
+          settingsId, 
+          deviceId,
+          automation,
+          ..._.omit(settings, 'startTime, endTime, interval, duration')
+        },
+        loadingCallback: setLoading,
+      }
+    )
+
+    dispatch(setUserDevices(res))
   }
 
   const AutoWateringConfig = (
@@ -69,21 +98,21 @@ export const Settings = () => {
       <div className='description'>
         O período de atividade é o intervalo do dia em que a estação local irá fazer o ciclo de automação.
       </div>
-      <div className='input-option'>
-        <span className='title'>Intervalo</span>
-        <Input
-          name='interval'
-          onChange={handleChangeSettings}
-          value={settings.interval} />
-      </div>
+      <InputOption
+        onSave={saveChanges}
+        name='interval'
+        title='Intervalo'
+        onChange={handleChangeSettings}
+        value={settings.interval}
+      />
       <div className='description'>O intervalo é o tempo entre um ciclo de irrigação e outro.</div>
-      <div className='input-option'>
-        <span className='title'>Tempo de irrigação</span>
-        <Input
-          name='duration'
-          onChange={handleChangeSettings}
-          value={settings.duration} />
-      </div>
+      <InputOption
+        onSave={saveChanges}
+        name='duration'
+        title='Tempo de irrigação'
+        onChange={handleChangeSettings}
+        value={settings.duration}
+      />
       <div className='description'>
         O tempo de irrigação corresponde ao tempo em que a irrigação permanece ligada quando é dado o tempo de intervalo.
       </div>
@@ -92,22 +121,25 @@ export const Settings = () => {
 
   const ManualWateringConfig = (
     <div className='options options--manual-watering'>
-      <div className='input-option'>
-        <span className='title'>Timer da irrigação manual</span>
-        <Input value={settings.pumpTimer} name='pumpTimer' onChange={handleChangeSettings} />
-      </div>
+      <InputOption
+        onSave={saveChanges}
+        title='Timer da irrigação manual'
+        onChange={handleChangeSettings}
+        value={settings.wateringTimer}
+        name='wateringTimer'
+      />
       <span className='description'>Tempo que a irrigação permanece ligada após o acionamento pelo botão.</span>
     </div>
   )
 
   const MeasuresConfig = (
-    <div className='input-option'>
-      <span className='title'>Intervalo de envio</span>
-      <Input
-        name='remoteMeasureInterval'
-        onChange={handleChangeSettings}
-        value={settings.remoteMeasureInterval} />
-    </div>
+    <InputOption
+      onSave={saveChanges}
+      title='Intervalo de envio'
+      onChange={handleChangeSettings}
+      value={settings.remoteMeasureInterval}
+      name='remoteMeasureInterval'
+    />
   )
 
   const collapsibleOptions = [

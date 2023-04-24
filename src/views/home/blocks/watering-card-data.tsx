@@ -59,7 +59,7 @@ export const WateringCardData = ({
   } = deviceRealTimeData
   const isRealTimeWateringStateEnabled = lastCommandReceived === COMMANDS.MANUAL_WATERING.OPTIONS.ON
   const deviceSettings = _.get(device, 'settings[0]')
-  const autoWateringEnabled = _.get(deviceSettings, 'wateringRoutine.enabled')
+  const autoWateringEnabled = _.get(deviceSettings, 'automation.enabled')
 
   const [wateringEnabled, setWateringEnabled] = useState(isRealTimeWateringStateEnabled)
   const [autoModeEnabled, setAutoModeEnabled] = useState(autoWateringEnabled)

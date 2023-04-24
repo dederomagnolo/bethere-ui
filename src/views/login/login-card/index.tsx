@@ -58,7 +58,7 @@ export const LoginCard = () => {
 
       console.log(res)
     } catch (err) {
-      console.error('deu pau')
+      console.error(err)
     }
   }
 

@@ -2,13 +2,14 @@ import React, { ChangeEventHandler } from 'react'
 
 import './styles.scss'
 
-interface InputProps {
+export interface InputProps {
   onChange: ChangeEventHandler
   placeholder?: string
   name?: string
   className?: string,
   value?: string,
-  autoFocus?: boolean
+  autoFocus?: boolean,
+  disabled?: boolean,
 }
 
 export const Input: React.FC<InputProps> = ({
@@ -16,10 +17,12 @@ export const Input: React.FC<InputProps> = ({
   placeholder,
   name,
   className,
-  value
+  value,
+  disabled
 }) => {
   return (
     <input
+      disabled={disabled}
       value={value}
       className={`app-input ${className}`}
       name={name}

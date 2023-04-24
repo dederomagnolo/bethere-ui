@@ -1,18 +1,12 @@
 import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import _ from 'lodash'
-import { Tooltip } from 'react-tooltip'
-
-import {
-  BiSave as SaveIcon,
-  BiEdit as EditIcon
-} from 'react-icons/bi'
 
 import { getUserDevices } from 'redux/device/selectors'
 
-import { CustomSelect } from '../select'
+import { CustomSelect } from '../ui-atoms/select'
 
-import { Input } from 'components'
+import { EditIconWithTooltip, Input } from 'components'
 import { getDeviceOptionsToSelect } from 'global/functions'
 import { editDeviceName, fetchUserDevices } from 'services/fetch'
 import { getToken } from 'redux/user/selectors'
@@ -73,21 +67,6 @@ export const DeviceSelector: React.FC<DeviceSelectorProps> = ({
     dispatch(setUserDevices(userDevices))
   }
 
-  const IconWithTooltip = () => {
-    const Icon = ({ id }: { id: string }) => deviceNameEdition
-      ? <SaveIcon id={id} onClick={handleSaveNewDeviceName} />
-      : <EditIcon id={id} onClick={() => setDeviceNameEdition(true)} />
-
-    return(
-      <div>
-        <Tooltip id='app-tooltip' anchorSelect='#device-name-tooltip-action'>
-          {deviceNameEdition ? 'Salvar alteração' : 'Editar nome'}
-        </Tooltip>
-        <Icon id='device-name-tooltip-action' />
-      </div>
-    )
-  }
-
   const handleChangeDeviceName = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEditedDeviceName(e.target.value)
   }
@@ -103,7 +82,11 @@ export const DeviceSelector: React.FC<DeviceSelectorProps> = ({
           : <CustomSelect
             defaultValue={deviceSelectOptions[indexOfDefaultDeviceInOptions]}
             options={deviceSelectOptions} />}
-        {allowNameEdition ? <IconWithTooltip /> : null}
+        {allowNameEdition ?
+          <EditIconWithTooltip
+            uniqueId='device-selector'
+            onToggle={() => setDeviceNameEdition(!deviceNameEdition)}
+            onSave={handleSaveNewDeviceName}/> : null}
       </div>
     </div>
   )

@@ -1,22 +1,26 @@
 import callApi from './callApi'
+import { editSettings } from './settings'
+import { sendCommandToServer } from './commands'
 
-const callService = async({
+export const tryToCallService = async({
   loadingCallback,
   apiCall
 }) => {
+  const setLoading = () => loadingCallback && loadingCallback(true)
+  const removeLoading = () => loadingCallback && loadingCallback(false)
   try {
-    loadingCallback(true)
+    setLoading()
     const res = apiCall()
 
     if(res) {
-      loadingCallback(false)
+      removeLoading()
       return res
     }
 
-    loadingCallback(false)
+    removeLoading()
     return console.error('Não foi possível realizar a chamada')
   } catch (error) {
-    loadingCallback(false)
+    removeLoading()
     console.error(error)
   }
 }
@@ -38,7 +42,7 @@ export const fetchCommandHistory = async ({
     token
   })
 
-  return callService({
+  return tryToCallService({
     apiCall,
     loadingCallback,
     deviceId,
@@ -56,7 +60,7 @@ export const fetchUserDevices = async ({
     token
   })
 
-  return callService({
+  return tryToCallService({
     apiCall,
     loadingCallback
   })
@@ -78,7 +82,7 @@ export const editDeviceName = async ({
     token
   })
 
-  return callService({
+  return tryToCallService({
     apiCall,
     loadingCallback
   })
@@ -100,8 +104,38 @@ export const getMeasuresHistory = async ({
     token
   })
 
-  return callService({
+  return tryToCallService({
     apiCall,
     loadingCallback
   })
+}
+
+export const editSettingsAndSendCommand = async ({
+  loadingCallback,
+  token,
+  settingsPayload
+}) => {
+  const { deviceId, settingsId } = settingsPayload
+
+  await editSettings({
+    token,
+    settingsPayload
+  })
+
+  await sendCommandToServer({
+    token,
+    commandName: 'SETTINGS',
+    commandPayload: {
+      settingsId
+    },
+    deviceId
+  })
+
+  const updatedDevices = await fetchUserDevices({
+    token
+  })
+
+  //  need to improve this call
+
+  return updatedDevices
 }
