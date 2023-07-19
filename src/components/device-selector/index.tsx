@@ -29,10 +29,11 @@ export const DeviceSelector: React.FC<DeviceSelectorProps> = ({
   const dispatch = useDispatch()
 
   const defaultDevice = _.find(userDevices, (device) => device.defaultDevice)
+  const deviceName = _.get(defaultDevice, 'deviceName')
 
   const [deviceNameEdition, setDeviceNameEdition] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [editedDeviceName, setEditedDeviceName] = useState(defaultDevice.deviceName)
+  const [editedDeviceName, setEditedDeviceName] = useState(deviceName)
 
   const deviceSelectOptions = getDeviceOptionsToSelect(userDevices)
   const indexOfDefaultDeviceInOptions =

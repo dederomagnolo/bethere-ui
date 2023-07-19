@@ -28,10 +28,15 @@ async function callApi({
     const res = await fetch(url, parameters)
 
     const content = await res.json()
+
+    const unauthorized = res.status
+    if(unauthorized) {
+
+    }
+
     return content;
-    // we can make messages for different status codes
   } catch (err: any) {
-    console.log(err);
+    // console.log(err.status);
     throw new Error(err.message)
   }
 }

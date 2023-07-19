@@ -28,11 +28,9 @@ export const tryToCallService = async({
 export const fetchCommandHistory = async ({
   dayToRetrieveHistory,
   deviceId,
-  token,
-  loadingCallback
+  token
 }) => {
-
-  const apiCall = async () => await callApi({
+  const res = await callApi({
     method: 'POST',
     service: '/commands/history',
     payload: {
@@ -42,12 +40,10 @@ export const fetchCommandHistory = async ({
     token
   })
 
-  return tryToCallService({
-    apiCall,
-    loadingCallback,
-    deviceId,
-    dayToRetrieveHistory
+  console.log({
+    res
   })
+  return res
 }
 
 export const fetchUserDevices = async ({

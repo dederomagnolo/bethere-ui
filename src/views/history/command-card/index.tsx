@@ -32,7 +32,7 @@ export const CommandCard: React.FC<CommandCardProps> = ({ command }) => {
       _.find(category.options, (option) => option.command === commandName)
       
     return {
-      commandStatus: commandInfo.status,
+      commandStatus: _.get(commandInfo, 'status'),
       categoryNameTranslated: category.categoryNameTranslated
     }
   }

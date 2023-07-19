@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useSelector } from 'react-redux'
 import moment from 'moment'
 import _ from 'lodash'
@@ -21,6 +21,7 @@ import { CommandType } from './types'
 import './styles.scss'
 import { DeviceSelector } from 'components/device-selector'
 import { Tooltip } from 'react-tooltip'
+import { useFetch } from 'hooks/useFetch'
 
 export const History = () => {
   const token = useSelector(getToken)
@@ -31,24 +32,30 @@ export const History = () => {
 
   const [commands, setCommands] = useState([])
   const [hideChart, setHideChart] = useState(true)
-  const [loadingHistory, setLoadingHistory] = useState(false)
   const [selectedDate, setSelectedDate] = useState(todaysStartDate)
 
   const retrieveCommandHistory = async (dayToRetrieveHistory?: string) => {
-    const todaysDate = moment().startOf('day').format()
-
     const history = await fetchCommandHistory({
       dayToRetrieveHistory: dayToRetrieveHistory,
       deviceId: defaultDeviceId,
-      loadingCallback: setLoadingHistory,
       token
     })
     setCommands(_.get(history, 'historyForDate'))
   }
 
-  useEffect(() => {
-    retrieveCommandHistory(startDateToQuery)
-  }, [defaultDeviceId, token])
+  const {
+    data,
+    error,
+    loading
+  } = useFetch(async () => await fetchCommandHistory({
+    dayToRetrieveHistory: startDateToQuery,
+    deviceId: defaultDeviceId,
+    token
+  }))
+
+  console.log({
+    data
+  })
 
   const commandCards = _.map(commands, (command: CommandType) =>
     <CommandCard key={command._id} command={command} />)
@@ -93,7 +100,7 @@ export const History = () => {
             <CustomSelect />
           </div>
         </div>
-        {loadingHistory ? <Loading Component={PuffLoader} /> : (
+        {loading ? <Loading Component={PuffLoader} /> : (
           <div className='history__data'>
             <div className='history__chart'>
               <div className='history__chart__title'>
@@ -104,7 +111,7 @@ export const History = () => {
             </div>
             <h2>Histórico</h2>
             <div className='history__command-cards'>
-              {commandCards}
+              {commands.length && commandCards}
             </div>
           </div>)}
       </div>
