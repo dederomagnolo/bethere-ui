@@ -1,8 +1,16 @@
-import React, { ChangeEventHandler } from 'react'
+import React, { 
+  useState,
+  ChangeEventHandler,
+  InputHTMLAttributes
+} from 'react'
+
+import { 
+  BsFillEyeFill as EyeIcon,
+} from 'react-icons/bs'
 
 import './styles.scss'
 
-export interface InputProps {
+export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   onChange: ChangeEventHandler
   placeholder?: string
   name?: string
@@ -10,6 +18,7 @@ export interface InputProps {
   value?: string,
   autoFocus?: boolean,
   disabled?: boolean,
+  type?: string
 }
 
 export const Input: React.FC<InputProps> = ({
@@ -18,15 +27,34 @@ export const Input: React.FC<InputProps> = ({
   name,
   className,
   value,
-  disabled
+  disabled,
+  type
 }) => {
+  const showEyeIcon = type === 'password'
+  const [inputType, setInputType] = useState(type)
+  const [showPassword, setShowPassword] = useState(false)
+
+  const togglePassword = () => {
+    if (showPassword) {
+      setShowPassword(false)
+      setInputType('password')
+    } else {
+      setShowPassword(true)
+      setInputType('text')
+    }
+  }
+
   return (
-    <input
+    <div className='app-input'>
+      <input
+      type={inputType}
       disabled={disabled}
       value={value}
-      className={`app-input ${className}`}
+      className={`app-input__input-element ${className ? className : ''}`}
       name={name}
       placeholder={placeholder}
       onChange={onChange} />
+      {showEyeIcon && <EyeIcon onClick={togglePassword} />}
+    </div>
   )
 }

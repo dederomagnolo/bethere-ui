@@ -1,4 +1,3 @@
-import React from 'react'
 import { 
   HiCog as Cog
 } from 'react-icons/hi'
@@ -15,7 +14,7 @@ interface GenericCardProps {
   settingsButtonRoute?: string
   label: string
   type?: string
-  CustomData?: any
+  CustomData?: () => JSX.Element
   icon?: any
 }
 

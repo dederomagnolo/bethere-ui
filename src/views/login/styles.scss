@@ -3,3 +3,67 @@
   flex-direction:column;
   align-items: center;
 }
+
+.login-card {
+  width: 400px;
+  height: 80vh;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  text-align:center;
+
+  color: #ffff;
+  background-color:#0DA1BC;
+
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2), 0 3px 5px rgba(0,0,0,0.1);
+  border-radius: 15px;
+
+  .login-card__container {
+    height: 90%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+
+    .logo {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+
+      img {
+        width: 80%;
+        margin-bottom: -15px;
+      }
+    }
+
+    .form-group {
+      max-width: 200px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 13px;
+      
+      &__field {
+        display: flex;
+        align-items: center;
+        width: 100%;
+      }
+
+      svg {
+        margin-right: 2px;
+      }
+  
+      .app-button {
+        width: 100%;
+      }
+
+      .app-input {
+        width: 100%;
+      }
+    }
+  }
+}

@@ -3,10 +3,46 @@
     width: 300px;
   }
 
+  &__info {
+    margin-top: 20px;
+
+    &__container {
+      display: flex;
+      align-items: center;
+
+      .title {
+        font-weight: bold;
+        margin-right: 10px;
+      }
+    }
+
+    p {
+      font-size: 14px;
+      margin: 10px 0;
+    }
+
+    .sensors {
+      display: flex;
+      gap: 12px;
+
+      &__card {
+        display: flex;
+        align-items: center;
+        padding: 6px;
+        border-radius: 6px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 3px 5px rgba(0, 0, 0, 0.1);
+      }
+    }
+  }
+
   &__container {
     display: flex;
     gap: 10px;
     align-items: center;
+
+    .app-input {
+      width: auto;
+    }
 
     input {
       width: 300px;

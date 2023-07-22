@@ -169,7 +169,7 @@ export const Settings = () => {
   return(
     <div className='settings-view'>
       <div className='select-device__container'>
-        <DeviceSelector allowNameEdition />
+        <DeviceSelector allowNameEdition showDeviceInfo />
       </div>
       <h1>Configurações</h1>
       <div className='collapsible-options'>

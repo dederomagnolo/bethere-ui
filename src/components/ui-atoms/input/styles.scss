@@ -1,9 +1,24 @@
 .app-input {
-  height: 38px;
-  border-color: hsl(0, 0%, 80%);
-  border-style: solid;
-  border-width: 1px;
-  border-radius: 6px;
-  padding: 0;
-  box-sizing: border-box;
+  display: flex;
+  position: relative;
+
+  &__input-element {
+    height: 38px;
+    border-color: hsl(0, 0%, 80%);
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 6px;
+    padding-left: 5px;
+    box-sizing: border-box;
+  }
+
+  svg {
+    position: absolute;
+    top: 50%;
+    bottom: 50%;
+    right: 2px;
+    top: 12px;
+
+    color: #adadad;
+  }
 }

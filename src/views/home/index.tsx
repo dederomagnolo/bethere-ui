@@ -101,7 +101,7 @@ export const Home = () => {
     shouldReconnect: (closeEvent) => true,
     reconnectInterval: 3000,
     queryParams: {
-      uiClient: token 
+      uiClient: token
     }}
   );
 

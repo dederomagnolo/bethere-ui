@@ -18,7 +18,6 @@ const findCategoryForCommand = (commandName: string) => {
   let commandCategory
   _.forEach(MAPPED_COMMANDS, (category, index) => {
     const categoryOptions = _.get(category, 'options')
-    console.log({categoryOptions})
     const isCommandOnCategoryOptions = _.find(categoryOptions, (option) => option.command === commandName)
     if (isCommandOnCategoryOptions) {
       commandCategory = MAPPED_COMMANDS[index].categoryName

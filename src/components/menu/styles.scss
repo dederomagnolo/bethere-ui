@@ -5,12 +5,13 @@
   position: fixed;
   bottom: 0;
   width: 100%;
-  height: 80px;
+  height: 65px;
   display: flex;
   align-items: center;
   box-shadow:0 1px 3px rgba(0,0,0,0.2), 0 3px 5px rgba(0,0,0,0.1); // turn it global
   border-radius: 20px 20px 0 0;
   transition: all 0.3s;
+  z-index: 1;
 
   @include md {
     height: 80vh;
