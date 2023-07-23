@@ -4,11 +4,9 @@ import callApi from 'services/callApi'
 interface EditSettingsArgs {
   settingsPayload: any,
   token: String,
-  loadingCallback?: Function
 }
 
 export const editSettings = async ({
-  loadingCallback,
   token,
   settingsPayload
 } : EditSettingsArgs) => {
@@ -20,7 +18,6 @@ export const editSettings = async ({
   })
 
   return tryToCallService({
-    apiCall,
-    loadingCallback
+    apiCall
   })
 }

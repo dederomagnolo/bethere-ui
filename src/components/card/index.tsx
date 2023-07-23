@@ -51,7 +51,7 @@ export const GenericCard = ({
     )
 
   return (
-    <div className={`generic-card generic-card--${type} ${className}`}>
+    <div className={`generic-card generic-card--${type} ${className ? className : ''}`}>
       {renderSettingsButton()}
       <div className='card-infos'>
         <CardLabel Icon={icon} label={label} />

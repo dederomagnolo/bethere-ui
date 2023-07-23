@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-export const useFetch = (fetchService: Function) => {
+export const useFetch = (fetchService: Function, dependencies: any[] = []) => {
   const [data, setData] = useState({})
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -19,7 +19,7 @@ export const useFetch = (fetchService: Function) => {
       }
     }
     callService()
-  }, [])
+  }, [...dependencies])
 
   return {
     data, loading, error

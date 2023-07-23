@@ -46,30 +46,20 @@
   &--watering {
     flex-direction: column-reverse;
     height: 200px;
-    width: 420px;
+    width: 480px;
 
     svg {
       color: #a3da5a63;
     }
   }
 
-  &--humidity {
+  &--sensor {
     flex-direction: column-reverse;
-    height: 200px;
-    width: 200px;
+    height: 230px;
+    width: 230px;
 
     svg {
-      color: #0da2bc66;
-    }
-  }
-
-  &--temperature {
-    flex-direction: column-reverse;
-    height: 200px;
-    width: 200px;
-
-    svg {
-      color: #F9C78D;
+      color: #6B6B6B;
     }
   }
 

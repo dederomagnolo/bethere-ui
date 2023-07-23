@@ -20,6 +20,11 @@ import {
   MdOutlinePhonelinkErase as OfflineBroadcastIcon
 } from 'react-icons/md'
 
+import {
+  FaTint as TintIcon,
+  FaThermometerHalf as ThermometerIcon,
+} from 'react-icons/fa'
+
 import { cards } from './utils/constants'
 
 import '../styles.scss'
@@ -40,12 +45,12 @@ const renderGenericCard = (type: string, CustomData?: any) => {
 
 const renderMeasures = (measures: any, loading: boolean) => { // type here
   const MeasureLabel = ({ type }: { type: any } ) => {
-    let internal = _.get(measures, 'internalHumidity') 
-    let external = _.get(measures, 'externalHumidity')
+    let humidity = _.get(measures, 'internalHumidity') 
+    let temperature = _.get(measures, 'internalTemperature')
 
-    if (type == 'temperature') {
-      internal = _.get(measures, 'internalTemperature')
-      external = _.get(measures, 'externalTemperature')
+    if (type === 'external') {
+      humidity = _.get(measures, 'externalHumidity')
+      temperature = _.get(measures, 'externalTemperature')
     }
 
     const renderMeasure = (data: number) => {
@@ -55,12 +60,18 @@ const renderMeasures = (measures: any, loading: boolean) => { // type here
     return (
       <div className='measures' key={type}>
         <div className='measure'>
-          <span className='measure-category'>Interna</span>
-          <span className='measure-data'>{renderMeasure(internal)}</span>
+          <div className='measure-label'>
+            <TintIcon className='measure-icon--humidity' />
+            <span className='measure-category'>Umidade</span>
+          </div>
+          <span className='measure-data'>{renderMeasure(humidity)}</span>
         </div>
         <div className='measure'>
-          <span className='measure-category'>Externa</span>
-          <span className='measure-data'>{renderMeasure(external)}</span>
+          <div className='measure-label'>
+            <ThermometerIcon className='measure-icon--temperature' />
+            <span className='measure-category'>Temperatura</span>
+          </div>
+          <span className='measure-data'>{renderMeasure(temperature)}</span>
         </div>
       </div>
     )
@@ -68,8 +79,8 @@ const renderMeasures = (measures: any, loading: boolean) => { // type here
 
   return (
     <div className='sensors'>
-      {renderGenericCard('humidity', () => <MeasureLabel type='humidity' />)}
-      {renderGenericCard('temperature', () => <MeasureLabel type='temperature' />)}
+      {renderGenericCard('sensor', () => <MeasureLabel type='external' />)}
+      {renderGenericCard('sensor', () => <MeasureLabel type='internal' />)}
     </div>
   )
 }

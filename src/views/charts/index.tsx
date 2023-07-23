@@ -39,7 +39,6 @@ export const Charts = () => {
   
   const updateMeasuresHistory = async (dayToRetrieveHistory: any) => {
     const measuresHistory = await getMeasuresHistory({
-      loadingCallback: setLoading,
       token,
       deviceId,
       dayToRetrieveHistory

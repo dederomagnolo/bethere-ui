@@ -22,6 +22,14 @@ import './styles.scss'
 import { DeviceSelector } from 'components/device-selector'
 import { Tooltip } from 'react-tooltip'
 import { useFetch } from 'hooks/useFetch'
+import { MAPPED_COMMANDS } from 'global/consts'
+
+const defaultOption = { value: 'all', label: 'Mostrar todos' }
+const commandOptions = _.map(MAPPED_COMMANDS, (command) => {
+  return { value: command.categoryName, label: command.categoryNameTranslated }
+}).concat(defaultOption)
+
+const defaultOptionIndex = commandOptions.length - 1
 
 export const History = () => {
   const token = useSelector(getToken)
@@ -30,41 +38,32 @@ export const History = () => {
   const todaysStartDate = moment().startOf('day')
   const startDateToQuery = moment(todaysStartDate).utc().format()
 
-  const [commands, setCommands] = useState([])
   const [hideChart, setHideChart] = useState(true)
-  const [selectedDate, setSelectedDate] = useState(todaysStartDate)
-
-  const retrieveCommandHistory = async (dayToRetrieveHistory?: string) => {
-    const history = await fetchCommandHistory({
-      dayToRetrieveHistory: dayToRetrieveHistory,
-      deviceId: defaultDeviceId,
-      token
-    })
-    setCommands(_.get(history, 'historyForDate'))
-  }
+  const [selectedDate, setSelectedDate] = useState(startDateToQuery)
+  const [filter, setFilter] = useState(commandOptions[defaultOptionIndex])
 
   const {
     data,
     error,
     loading
   } = useFetch(async () => await fetchCommandHistory({
-    dayToRetrieveHistory: startDateToQuery,
+    dayToRetrieveHistory: selectedDate,
     deviceId: defaultDeviceId,
     token
-  }))
+  }), [selectedDate])
 
-  console.log({
-    data
-  })
+  const historyForDate = _.get(data, 'historyForDate')
+  const historyFilteredByCategoryName = filter.value !== 'all' ? _.filter(
+    historyForDate,
+    (command: any) => command.categoryName === filter.value
+  ) : historyForDate
 
-  const commandCards = _.map(commands, (command: CommandType) =>
+  const commandCards = _.map(historyFilteredByCategoryName, (command: CommandType) =>
     <CommandCard key={command._id} command={command} />)
 
   const handleDateChange = async (date: any) => {
-    const formattedDate = moment(date)
+    const formattedDate = moment(date).utc().format()
     setSelectedDate(formattedDate)
-
-    await retrieveCommandHistory(formattedDate.format())
   }
 
   const IconWithTooltip = () => {
@@ -97,7 +96,10 @@ export const History = () => {
           </div>
           <div className='history__command-filter'>
             <h2>Filtro por comando</h2>
-            <CustomSelect />
+            <CustomSelect
+              onChange={(value: any) => setFilter(value)}
+              options={commandOptions}
+              defaultValue={commandOptions[defaultOptionIndex]} />
           </div>
         </div>
         {loading ? <Loading Component={PuffLoader} /> : (
@@ -107,11 +109,11 @@ export const History = () => {
                 <h2>Linha do tempo</h2>
                 <IconWithTooltip />
               </div>
-              {!hideChart && <CustomScatterChart dataToPlot={commands} />}
+              {!hideChart && <CustomScatterChart dataToPlot={historyFilteredByCategoryName} />}
             </div>
             <h2>Histórico</h2>
             <div className='history__command-cards'>
-              {commands.length && commandCards}
+              {commandCards}
             </div>
           </div>)}
       </div>

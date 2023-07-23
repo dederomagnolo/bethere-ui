@@ -1,17 +1,15 @@
 import {
-  FaTint as Tint,
-  FaThermometerHalf as Thermometer,
-  FaLeaf as Leaf
+  FaLeaf as Leaf,
 } from 'react-icons/fa'
 
+import {
+  BiStation as SensorIcon
+} from 'react-icons/bi'
+
 export const cards: any = {
-  humidity: {
-    label: 'Umidade',
-    icon: Tint
-  },
-  temperature: {
-    label: 'Temperatura',
-    icon: Thermometer
+  sensor: {
+    label: 'Sensor',
+    icon: SensorIcon
   },
   watering: {
     label: 'Irrigação',

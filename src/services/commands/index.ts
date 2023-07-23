@@ -5,7 +5,6 @@ import { tryToCallService } from 'services/fetch'
 
 
 interface SendCommandToServerArgs {
-  loadingCallback: Function,
   token: string,
   commandName: string,
   commandPayload?: {
@@ -28,7 +27,6 @@ const findCategoryForCommand = (commandName: string) => {
 }
 
 export const sendCommandToServer = async ({
-  loadingCallback,
   token,
   commandName,
   commandPayload,
@@ -51,8 +49,7 @@ export const sendCommandToServer = async ({
 
   return (
     tryToCallService({
-      apiCall,
-      loadingCallback
+      apiCall
     })
   )
 }

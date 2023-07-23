@@ -45,8 +45,7 @@ export const DeviceSelector: React.FC<DeviceSelectorProps> = ({
   useEffect(() => {
     const updateUserDevices = async () => {
       const userDevices = await fetchUserDevices({
-        token,
-        loadingCallback: setLoading 
+        token
       })
       dispatch(setUserDevices(userDevices))
     }
@@ -58,13 +57,11 @@ export const DeviceSelector: React.FC<DeviceSelectorProps> = ({
     await editDeviceName({
       token,
       deviceId: selectedDevice._id,
-      deviceName: editedDeviceName,
-      loadingCallback: setLoading
+      deviceName: editedDeviceName
     })
 
     const userDevices = await fetchUserDevices({
-      token,
-      loadingCallback: setLoading 
+      token
     })
 
     dispatch(setUserDevices(userDevices))
@@ -81,7 +78,7 @@ export const DeviceSelector: React.FC<DeviceSelectorProps> = ({
 
   const mappedSensors = _.map(sensors, (sensor: any) => {
     return (
-      <p className='sensors__card'>{sensor.model}</p>
+      <p key={sensor._id} className='sensors__card'>{sensor.model}</p>
     )
   })
 
@@ -110,7 +107,7 @@ export const DeviceSelector: React.FC<DeviceSelectorProps> = ({
             <p>{deviceSerialKey}</p>
           </div>
           {sensors && sensors.length ? <div className='device-selector__info__container'>
-            <p className='title'>Sensores:</p>
+            <p className='title'>{sensors.length > 1 ? 'Sensores' : 'Sensor'}:</p>
             <div className='sensors'>
               {mappedSensors}
             </div>

@@ -11,10 +11,8 @@ import { getUserDevices } from 'redux/device/selectors';
 import { DeviceSelector } from 'components/device-selector';
 import { InputOption } from './input-option';
 
-import { editSettings } from 'services/settings';
 import { getToken } from 'redux/user/selectors';
-import { sendCommandToServer } from 'services/commands';
-import { editSettingsAndSendCommand, fetchUserDevices } from 'services/fetch';
+import { editSettingsAndSendCommand } from 'services/fetch';
 import { setUserDevices } from 'redux/device/actions';
 
 export const Settings = () => {
@@ -76,11 +74,14 @@ export const Settings = () => {
           automation,
           ..._.omit(settings, 'startTime, endTime, interval, duration')
         },
-        loadingCallback: setLoading,
       }
     )
 
     dispatch(setUserDevices(res))
+  }
+
+  const getCurrentTimeOption = (timeValue: number) => {
+    return _.find(timeOptions, (option) => option.value === timeValue)
   }
 
   const AutoWateringConfig = (
@@ -88,11 +89,15 @@ export const Settings = () => {
       <div className='cycle-period'>
         <div className='cycle-period__time-select-container'>
           <span className='title'>Período de atividade</span> de
-          <CustomSelect options={timeOptions} />
+          <CustomSelect
+            options={timeOptions}
+            value={getCurrentTimeOption(settings.startTime)} />
         </div>
         <div className='cycle-period__time-select-container'>
           até
-          <CustomSelect options={timeOptions} />
+          <CustomSelect
+            options={timeOptions}
+            value={getCurrentTimeOption(settings.endTime)} />
         </div>
       </div>
       <div className='description'>

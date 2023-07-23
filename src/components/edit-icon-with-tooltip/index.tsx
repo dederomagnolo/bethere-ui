@@ -11,6 +11,7 @@ import {
   RiCloseCircleLine as CancelIcon
 } from 'react-icons/ri'
 
+import './styles.scss'
 
 export interface EditWithTooltipProps {
   onSave?: MouseEventHandler
@@ -40,22 +41,24 @@ export const EditIconWithTooltip = ({
   }
 
   const Icon = ({ id }: { id: string }) => editMode
-    ? <div>
+    ? <div className='app-tooltip__icon-container'>
         <Tooltip id='app-tooltip' anchorSelect={`#app-tooltip-cancel-${id}`}>
           Cancelar
         </Tooltip>
-        <SaveIcon id={id} onClick={handleSave} />
-        <CancelIcon id={`app-tooltip-cancel-${id}`} onClick={() => {
-            setEditMode(false)
-            onToggle && onToggle()
-          }}
-        />
+        <div className='app-tooltip__icon-container__group'>
+          <SaveIcon id={id} onClick={handleSave} />
+          <CancelIcon id={`app-tooltip-cancel-${id}`} onClick={() => {
+              setEditMode(false)
+              onToggle && onToggle()
+            }}
+          />
+        </div>
       </div>
     : <EditIcon id={id} onClick={handleEdit} />
 
   const id = `tooltip-action-${uniqueId}`
 
-  return(
+  return (
     <div key={id}>
       <Tooltip id='app-tooltip' anchorSelect={`#${id}`}>
         {editMode ? 'Salvar alteração' : 'Editar'}

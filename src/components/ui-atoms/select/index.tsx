@@ -3,12 +3,14 @@ import Select, { GroupBase, OptionsOrGroups } from  'react-select'
 interface SelectProps {
   defaultValue?: any
   options?: any
-  onChange?: Function
+  onChange?: Function,
+  value?: any
 }
 
-export const CustomSelect = ({ options, defaultValue, onChange }: SelectProps) => {
+export const CustomSelect = ({ options, defaultValue, onChange, value }: SelectProps) => {
   return (
     <Select
+      value={value}
       onChange={(option) => onChange && onChange(option)}
       isSearchable={false}
       defaultValue={defaultValue}
