@@ -27,17 +27,16 @@ async function callApi({
     // @ts-ignore
     const res = await fetch(url, parameters)
 
-    const content = await res.json()
-
-    const unauthorized = res.status
-    if(unauthorized) {
-
+    if (res) {
+      const content = await res.json()
+      if (res.status === 200) {
+        return content
+      }
+      return { status: res.status, message: content.error, service: res.url}
     }
-
-    return content;
   } catch (err: any) {
-    // console.log(err.status);
-    throw new Error(err.message)
+    throw new Error(err.message) // need to handle this on UI too
+    // return { message: 'Internal Server Error', service: err }
   }
 }
 

@@ -22,12 +22,12 @@ export const DeviceReducer = (
       return {
         ...initialState
       }
-    case "persist/REHYDRATE": {
-      return {
-          ...state,
-          ..._.get(action.payload, 'devices')
-      }
-    }
+    // case "persist/REHYDRATE": {
+    //   return {
+    //       ...state,
+    //       ..._.get(action.payload, 'devices')
+    //   }
+    // }
     default:
       return state
   }

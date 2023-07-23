@@ -20,6 +20,7 @@ import callApi from '../../services/callApi'
 import logo from '../../assets/bethere_logo.png'
 
 import './styles.scss'
+import { setGlobalError } from 'redux/global/actions'
 
 export const Login = () => {  
   const dispatch = useDispatch();
@@ -46,18 +47,21 @@ export const Login = () => {
         service: '/user/authenticate'
       })
 
-      const token = _.get(res, 'token')
-      const userId = _.get(res, 'user._id')
+      if (res) {
+        // the response with status 200 is being filtered on callApi
+        if (res.status) {
+          return dispatch(setGlobalError({ message: res.error, service: 'login', status: res.status }))
+        }
 
-      if (token) {
-        dispatch(setUserInfo({ token, userId }))
+        const token = _.get(res, 'token')
+        const userId = _.get(res, 'user._id')
+        
+        dispatch(setUserInfo({ token, userId, authenticated: true }))
 
         const devices = _.get(res, 'user.devices')
         dispatch(setUserDevices(devices))
         navigate('/')
       }
-
-      console.log(res)
     } catch (err) {
       console.error(err)
     }

@@ -4,10 +4,12 @@ interface UserState {
   token: String
   username: String,
   userId: String,
+  authenticated: Boolean
 }
 
 const initialState = {
-  token: '',
+  token: '123',
+  authenticated: false,
   username: '',
   userId: ''
 }
@@ -27,12 +29,12 @@ export const UserReducer = (
         return {
           ...initialState
         }
-      case "persist/REHYDRATE": {
-        return {
-          ...state,
-          ..._.get(action.payload, 'user')
-        }
-      }
+      // case "persist/REHYDRATE": {
+      //   return {
+      //     ...state,
+      //     ..._.get(action.payload, 'user')
+      //   }
+      // }
       default:
         return state
     }

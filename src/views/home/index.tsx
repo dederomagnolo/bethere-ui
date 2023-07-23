@@ -16,9 +16,10 @@ import {
 } from 'react-icons/ri'
 
 import {
-  MdOutlineSpeakerPhone as BroadcastingIcon,
-  MdOutlinePhonelinkErase as OfflineBroadcastIcon
-} from 'react-icons/md'
+  TbCircleFilled as OnlineIcon,
+  TbCircleXFilled as OfflineIcon,
+  TbCircleDotted as ConnectingIcon
+} from  'react-icons/tb'
 
 import {
   FaTint as TintIcon,
@@ -29,6 +30,7 @@ import { cards } from './utils/constants'
 
 import '../styles.scss'
 import './styles.scss'
+import { WsReadyState } from 'global/consts';
 
 const websocketUrl = 'ws://localhost:8080';
 
@@ -36,12 +38,15 @@ const renderGenericCard = (type: string, CustomData?: any) => {
   const { label, icon } = cards[type]
   return (
     <GenericCard
+      settingsButtonRoute='configuracoes'
       type={type}
       icon={icon}
       label={label}
       CustomData={CustomData} />
   )
 }
+
+const LoadingIcon = () => <ConnectingIcon className='animated-dashed-loading' />
 
 const renderMeasures = (measures: any, loading: boolean) => { // type here
   const MeasureLabel = ({ type }: { type: any } ) => {
@@ -54,7 +59,7 @@ const renderMeasures = (measures: any, loading: boolean) => { // type here
     }
 
     const renderMeasure = (data: number) => {
-      return loading ? <BeatLoader size={5} /> : <span>{data}</span>
+      return loading ? <LoadingIcon /> : <span>{data}</span>
     }
     
     return (
@@ -89,7 +94,7 @@ export const Home = () => {
   const userDevices = useSelector(getUserDevices)
   const token = useSelector(getToken)
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(false)
+  const [error, setError] = useState({ type: '' })
   const [deviceRealTimeData, setDeviceRealTimeData] = useState({
     defaultDeviceStatus: false,
     measures: [],
@@ -104,12 +109,22 @@ export const Home = () => {
     readyState,
     } = useWebSocket(websocketUrl, {
     onMessage: (event) => console.log(event),
-    onOpen: () => {
-      console.log(`Connected to WebSocket Server`)
+    onOpen: (event) => {
+      console.log({
+        event
+      })
+      console.log(`Connecting to WebSocket Server...`)
       setLoading(true)
     },
-    onError: (event) => { console.error(event); },
-    shouldReconnect: (closeEvent) => true,
+    onError: (err) => {
+      console.log(err)
+      setError({ type: 'websocket'})
+    },
+    onReconnectStop: () => setError({ type: 'websocket'}),
+    shouldReconnect: (closeEvent) => {
+      return true
+    },
+    reconnectAttempts: 10,
     reconnectInterval: 3000,
     queryParams: {
       uiClient: token
@@ -118,7 +133,7 @@ export const Home = () => {
 
   const handleDeviceNonResponding = () => {
     setLoading(false)
-    setError(true)
+    setError({ type: 'device'})
   }
 
   useEffect(() => {
@@ -157,7 +172,10 @@ export const Home = () => {
       })
 
       setLoading(false)
-      setError(!isConnectedDeviceDefault)
+
+      if (!isConnectedDeviceDefault) {
+        setError({ type: 'device'})
+      }
     }
   }, [lastMessage])
 
@@ -169,18 +187,19 @@ export const Home = () => {
 
     const StatusLabel = () => {
       if (loading) {
-        return <BeatLoader size={10} />
+        return <LoadingIcon />
       }
 
+      const shouldRenderOfflineLabel = error.type !== ''
+
       const offlineLabel = (
-        <div>
+        shouldRenderOfflineLabel && <div>
           <div>
-            {error && <WiFiErrorIcon className='wifi-error-icon'/>}
+            <WiFiErrorIcon className='wifi-error-icon'/>
             <span>Offline</span>
           </div>
           {/* {<span className='reconnect-label'>Reconnecting </span>} */}
         </div>
-
       )
 
       return (
@@ -191,9 +210,35 @@ export const Home = () => {
       )
     }
 
+    const renderWebsocketConnectionStatus = () => {
+      const containerClass = 'server-connection-status'
+      const StatusIcon = () => {
+        if (loading) {
+          return <LoadingIcon />
+        }
+
+        switch (readyState) {
+          case WsReadyState.OPEN:
+            return <OnlineIcon className={`${containerClass}--online`}/>
+          case WsReadyState.CONNECTING:
+            return <LoadingIcon />
+          default:
+            return <OfflineIcon className={`${containerClass}--offline`}/>
+        }
+      }
+
+      return (
+        <div className='server-connection-status'>
+          <h3>Conexão com o servidor:</h3>
+          <StatusIcon />
+        </div>
+      )
+    }
+
     return (
       <>
         <h2>Estação local</h2>
+        {renderWebsocketConnectionStatus()}
         <GenericCard
           CustomData={StatusLabel}
           settingsButtonRoute='/configuracoes'

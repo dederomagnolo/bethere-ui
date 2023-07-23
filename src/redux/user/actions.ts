@@ -1,7 +1,13 @@
-export const setUserInfo = ({ token, userId}: { token: String, userId: String }) => {
+type UserInfoProps = { 
+  token: String
+  userId: String
+  authenticated: Boolean
+}
+
+export const setUserInfo = (payload: UserInfoProps) => {
   return {
     type: 'SET_USER_INFO',
-    payload: { token, userId }
+    payload: payload
   }
 }
 

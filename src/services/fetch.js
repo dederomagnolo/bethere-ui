@@ -40,15 +40,15 @@ export const fetchCommandHistory = async ({
 export const fetchUserDevices = async ({
   token
 }) => {
-  const apiCall = async () => await callApi({
-    method: 'GET',
-    service: '/devices/user',
-    token
-  })
-
-  return tryToCallService({
-    apiCall
-  })
+  try {
+    return await callApi({
+      method: 'GET',
+      service: '/devices/user',
+      token
+    })
+  } catch (error) {
+    console.error(error)
+  }
 }
 
 export const editDeviceName = async ({

@@ -5,7 +5,7 @@ import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 
 import { Charts, Login, Home, Settings, History } from 'views'
 
-import { getToken } from 'redux/user/selectors';
+import { getAuthenticatedStatus, getToken } from 'redux/user/selectors';
 
 import { Menu } from '../menu'
 
@@ -40,15 +40,16 @@ const routesList = [
 
 export const Layout: React.FunctionComponent = () => {
   const token = useSelector(getToken)
+  const authenticated = useSelector(getAuthenticatedStatus)
   const location = useLocation()
 
   const PageContainer = (Component: any) => {
     const isLoginRoute = location.pathname === '/login'
-    if(isLoginRoute && token) {
+    if(isLoginRoute && token && authenticated) {
       return <Navigate to='/' replace={true} />
     }
 
-    if(!token) {
+    if(!authenticated) {
       return isLoginRoute ? <Component /> : <Navigate to='/login' replace={true} />
     }
     
@@ -63,7 +64,7 @@ export const Layout: React.FunctionComponent = () => {
 
   return (
     <div className='app-layout'>
-      <Menu />
+      {authenticated && <Menu />}
       <div className='page-container'>
         <Routes>
           {routes}

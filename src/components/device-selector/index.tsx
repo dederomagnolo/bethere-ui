@@ -12,6 +12,8 @@ import { editDeviceName, fetchUserDevices } from 'services/fetch'
 import { getToken } from 'redux/user/selectors'
 import { setUserDevices } from 'redux/device/actions'
 
+import { useFetch } from 'hooks/useFetch'
+
 import './styles.scss'
 
 interface DeviceSelectorProps {
@@ -27,10 +29,22 @@ export const DeviceSelector: React.FC<DeviceSelectorProps> = ({
   const token = useSelector(getToken)
   const dispatch = useDispatch()
 
+  const {
+    data,
+    error
+  } = useFetch(async () => {
+    const res = await fetchUserDevices({
+      token
+    })
+    if (res) {
+      dispatch(setUserDevices(userDevices))
+    }
+  }, [token])
+
   const defaultDevice = _.find(userDevices, (device) => device.defaultDevice)
   const deviceName = _.get(defaultDevice, 'deviceName')
 
-  const [selectedDevice, setSelectedDevice] = useState(defaultDevice)
+  const [selectedDevice, setSelectedDevice] = useState(defaultDevice || { _id: ''} )
   const [deviceNameEdition, setDeviceNameEdition] = useState(false)
   const [loading, setLoading] = useState(false)
   const [editedDeviceName, setEditedDeviceName] = useState(deviceName)
@@ -41,16 +55,6 @@ export const DeviceSelector: React.FC<DeviceSelectorProps> = ({
   const deviceSelectOptions = getDeviceOptionsToSelect(userDevices)
   const indexOfDefaultDeviceInOptions =
     _.findIndex(deviceSelectOptions, (device) => device.value === selectedDevice._id)
-
-  useEffect(() => {
-    const updateUserDevices = async () => {
-      const userDevices = await fetchUserDevices({
-        token
-      })
-      dispatch(setUserDevices(userDevices))
-    }
-    updateUserDevices()
-  }, [token])
 
   const handleSaveNewDeviceName = async () => {
     setDeviceNameEdition(false)
