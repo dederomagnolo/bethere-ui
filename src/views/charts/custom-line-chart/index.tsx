@@ -16,29 +16,31 @@ import { generateTicks } from 'global/functions';
 
 const translatedDataType = {
   'externalHumidity': {
-    translated: 'Umidade Externa',
+    translated: 'Sensor Externo',
     unity: '%'
   },
   'externalTemperature': {
-    translated: 'Temperatura Externa',
+    translated: '',
     unity: '°C'
-  },
-  'internalTemperature': {
-    translated: 'Temperatura Interna',
-    unity: '°C'
-  },
-  'internalHumidity': {
-    translated: 'Umidade Interna',
-    unity: '%'
   }
+} as any
+
+const unityByType = {
+  temperature: '°C',
+  humidity: '%'
+} as any
+
+const sensors = {
+  hf3ni: 'sensor externo',
+  l8l8a: 'sensor interno'
 } as any
 
 export const CustomLineChart = ({
   dataToPlot,
   lineDataKeys = ['nop', 'nop'],
-  dateToAjdustTicks
+  dateToAjdustTicks,
+  measureType
 }: any) => {
-  
   const ticks = generateTicks({
     date: dateToAjdustTicks,
     valueToIncrement: 30,
@@ -72,13 +74,16 @@ export const CustomLineChart = ({
           tickFormatter={(t) => moment(t).format('HH:mm')}
         />
         <YAxis
-          tickFormatter={(tick) => `${tick}${_.get(translatedDataType[lineDataKeys[0]], 'unity')}`}
+          tickFormatter={(tick) => `${tick}${unityByType[measureType]}`}
           type='number'
           scale='linear'
           domain={[initialYDomain, finalYDomain]} />
         <Tooltip 
           labelFormatter={(test) =>  moment(test).format('HH:mm')}/>
-        <Legend formatter={(value) => _.get(translatedDataType[value], 'translated')} />
+        <Legend formatter={(value: any) => {
+          console.log({value})
+            return sensors[value]}
+          } />
         <Line type='monotone' dataKey={lineDataKeys[0]} stroke="#8884d8" />
         <Line type='monotone' dataKey={lineDataKeys[1]} stroke="#82ca9d" />
       </LineChart>

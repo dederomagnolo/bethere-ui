@@ -18,12 +18,19 @@ const mergeMeasureBatchDataToPlot = (dataToMerge: any) => {
   _.forEach(dataToMerge, (batch, key: any) => {
     const formattedBatch = _.map(batch, (measure) => ({
       x: (moment(measure.createdAt)).valueOf(),
-      [measure.measureName]: measure.value,
+      [measure.origin]: measure.value,
     }))
     formattedData.push(formattedBatch)
   })
 
   return _.merge(formattedData[0], formattedData[1])
+}
+
+const mapToPlot = (dataToMap: any) => {
+  return _.map(dataToMap, (measure) => ({
+    x: (moment(measure.createdAt)).valueOf(),
+    [measure.type]: measure.value,
+  }))
 }
 
 export const Charts = () => {
@@ -50,18 +57,6 @@ export const Charts = () => {
     updateMeasuresHistory(startDateToQuery)
   }, [])
 
-  const renderLineChartForMeasureType = (data: any) => {
-    const dataToPlot = mergeMeasureBatchDataToPlot(data)
-    const keys = _.keys(data)
-    return (
-      <div className='charts__chart-container'>
-        {loading
-          ? <Loading Component={PuffLoader} />
-          : <CustomLineChart dataToPlot={dataToPlot} lineDataKeys={keys} dateToAjdustTicks={selectedDate} />}
-      </div>
-    )
-  }
-
   const humidityChartData = _.pick(measures, 'externalHumidity', 'internalHumidity')
   const temperatureChartData = _.pick(measures, 'externalTemperature', 'internalTemperature')
 
@@ -71,13 +66,42 @@ export const Charts = () => {
     await updateMeasuresHistory(moment(dateToQueryHistory).utc().format())
   }
 
+  const renderCharts = () => {
+    let mapped = { temperature: [], humidity: []}
+    _.forEach(measures, (sensor, index) => {
+      const groupedByType = _.groupBy(sensor, 'origin')
+      mapped = { ...mapped, [index]: groupedByType }
+    })
+
+    const measureTypes = _.keys(mapped)
+    const mappedCharts = _.map(mapped, (measureType, key: any) => {
+      const dataToPlot = mergeMeasureBatchDataToPlot(measureType)
+      const keys = _.keys(measureType)
+      return (
+        <div className='charts__chart-container'>
+          {loading
+            ? <Loading Component={PuffLoader} />
+            : <CustomLineChart
+              measureType={key}
+              dataToPlot={dataToPlot}
+              lineDataKeys={keys}
+              dateToAjdustTicks={selectedDate} />}
+        </div>
+      )
+    })
+    return (
+      <div className='charts'>
+        {mappedCharts}
+      </div>
+    )
+  }
+
   return(
     <div>
       <h2>Gráficos</h2>
       <DeviceSelector />
       <CustomDatePicker value={selectedDate} onChange={handleDateChange} />
-      {renderLineChartForMeasureType(humidityChartData)}
-      {renderLineChartForMeasureType(temperatureChartData)}
+      {renderCharts()}
     </div>
   )
 }
