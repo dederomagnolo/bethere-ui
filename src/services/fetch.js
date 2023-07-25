@@ -71,6 +71,21 @@ export const editDeviceName = async ({
   })
 }
 
+export const setDefaultDevice = async ({ deviceId, token }) => {
+  try {
+    const res = await callApi({
+      method: 'POST',
+      service: '/devices/set-default',
+      payload: { deviceId },
+      token
+    })
+
+    return res
+  } catch (err) {
+    console.error(err)
+  }
+}
+
 export const getMeasuresHistory = async ({
   token,
   deviceId,

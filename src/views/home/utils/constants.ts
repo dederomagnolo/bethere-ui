@@ -6,9 +6,9 @@ import {
   BiStation as SensorIcon
 } from 'react-icons/bi'
 
-export const cards: any = {
-  sensor: {
-    label: 'Sensor',
+export const CARDS: any = {
+  sht20: {
+    label: 'Sensor SHT20',
     icon: SensorIcon
   },
   watering: {

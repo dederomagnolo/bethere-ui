@@ -62,7 +62,6 @@ export const CustomScatterChart = ({ dataToPlot }: any) => {
   const tickNumericValues = tickTimeStrings.map(timeString => moment(timeString).valueOf());
 
   const startDateToQuery = moment(startDate).utc().format()
-  console.log({ startDateToQuery })
 
   const formattedCommandHistory = _.map(dataToPlot, (command) => ({
     x: command.commandName,

@@ -1,0 +1,32 @@
+@import '../../../styles/animations.scss';
+
+.pulsing-circle {
+  display: flex;
+  align-items: center;
+
+  &__bg-pulse {
+    width: 16px;
+    height: 16px;
+    margin: 0 auto 0;
+    box-shadow: 0 0 0 0 rgba(#5a99d4, .5);
+    background: transparent;
+    animation: pulse 2.5s infinite;
+    border-radius: 50%;
+    position: absolute;
+  }
+
+  &__icon {
+    
+    &--online {
+      color: #0C9C7A;
+    }
+  
+    &--progress {
+      color: rgb(214, 214, 0);
+    }
+
+    &--offline {
+      color: #f53a17;
+    }
+  }
+}

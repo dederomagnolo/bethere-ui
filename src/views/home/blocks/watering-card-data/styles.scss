@@ -1,0 +1,29 @@
+.watering-card {
+  padding-top: 10px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  align-items: flex-end;
+
+  .option {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    width: 100%;
+    gap: 8px;
+
+    span {
+      font-size: 14px;
+    }
+
+    &--toggle {
+      width: 150px;
+
+      span {
+        width: 60px;
+        margin-left: 10px;
+      }
+    }
+  }
+}

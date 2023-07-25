@@ -14,7 +14,6 @@ const initialState = {
   userId: ''
 }
 
-
 export const UserReducer = (
   state: UserState = initialState, 
   action: any

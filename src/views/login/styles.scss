@@ -63,6 +63,10 @@
 
       .app-input {
         width: 100%;
+
+        &__input-element {
+          padding-left: 20px;
+        }
       }
     }
   }

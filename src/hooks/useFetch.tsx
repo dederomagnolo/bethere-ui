@@ -16,18 +16,18 @@ export const useFetch = (fetchService: Function, dependencies: any[] = []) => {
       setLoading(true)
       try {
         const res = await fetchService()
-        if (res) {
-          if(res.status === 200) {
-            return setData(res)
+        if (res) {            
+          if (res.error) {
+            if (res.status === 401) {
+              return navigate('/login')
+            }
+            setError(true)
+            return dispatch(setGlobalError({ service: res.service, message: res.message, status: res.status }))
           }
-
-          if (res.status === 401) {
-            return navigate('/login')
-          }
-
-          setError(true)
-          dispatch(setGlobalError({ service: res.service, message: res.message, status: res.status }))
+          //success 
+          setData(res)
         }
+        
         setLoading(false)
       } catch (err: any) {
         console.error(err)

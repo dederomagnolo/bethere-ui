@@ -6,6 +6,7 @@ import React, {
 
 import { 
   BsFillEyeFill as EyeIcon,
+  BsEyeSlashFill as SlashedEyeIcon
 } from 'react-icons/bs'
 
 import './styles.scss'
@@ -19,6 +20,8 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   autoFocus?: boolean,
   disabled?: boolean,
   type?: string
+  Icon?: React.FunctionComponent
+  iconCustomClassName?: string
 }
 
 export const Input: React.FC<InputProps> = ({
@@ -28,7 +31,9 @@ export const Input: React.FC<InputProps> = ({
   className,
   value,
   disabled,
-  type
+  type,
+  Icon,
+  iconCustomClassName
 }) => {
   const showEyeIcon = type === 'password'
   const [inputType, setInputType] = useState(type)
@@ -44,8 +49,14 @@ export const Input: React.FC<InputProps> = ({
     }
   }
 
+  const iconProps = {
+    className: `app-input__icon app-input__icon--default ${iconCustomClassName}`
+  } as any // preciso entender melhor, dndo erro em intrinsic attributes
+
+  const EyeIconType = showPassword ? SlashedEyeIcon : EyeIcon  
   return (
     <div className='app-input'>
+      {Icon ? <Icon {...iconProps} /> : null}
       <input
       type={inputType}
       disabled={disabled}
@@ -54,7 +65,10 @@ export const Input: React.FC<InputProps> = ({
       name={name}
       placeholder={placeholder}
       onChange={onChange} />
-      {showEyeIcon && <EyeIcon onClick={togglePassword} />}
+      {showEyeIcon &&
+        <EyeIconType 
+          className='app-input__icon app-input__icon--password'
+          onClick={togglePassword} />}
     </div>
   )
 }

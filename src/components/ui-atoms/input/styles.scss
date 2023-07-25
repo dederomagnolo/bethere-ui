@@ -1,6 +1,7 @@
 .app-input {
   display: flex;
   position: relative;
+  align-items: center;
 
   &__input-element {
     height: 38px;
@@ -12,13 +13,20 @@
     box-sizing: border-box;
   }
 
-  svg {
+  &__icon {
     position: absolute;
-    top: 50%;
-    bottom: 50%;
-    right: 2px;
-    top: 12px;
+    color: #adadad95;
 
-    color: #adadad;
+    &--default {
+      color: #114B5F90;
+      top: 12px;
+      left: 2px;
+    }
+
+    &--password {
+        bottom: 50%;
+        right: 2px;
+        top: 12px;
+    }
   }
 }

@@ -1,19 +1,17 @@
 import { useState, useEffect } from 'react'
-import Switch from 'react-switch'
 import _ from 'lodash'
-
 import { useSelector } from 'react-redux'
 
-import { COMMANDS, WsReadyState } from '../../../global/consts'
-import callApi from '../../../services/callApi'
+import { COMMANDS, WsReadyState } from 'global/consts'
+import callApi from 'services/callApi'
 
-import { getToken, getUserId } from '../../../redux/user/selectors'
+import { getToken, getUserId } from 'redux/user/selectors'
+import { Toggle } from 'components/ui-atoms/switch'
 
-interface SwitchProps {
-  checked: boolean
-  onChange: Function,
-  disabled?: boolean
-}
+import { PulsingCircle } from 'components/ui-atoms/pulsing-circle'
+
+import './styles.scss'
+
 
 interface WateringCardDataProps {
   wsStatus: number
@@ -24,26 +22,6 @@ interface WateringCardDataProps {
     lastCommandReceived: string
   }
 }
-
-const CustomSwitch = ({
-  onChange,
-  checked,
-  disabled
-}: SwitchProps) => {
-  return (
-    <Switch
-      disabled={disabled}
-      boxShadow='0px 1px 5px rgba(0, 0, 0, 0.6)'
-      handleDiameter={24}
-      uncheckedIcon={false}
-      checkedIcon={false}
-      checked={checked}
-      onChange={() => onChange && onChange()}
-    />
-  )
-}
-
-
 
 export const WateringCardData = ({
   wsStatus,
@@ -66,9 +44,13 @@ export const WateringCardData = ({
 
   const deviceId = _.get(device, '_id')
 
-  useEffect(() => {    
+  useEffect(() => {
+    console.log('mount')
+  }, [])
+
+  useEffect(() => {
     setWateringEnabled(isRealTimeWateringStateEnabled)
-  }, [lastCommandReceived])
+  }, [isRealTimeWateringStateEnabled])
 
   const handleSendCommand = async () => {
     if(wsStatus === WsReadyState.OPEN && defaultDeviceStatus) {
@@ -97,21 +79,35 @@ export const WateringCardData = ({
     }
   }
 
-  const checkWateringOperationStatus = () => {
+  const renderOperationLabel = () => {
+    let operationLabel = 'Offline' 
+    let pulsingCircleType = 'offline'
+
     if(defaultDeviceStatus) {
-      return `Irrigação manual ${wateringEnabled ? 'ligada' : 'desligada'}`
+      if(wateringEnabled) {
+        pulsingCircleType = 'progress'
+        operationLabel = 'Irrigação manual ligada'
+      } else {
+        pulsingCircleType = 'online'
+        operationLabel = 'Disponível'
+      }
     }
-    return 'Offline'
+
+
+    return (
+      <div className='option'>
+        <PulsingCircle type={pulsingCircleType} />
+        <span>{operationLabel}</span>
+      </div>
+    )
   }
 
   return (
     <div className='watering-card'>
-      <div className='option'>
-        <span>Status: </span>
-        <span>{checkWateringOperationStatus()}</span>
-      </div>
+      {renderOperationLabel()}
+      
       <div className='option option--toggle'>
-        <CustomSwitch
+        <Toggle
           disabled={!defaultDeviceStatus}
           checked={autoModeEnabled}
           onChange={() => {}}
@@ -119,7 +115,7 @@ export const WateringCardData = ({
         <span>Auto</span>
       </div>
       <div className='option option--toggle'>
-        <CustomSwitch
+        <Toggle
           disabled={!defaultDeviceStatus}
           checked={wateringEnabled}
           onChange={handleSendCommand}

@@ -52,15 +52,6 @@ export const History = () => {
     token
   }), [selectedDate])
 
-  const historyForDate = _.get(data, 'historyForDate')
-  const historyFilteredByCategoryName = filter.value !== 'all' ? _.filter(
-    historyForDate,
-    (command: any) => command.categoryName === filter.value
-  ) : historyForDate
-
-  const commandCards = _.map(historyFilteredByCategoryName, (command: CommandType) =>
-    <CommandCard key={command._id} command={command} />)
-
   const handleDateChange = async (date: any) => {
     const formattedDate = moment(date).utc().format()
     setSelectedDate(formattedDate)
@@ -83,6 +74,39 @@ export const History = () => {
     )
   }
 
+  const renderHistoryData = () => {
+    const historyForDate = _.get(data, 'historyForDate', []) 
+    const historyFilteredByCategoryName = filter.value !== 'all' ? _.filter(
+      historyForDate,
+      (command: any) => command.categoryName === filter.value
+    ) : historyForDate
+  
+    const commandCards = _.map(historyFilteredByCategoryName, (command: CommandType) =>
+      <CommandCard key={command._id} command={command} />)
+    
+    return (
+      historyForDate && historyForDate.length ? (
+        <div className='history__data'>
+          <div className='history__chart'>
+            <div className='history__chart__title'>
+              <h2>Linha do tempo</h2>
+              <IconWithTooltip />
+            </div>
+            {!hideChart && <CustomScatterChart dataToPlot={historyFilteredByCategoryName} />}
+          </div>
+          <h2>Histórico</h2>
+          <div className='history__command-cards'>
+            {commandCards.length ? commandCards : 'Não foram registrados comandos nesta data.'}
+          </div>
+        </div>
+      ) : (
+        <div className='history__data'>
+          Não foram registrados comandos nesta data.
+        </div>
+      )
+    )
+  }
+
   return (
     <div className='history'>
       <DeviceSelector />
@@ -102,20 +126,7 @@ export const History = () => {
               defaultValue={commandOptions[defaultOptionIndex]} />
           </div>
         </div>
-        {loading ? <Loading Component={PuffLoader} /> : (
-          <div className='history__data'>
-            <div className='history__chart'>
-              <div className='history__chart__title'>
-                <h2>Linha do tempo</h2>
-                <IconWithTooltip />
-              </div>
-              {!hideChart && <CustomScatterChart dataToPlot={historyFilteredByCategoryName} />}
-            </div>
-            <h2>Histórico</h2>
-            <div className='history__command-cards'>
-              {commandCards}
-            </div>
-          </div>)}
+        {loading ? <Loading Component={PuffLoader} /> : renderHistoryData()}
       </div>
     </div>
   )

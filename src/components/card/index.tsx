@@ -3,6 +3,7 @@ import {
 } from 'react-icons/hi'
 
 import './styles.scss'
+import { useEffect } from 'react'
 
 interface CardLabelProps {
   label: string
@@ -15,10 +16,11 @@ interface GenericCardProps {
   label: string
   type?: string
   CustomData?: () => JSX.Element
-  icon?: any
+  icon?: any,
+  children?: any
 }
 
-const renderIcon = (BaseIcon: any) => <BaseIcon size={22} />
+const renderIcon = (BaseIcon: any) => <BaseIcon className='card-label-icon' size={22} />
 
 const CardLabel = ({ label, Icon } : CardLabelProps) => {
   const icon = Icon && (
@@ -41,12 +43,18 @@ export const GenericCard = ({
   settingsButtonRoute,
   CustomData,
   label,
-  icon
+  icon,
+  children
 } : GenericCardProps) => {
+
+  useEffect(() => {
+    console.log('card mount')
+  }, [])
+
   const renderSettingsButton = () =>
     settingsButtonRoute && (
       <div className='generic-card__settings'>
-        <Cog size='22px' />
+        <Cog size={18} />
       </div>
     )
 
@@ -58,6 +66,7 @@ export const GenericCard = ({
       </div>
       <div className={`card-data card-data--${type}`}>
         {CustomData && <CustomData />}
+        {children}
       </div>
     </div>
   )

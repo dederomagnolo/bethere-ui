@@ -32,7 +32,13 @@ async function callApi({
       if (res.status === 200) {
         return content
       }
-      return { status: res.status, message: content.error, service: res.url}
+
+      return {
+        status: res.status,
+        message: content.error,
+        service: res.url,
+        error: true
+      }
     }
   } catch (err: any) {
     throw new Error(err.message) // need to handle this on UI too

@@ -3,7 +3,7 @@ import _  from 'lodash'
 import { useDispatch, useSelector } from 'react-redux';
 
 
-import { AppCollapsible, Button, CustomSelect} from 'components';
+import { AppCollapsible, Button, CustomSelect, EditIconWithTooltip} from 'components';
 import { getTimeOptions } from './functions';
 
 import './styles.scss'
@@ -14,6 +14,10 @@ import { InputOption } from './input-option';
 import { getToken } from 'redux/user/selectors';
 import { editSettingsAndSendCommand } from 'services/fetch';
 import { setUserDevices } from 'redux/device/actions';
+
+type OptionType = {
+  value: Number | String
+}
 
 export const Settings = () => {
   const dispatch = useDispatch()
@@ -53,17 +57,25 @@ export const Settings = () => {
     wateringTimer,
     remoteMeasureInterval
   })
+  const [editActivityPeriod, setEditActivityPeriod] = useState(false)
 
-  const handleChangeSettings = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeSettings = (e: React.ChangeEvent<HTMLInputElement> & OptionType, name?: string) => {
+    if (name) {
+      const value = e.value
+      return setSettings ({ ...settings, [name]: value })
+    }
+
     const value = e.target.value
     setSettings({ ...settings, [e.target.name]: value })
   }
 
   const saveChanges = async () => {
     const { startTime, endTime, interval, duration } = settings
+
     const automation = {
       startTime, endTime, interval, duration
     }
+
     const deviceId = defaultDevice._id
     const settingsId = defaultDeviceSettings._id
     const res = await editSettingsAndSendCommand({
@@ -90,15 +102,23 @@ export const Settings = () => {
         <div className='cycle-period__time-select-container'>
           <span className='title'>Período de atividade</span> de
           <CustomSelect
+            isDisabled={!editActivityPeriod}
+            onChange={(option: any) => handleChangeSettings(option, 'startTime')}
             options={timeOptions}
-            value={getCurrentTimeOption(settings.startTime)} />
+            defaultValue={getCurrentTimeOption(settings.startTime)} />
         </div>
         <div className='cycle-period__time-select-container'>
           até
           <CustomSelect
+            isDisabled={!editActivityPeriod}
+            onChange={(option: any) => handleChangeSettings(option, 'endTime')}
             options={timeOptions}
-            value={getCurrentTimeOption(settings.endTime)} />
+            defaultValue={getCurrentTimeOption(settings.endTime)} />
         </div>
+        <EditIconWithTooltip
+          onSave={saveChanges}
+          uniqueId='timeField'
+          onToggle={() => setEditActivityPeriod(!editActivityPeriod)} />
       </div>
       <div className='description'>
         O período de atividade é o intervalo do dia em que a estação local irá fazer o ciclo de automação.
@@ -125,7 +145,7 @@ export const Settings = () => {
   )
 
   const ManualWateringConfig = (
-    <div className='options options--manual-watering'>
+    <div className='options options--single'>
       <InputOption
         onSave={saveChanges}
         title='Timer da irrigação manual'
@@ -138,13 +158,18 @@ export const Settings = () => {
   )
 
   const MeasuresConfig = (
-    <InputOption
-      onSave={saveChanges}
-      title='Intervalo de envio'
-      onChange={handleChangeSettings}
-      value={settings.remoteMeasureInterval}
-      name='remoteMeasureInterval'
-    />
+    <div className='options options--single'>
+      <InputOption
+        onSave={saveChanges}
+        title='Intervalo de envio'
+        onChange={handleChangeSettings}
+        value={settings.remoteMeasureInterval}
+        name='remoteMeasureInterval'
+      />
+      <div className='description'>
+        Intervalo em que as medições serão salvas no histórico do dispositivo. Não afeta o recebimento em tempo real na tela de início.
+      </div>
+    </div>
   )
 
   const collapsibleOptions = [
@@ -171,7 +196,7 @@ export const Settings = () => {
     )
   })
 
-  return(
+  return (
     <div className='settings-view'>
       <div className='select-device__container'>
         <DeviceSelector allowNameEdition showDeviceInfo />

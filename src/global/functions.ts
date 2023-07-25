@@ -33,8 +33,6 @@ export const generateTicks = ({
     tickTimeStrings.push(dateToManipulate.add(valueToIncrement, momentType).format())
   }
 
-  console.log({ tickTimeStrings })
-
   const tickNumericValues = tickTimeStrings.map(timeString => moment(timeString).valueOf());
 
   return tickNumericValues

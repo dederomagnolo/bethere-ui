@@ -6,14 +6,14 @@
   &__info {
     margin-top: 20px;
 
+    .title {
+      font-weight: bold;
+      margin-right: 10px;
+    }
+    
     &__container {
       display: flex;
       align-items: center;
-
-      .title {
-        font-weight: bold;
-        margin-right: 10px;
-      }
     }
 
     p {

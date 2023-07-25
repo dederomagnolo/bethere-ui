@@ -8,13 +8,14 @@ import { CustomSelect } from '../ui-atoms/select'
 
 import { EditIconWithTooltip, Input } from 'components'
 import { getDeviceOptionsToSelect } from 'global/functions'
-import { editDeviceName, fetchUserDevices } from 'services/fetch'
+import { editDeviceName, fetchUserDevices, setDefaultDevice } from 'services/fetch'
 import { getToken } from 'redux/user/selectors'
 import { setUserDevices } from 'redux/device/actions'
 
 import { useFetch } from 'hooks/useFetch'
 
 import './styles.scss'
+import { Toggle } from 'components/ui-atoms/switch'
 
 interface DeviceSelectorProps {
   allowNameEdition?: boolean
@@ -42,12 +43,12 @@ export const DeviceSelector: React.FC<DeviceSelectorProps> = ({
   }, [token])
 
   const defaultDevice = _.find(userDevices, (device) => device.defaultDevice)
-  const deviceName = _.get(defaultDevice, 'deviceName')
+  const defaultDeviceName = _.get(defaultDevice, 'deviceName')
 
   const [selectedDevice, setSelectedDevice] = useState(defaultDevice || { _id: ''} )
   const [deviceNameEdition, setDeviceNameEdition] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [editedDeviceName, setEditedDeviceName] = useState(deviceName)
+  const [editedDeviceName, setEditedDeviceName] = useState(defaultDeviceName)
 
   const deviceSerialKey = _.get(selectedDevice, 'deviceSerialKey')
   const sensors = _.get(selectedDevice, 'sensors')
@@ -86,6 +87,17 @@ export const DeviceSelector: React.FC<DeviceSelectorProps> = ({
     )
   })
 
+  const handleToggleDefaultDevice = async (value: any) => {
+    const res = await setDefaultDevice({ token, deviceId: selectedDevice._id })
+    const userDevices = await fetchUserDevices({
+      token
+    })
+
+    dispatch(setUserDevices(userDevices))
+    const deviceFromOption = _.find(userDevices, (device) => device._id === selectedDevice._id)
+    setSelectedDevice(deviceFromOption)
+  }
+
   return (
     <div className='device-selector'>
       <h1>Dispositivo</h1>
@@ -116,6 +128,14 @@ export const DeviceSelector: React.FC<DeviceSelectorProps> = ({
               {mappedSensors}
             </div>
           </div> : null}
+          <div className='device-selector__info__container'>
+            <p className='title'>Dispositivo padrão</p>
+            <Toggle
+              disabled={selectedDevice.defaultDevice}
+              checked={selectedDevice.defaultDevice}
+              onChange={handleToggleDefaultDevice}
+            />
+          </div>
         </div>
       )}
     </div>

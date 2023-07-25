@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { useSelector } from 'react-redux';
 import useWebSocket from 'react-use-websocket';
 import _ from 'lodash'
@@ -6,89 +6,20 @@ import _ from 'lodash'
 import { GenericCard } from 'components'
 import { WateringCardData } from './blocks/watering-card-data'
 
-import BeatLoader from 'react-spinners/BeatLoader'
-
 import { getToken } from '../../redux/user/selectors'
 import { getUserDevices } from '../../redux/device/selectors'
 
 import {
-  RiSignalWifiErrorFill as WiFiErrorIcon
-} from 'react-icons/ri'
-
-import {
   TbCircleFilled as OnlineIcon,
   TbCircleXFilled as OfflineIcon,
-  TbCircleDotted as ConnectingIcon
 } from  'react-icons/tb'
-
-import {
-  FaTint as TintIcon,
-  FaThermometerHalf as ThermometerIcon,
-} from 'react-icons/fa'
-
-import { cards } from './utils/constants'
 
 import '../styles.scss'
 import './styles.scss'
 import { WsReadyState } from 'global/consts';
-
-const websocketUrl = 'ws://localhost:8080';
-
-const renderGenericCard = (type: string, CustomData?: any) => {
-  const { label, icon } = cards[type]
-  return (
-    <GenericCard
-      settingsButtonRoute='configuracoes'
-      type={type}
-      icon={icon}
-      label={label}
-      CustomData={CustomData} />
-  )
-}
-
-const LoadingIcon = () => <ConnectingIcon className='animated-dashed-loading' />
-
-const renderMeasures = (measures: any, loading: boolean) => { // type here
-  const MeasureLabel = ({ type }: { type: any } ) => {
-    let humidity = _.get(measures, 'internalHumidity') 
-    let temperature = _.get(measures, 'internalTemperature')
-
-    if (type === 'external') {
-      humidity = _.get(measures, 'externalHumidity')
-      temperature = _.get(measures, 'externalTemperature')
-    }
-
-    const renderMeasure = (data: number) => {
-      return loading ? <LoadingIcon /> : <span>{data}</span>
-    }
-    
-    return (
-      <div className='measures' key={type}>
-        <div className='measure'>
-          <div className='measure-label'>
-            <TintIcon className='measure-icon--humidity' />
-            <span className='measure-category'>Umidade</span>
-          </div>
-          <span className='measure-data'>{renderMeasure(humidity)}</span>
-        </div>
-        <div className='measure'>
-          <div className='measure-label'>
-            <ThermometerIcon className='measure-icon--temperature' />
-            <span className='measure-category'>Temperatura</span>
-          </div>
-          <span className='measure-data'>{renderMeasure(temperature)}</span>
-        </div>
-      </div>
-    )
-  }
-
-  return (
-    <div className='sensors'>
-      {renderGenericCard('sensor', () => <MeasureLabel type='external' />)}
-      {renderGenericCard('sensor', () => <MeasureLabel type='internal' />)}
-    </div>
-  )
-}
+import { LoadingIcon } from './blocks/loading-icon';
+import { Sensors } from './blocks/sensors';
+import { CARDS } from './utils/constants';
 
 export const Home = () => {
   const userDevices = useSelector(getUserDevices)
@@ -102,42 +33,26 @@ export const Home = () => {
   })
 
   const defaultDevice = _.find(userDevices, (device) => device.defaultDevice)
-  const deviceName = defaultDevice && defaultDevice.deviceName
+  const deviceName = _.get(defaultDevice, 'deviceName')
+  const deviceSensors = _.get(defaultDevice, 'sensors')
+  const isDeviceOffline = error.type !== ''
 
-  const { 
-    lastMessage,
-    readyState,
-    } = useWebSocket(websocketUrl, {
-    onMessage: (event) => console.log(event),
-    onOpen: (event) => {
-      console.log({
-        event
-      })
-      console.log(`Connecting to WebSocket Server...`)
-      setLoading(true)
-    },
-    onError: (err) => {
-      console.log(err)
-      setError({ type: 'websocket'})
-    },
-    onReconnectStop: () => setError({ type: 'websocket'}),
-    shouldReconnect: (closeEvent) => {
-      return true
-    },
-    reconnectAttempts: 10,
-    reconnectInterval: 3000,
-    queryParams: {
-      uiClient: token
-    }}
-  );
+  const {
+    defaultDeviceStatus,
+    measures,
+  } = deviceRealTimeData
+
+  useEffect(() => {
+    console.log('oi')
+  }, [defaultDevice])
 
   const handleDeviceNonResponding = () => {
     setLoading(false)
     setError({ type: 'device'})
   }
 
-  useEffect(() => {
-    const receivedData = lastMessage && lastMessage.data
+  const onMessage = (event: any) => {
+    const receivedData = event && event.data
     const parsedData = JSON.parse(receivedData)
 
     setTimeout(() => {
@@ -177,93 +92,121 @@ export const Home = () => {
         setError({ type: 'device'})
       }
     }
-  }, [lastMessage])
+  }
 
-  const renderPageContent = () => {
-    const {
-      defaultDeviceStatus,
-      measures,
-    } = deviceRealTimeData
+  const {
+    readyState,
+    } = useWebSocket(process.env.REACT_APP_WS_HOST || '', {
+    onMessage: (event) => {onMessage(event)},
+    onOpen: (event) => {
+      console.log(`Connecting to WebSocket Server...`)
+      setLoading(true)
+    },
+    onError: (err) => {
+      console.log(err)
+      setError({ type: 'websocket'})
+    },
+    onReconnectStop: () => setError({ type: 'websocket'}),
+    shouldReconnect: (closeEvent) => {
+      return true
+    },
+    filter: (message) => {
+      console.log(message.data)
+      return true      
+    },
+    reconnectAttempts: 10,
+    reconnectInterval: 3000,
+    queryParams: {
+      uiClient: token
+    }},
+  );
 
-    const StatusLabel = () => {
+  const StatusLabel = () => {
+    if (loading) {
+      return <LoadingIcon />
+    }
+
+    const offlineLabel = (
+      isDeviceOffline && (
+        <div className='device-status__offline-label'>
+          <OfflineIcon   className='wifi-error-icon'/>
+          <p>Offline</p>
+        </div>
+      )
+    )
+
+    return (
+      <div
+        className={`device-status device-status--${defaultDeviceStatus ? 'online' : 'offline'}`}>
+        {defaultDeviceStatus ? <p>Online</p> : offlineLabel}
+      </div>
+    )
+  }
+
+  const renderWebsocketConnectionStatus = () => {
+    const containerClass = 'server-connection-status'
+    const StatusLabelWithIcon = () => {
       if (loading) {
         return <LoadingIcon />
       }
 
-      const shouldRenderOfflineLabel = error.type !== ''
-
-      const offlineLabel = (
-        shouldRenderOfflineLabel && <div>
-          <div>
-            <WiFiErrorIcon className='wifi-error-icon'/>
-            <span>Offline</span>
-          </div>
-          {/* {<span className='reconnect-label'>Reconnecting </span>} */}
-        </div>
-      )
-
-      return (
-        <span
-          className={`device-status device-status--${defaultDeviceStatus ? 'online' : 'offline'}`}>
-          {defaultDeviceStatus ? 'Online' : offlineLabel}
-        </span>
-      )
-    }
-
-    const renderWebsocketConnectionStatus = () => {
-      const containerClass = 'server-connection-status'
-      const StatusIcon = () => {
-        if (loading) {
+      switch (readyState) {
+        case WsReadyState.OPEN:
+          return (
+            <div className='server-connection-status__icon-container'>
+              <div className='server-connection-status__animated-icon__bg-pulse' />
+              <OnlineIcon className={`${containerClass}--online`}/>
+              <p>Disponível</p>
+            </div>
+          )
+        case WsReadyState.CONNECTING:
           return <LoadingIcon />
-        }
-
-        switch (readyState) {
-          case WsReadyState.OPEN:
-            return <OnlineIcon className={`${containerClass}--online`}/>
-          case WsReadyState.CONNECTING:
-            return <LoadingIcon />
-          default:
-            return <OfflineIcon className={`${containerClass}--offline`}/>
-        }
+        default:
+          return (
+          <div className='server-connection-status__icon-container'>
+            <OfflineIcon className={`${containerClass}--offline`}/>
+            <p>Sem conexão</p>
+          </div>
+        )
       }
-
-      return (
-        <div className='server-connection-status'>
-          <h3>Conexão com o servidor:</h3>
-          <StatusIcon />
-        </div>
-      )
     }
 
     return (
-      <>
-        <h2>Estação local</h2>
-        {renderWebsocketConnectionStatus()}
-        <GenericCard
-          CustomData={StatusLabel}
-          settingsButtonRoute='/configuracoes'
-          label={deviceName} />
-        <h2>Medições</h2>
-        <div className='dashboard'>
-          {renderMeasures(measures, loading)}
-          <GenericCard
-            settingsButtonRoute='configuracoes'
-            type='watering'
-            icon={cards['watering'].icon}
-            label={cards['watering'].label}
-            CustomData={() => 
-              <WateringCardData
-                deviceRealTimeData={deviceRealTimeData}
-                device={defaultDevice}
-                wsStatus={readyState} />} />
+      <div className='server-connection-status'>
+        <h3>Status do servidor:</h3>
+        <div className='server-connection-status__container'>
+          <StatusLabelWithIcon />
         </div>
-      </>
+      </div>
     )
   }
   
   return(
     <div className='page-content home-view'>
-      {renderPageContent()}
+      {renderWebsocketConnectionStatus()}
+      <h2>Estação local</h2>
+      <GenericCard
+        CustomData={StatusLabel}
+        settingsButtonRoute='/configuracoes'
+        label={deviceName} />
+      <div className='dashboard'>
+        <Sensors
+          isDeviceOffline={!defaultDeviceStatus}
+          measures={measures}
+          loading={loading}
+          sensors={deviceSensors} />
+        <GenericCard
+          settingsButtonRoute='configuracoes'
+          type='watering'
+          icon={CARDS['watering'].icon}
+          label={CARDS['watering'].label}
+        >
+          <WateringCardData
+            deviceRealTimeData={{defaultDeviceStatus: true, measures: [], lastCommandReceived: '' }}
+            device={defaultDevice}
+            wsStatus={1} />
+        </GenericCard>
+      </div>
     </div>
   )
 }
