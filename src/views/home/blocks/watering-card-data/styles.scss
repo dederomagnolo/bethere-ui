@@ -1,10 +1,17 @@
 .watering-card {
-  padding-top: 10px;
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 18px;
   align-items: flex-end;
+  height: auto;
+
+  &__options {
+    display: flex;
+    margin-top: 14px;
+    flex-direction: column;
+    height: 100%;
+    justify-content: center;
+  }
 
   .option {
     display: flex;
@@ -12,6 +19,11 @@
     justify-content: flex-end;
     width: 100%;
     gap: 8px;
+
+    &__status-label {
+      font-size: 12px;
+      margin: 0 0 14px 0;
+    }
 
     span {
       font-size: 14px;
@@ -22,7 +34,6 @@
 
       span {
         width: 60px;
-        margin-left: 10px;
       }
     }
   }

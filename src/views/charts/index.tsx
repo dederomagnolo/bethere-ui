@@ -26,13 +26,6 @@ const mergeMeasureBatchDataToPlot = (dataToMerge: any) => {
   return _.merge(formattedData[0], formattedData[1])
 }
 
-const mapToPlot = (dataToMap: any) => {
-  return _.map(dataToMap, (measure) => ({
-    x: (moment(measure.createdAt)).valueOf(),
-    [measure.type]: measure.value,
-  }))
-}
-
 export const Charts = () => {
   const token = useSelector(getToken)
   const deviceId = useSelector(getDefaultDeviceId)
@@ -57,8 +50,6 @@ export const Charts = () => {
     updateMeasuresHistory(startDateToQuery)
   }, [])
 
-  const humidityChartData = _.pick(measures, 'externalHumidity', 'internalHumidity')
-  const temperatureChartData = _.pick(measures, 'externalTemperature', 'internalTemperature')
 
   const handleDateChange = async (date : any) => {
     const dateToQueryHistory = moment(date).startOf('day')
@@ -67,31 +58,46 @@ export const Charts = () => {
   }
 
   const renderCharts = () => {
-    let mapped = { temperature: [], humidity: []}
+    let mapped = {}
+    console.log({measures})
     _.forEach(measures, (sensor, index) => {
       const groupedByType = _.groupBy(sensor, 'origin')
+      console.log({
+        groupedByType
+      })
       mapped = { ...mapped, [index]: groupedByType }
     })
 
-    const measureTypes = _.keys(mapped)
+    console.log({
+      mapped
+    })
+
     const mappedCharts = _.map(mapped, (measureType, key: any) => {
       const dataToPlot = mergeMeasureBatchDataToPlot(measureType)
       const keys = _.keys(measureType)
+
+      if(loading) {
+        return <Loading Component={PuffLoader} />
+      }
+
+      const shouldRenderChart = !_.isEmpty(dataToPlot)
+      console.log({dataToPlot, measureType, key, keys})
       return (
         <div className='charts__chart-container'>
-          {loading
-            ? <Loading Component={PuffLoader} />
-            : <CustomLineChart
+          {shouldRenderChart ? <CustomLineChart
+              key={`${measureType}-${key}`}
               measureType={key}
               dataToPlot={dataToPlot}
               lineDataKeys={keys}
-              dateToAjdustTicks={selectedDate} />}
+              dateToAjdustTicks={selectedDate} /> : null}
         </div>
       )
     })
+
+
     return (
       <div className='charts'>
-        {mappedCharts}
+        {!_.isEmpty(mapped) ? mappedCharts : <p>Não foram registradas medidas nesta data.</p>}
       </div>
     )
   }

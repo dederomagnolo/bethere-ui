@@ -134,3 +134,11 @@ export const editSettingsAndSendCommand = async ({
 
   return updatedDevices
 }
+
+export const checkToken = async (token) => {
+  return await callApi({
+    token,
+    method: 'POST',
+    service: '/user/check'
+  })
+}

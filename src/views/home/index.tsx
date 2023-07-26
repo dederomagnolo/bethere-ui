@@ -1,13 +1,13 @@
-import { useEffect, useState, useMemo } from 'react'
-import { useSelector } from 'react-redux';
+import { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux';
 import useWebSocket from 'react-use-websocket';
 import _ from 'lodash'
 
 import { GenericCard } from 'components'
 import { WateringCardData } from './blocks/watering-card-data'
 
-import { getToken } from '../../redux/user/selectors'
-import { getUserDevices } from '../../redux/device/selectors'
+import { getToken } from 'redux/user/selectors'
+import { getUserDevices } from 'redux/device/selectors'
 
 import {
   TbCircleFilled as OnlineIcon,
@@ -20,16 +20,20 @@ import { WsReadyState } from 'global/consts';
 import { LoadingIcon } from './blocks/loading-icon';
 import { Sensors } from './blocks/sensors';
 import { CARDS } from './utils/constants';
+import { checkToken } from 'services/fetch';
+import { clearUserState } from 'redux/user/actions';
 
 export const Home = () => {
   const userDevices = useSelector(getUserDevices)
   const token = useSelector(getToken)
+  const dispatch = useDispatch()
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState({ type: '' })
   const [deviceRealTimeData, setDeviceRealTimeData] = useState({
     defaultDeviceStatus: false,
     measures: [],
-    lastCommandReceived: ''
+    lastCommandReceived: '',
+    wateringStatus: {}
   })
 
   const defaultDevice = _.find(userDevices, (device) => device.defaultDevice)
@@ -40,19 +44,47 @@ export const Home = () => {
   const {
     defaultDeviceStatus,
     measures,
+    wateringStatus
   } = deviceRealTimeData
 
-  useEffect(() => {
-    console.log('oi')
-  }, [defaultDevice])
+  console.log({
+    wateringStatus
+  })
 
   const handleDeviceNonResponding = () => {
     setLoading(false)
     setError({ type: 'device'})
   }
 
-  const onMessage = (event: any) => {
-    const receivedData = event && event.data
+  const {
+    lastMessage,
+    readyState
+    } = useWebSocket(process.env.REACT_APP_WS_HOST || '', {
+    onMessage: (event) => {},
+    onOpen: (event) => {
+      console.log(`Connecting to WebSocket Server...`)
+      setLoading(true)
+    },
+    onError: async (err: any) => {
+      setError({ type: 'websocket'})
+      const res = await checkToken(token)
+      if(res && res.status === 401) {
+        dispatch(clearUserState())
+      }
+    },
+    onReconnectStop: () => setError({ type: 'websocket'}),
+    shouldReconnect: (closeEvent) => {
+      return true
+    },
+    reconnectAttempts: 10,
+    reconnectInterval: 3000,
+    queryParams: {
+      uiClient: token
+    }},
+  )
+
+  useEffect(() => {
+    const receivedData = lastMessage && lastMessage.data
     const parsedData = JSON.parse(receivedData)
 
     setTimeout(() => {
@@ -63,7 +95,8 @@ export const Home = () => {
       const {
         connectedDevices,
         measures,
-        lastCommandReceived
+        lastCommandReceived,
+        wateringStatus
       } = parsedData
 
       // need to get last command received from DB while this is loading
@@ -83,7 +116,8 @@ export const Home = () => {
       setDeviceRealTimeData({
         measures,
         lastCommandReceived,
-        defaultDeviceStatus: isConnectedDeviceDefault
+        defaultDeviceStatus: isConnectedDeviceDefault,
+        wateringStatus
       })
 
       setLoading(false)
@@ -92,34 +126,8 @@ export const Home = () => {
         setError({ type: 'device'})
       }
     }
-  }
+  }, [lastMessage])
 
-  const {
-    readyState,
-    } = useWebSocket(process.env.REACT_APP_WS_HOST || '', {
-    onMessage: (event) => {onMessage(event)},
-    onOpen: (event) => {
-      console.log(`Connecting to WebSocket Server...`)
-      setLoading(true)
-    },
-    onError: (err) => {
-      console.log(err)
-      setError({ type: 'websocket'})
-    },
-    onReconnectStop: () => setError({ type: 'websocket'}),
-    shouldReconnect: (closeEvent) => {
-      return true
-    },
-    filter: (message) => {
-      console.log(message.data)
-      return true      
-    },
-    reconnectAttempts: 10,
-    reconnectInterval: 3000,
-    queryParams: {
-      uiClient: token
-    }},
-  );
 
   const StatusLabel = () => {
     if (loading) {
@@ -202,7 +210,8 @@ export const Home = () => {
           label={CARDS['watering'].label}
         >
           <WateringCardData
-            deviceRealTimeData={{defaultDeviceStatus: true, measures: [], lastCommandReceived: '' }}
+            connectionLoading={loading}
+            deviceRealTimeData={deviceRealTimeData}
             device={defaultDevice}
             wsStatus={1} />
         </GenericCard>

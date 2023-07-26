@@ -47,10 +47,6 @@ export const GenericCard = ({
   children
 } : GenericCardProps) => {
 
-  useEffect(() => {
-    console.log('card mount')
-  }, [])
-
   const renderSettingsButton = () =>
     settingsButtonRoute && (
       <div className='generic-card__settings'>

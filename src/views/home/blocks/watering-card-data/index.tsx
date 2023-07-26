@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import _ from 'lodash'
-import { useSelector } from 'react-redux'
+import { useSelector,  useDispatch } from 'react-redux'
 
 import { COMMANDS, WsReadyState } from 'global/consts'
 import callApi from 'services/callApi'
@@ -11,6 +11,9 @@ import { Toggle } from 'components/ui-atoms/switch'
 import { PulsingCircle } from 'components/ui-atoms/pulsing-circle'
 
 import './styles.scss'
+import { LoadingIcon } from '../loading-icon'
+import { editSettingsAndSendCommand } from 'services/fetch'
+import { setUserDevices } from 'redux/device/actions'
 
 
 interface WateringCardDataProps {
@@ -21,20 +24,23 @@ interface WateringCardDataProps {
     measures: any
     lastCommandReceived: string
   }
+  connectionLoading: boolean
 }
 
 export const WateringCardData = ({
   wsStatus,
   device,
-  deviceRealTimeData
+  deviceRealTimeData,
+  connectionLoading
 } : WateringCardDataProps) => {
   const token = useSelector(getToken)
   const userId = useSelector(getUserId)
+  const dispatch = useDispatch()
 
   const {
     defaultDeviceStatus,
     lastCommandReceived
-  } = deviceRealTimeData
+} = deviceRealTimeData
   const isRealTimeWateringStateEnabled = lastCommandReceived === COMMANDS.MANUAL_WATERING.OPTIONS.ON
   const deviceSettings = _.get(device, 'settings[0]')
   const autoWateringEnabled = _.get(deviceSettings, 'automation.enabled')
@@ -43,10 +49,6 @@ export const WateringCardData = ({
   const [autoModeEnabled, setAutoModeEnabled] = useState(autoWateringEnabled)
 
   const deviceId = _.get(device, '_id')
-
-  useEffect(() => {
-    console.log('mount')
-  }, [])
 
   useEffect(() => {
     setWateringEnabled(isRealTimeWateringStateEnabled)
@@ -79,17 +81,41 @@ export const WateringCardData = ({
     }
   }
 
+  const handleSendAutoCommand = async () => {
+    const settingsId = deviceSettings._id
+    const res = await editSettingsAndSendCommand({
+        token,
+        settingsPayload: {
+          settingsId, 
+          deviceId,
+          automation: {
+            enabled: !autoModeEnabled
+          }
+        },
+      }
+    )
+
+    if (res) {
+      dispatch(setUserDevices(res))
+      setAutoModeEnabled(!autoModeEnabled)
+    }
+  }
+
   const renderOperationLabel = () => {
     let operationLabel = 'Offline' 
     let pulsingCircleType = 'offline'
 
-    if(defaultDeviceStatus) {
-      if(wateringEnabled) {
+    if (connectionLoading) {
+      return <LoadingIcon />
+    }
+
+    if (defaultDeviceStatus) {
+      pulsingCircleType = 'online'
+      operationLabel = 'Disponível'
+      
+      if (wateringEnabled) {
         pulsingCircleType = 'progress'
         operationLabel = 'Irrigação manual ligada'
-      } else {
-        pulsingCircleType = 'online'
-        operationLabel = 'Disponível'
       }
     }
 
@@ -97,7 +123,7 @@ export const WateringCardData = ({
     return (
       <div className='option'>
         <PulsingCircle type={pulsingCircleType} />
-        <span>{operationLabel}</span>
+        <span>{connectionLoading ? 'loading' : operationLabel}</span>
       </div>
     )
   }
@@ -105,22 +131,27 @@ export const WateringCardData = ({
   return (
     <div className='watering-card'>
       {renderOperationLabel()}
-      
-      <div className='option option--toggle'>
-        <Toggle
-          disabled={!defaultDeviceStatus}
-          checked={autoModeEnabled}
-          onChange={() => {}}
-        />
-        <span>Auto</span>
-      </div>
-      <div className='option option--toggle'>
-        <Toggle
-          disabled={!defaultDeviceStatus}
-          checked={wateringEnabled}
-          onChange={handleSendCommand}
-        />
-        <span>Manual</span>
+      <div className='watering-card__options'>
+        <div className='option option--toggle'>
+          <span>Auto</span>
+          <div>
+            <Toggle
+              disabled={connectionLoading}
+              checked={autoModeEnabled}
+              onChange={handleSendAutoCommand}
+            />
+          </div>
+        </div>
+        <span className='option__status-label'>Próxima ligação:</span>
+        <div className='option option--toggle'>
+            <span>Manual</span>
+            <Toggle
+              disabled={connectionLoading}
+              checked={wateringEnabled}
+              onChange={handleSendCommand}
+            />
+        </div>
+        {wateringEnabled ? <span className='option__status-label'>Tempo restante:</span> : null}
       </div>
     </div>
   )

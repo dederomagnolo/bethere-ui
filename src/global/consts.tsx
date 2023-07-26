@@ -19,11 +19,11 @@ export const COMMANDS: any = {
     }
   },
   AUTO_WATERING_MODE: {
-    CATEGORY_NAME: 'Auto Watering Mode',
+    CATEGORY_NAME: 'Auto Watering',
     CATEGORY_NAME_PT: 'Irrigação Automática',
     OPTIONS: {
-      ON: 'WR_ON',
-      OFF: 'WR_OFF'
+      ON: 'AW1',
+      OFF: 'AW0'
     }
   },
   RESET_LOCAL_STATION: {

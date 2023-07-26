@@ -12,18 +12,7 @@ import {
 
 import _ from 'lodash'
 import moment from 'moment'
-import { generateTicks } from 'global/functions';
-
-const translatedDataType = {
-  'externalHumidity': {
-    translated: 'Sensor Externo',
-    unity: '%'
-  },
-  'externalTemperature': {
-    translated: '',
-    unity: '°C'
-  }
-} as any
+import { generateTicks } from 'global/functions'
 
 const unityByType = {
   temperature: '°C',
@@ -81,7 +70,6 @@ export const CustomLineChart = ({
         <Tooltip 
           labelFormatter={(test) =>  moment(test).format('HH:mm')}/>
         <Legend formatter={(value: any) => {
-          console.log({value})
             return sensors[value]}
           } />
         <Line type='monotone' dataKey={lineDataKeys[0]} stroke="#8884d8" />
