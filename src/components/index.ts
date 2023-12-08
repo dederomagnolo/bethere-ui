@@ -10,5 +10,6 @@ export {
   CustomSelect,
   Input,
   Loading,
-  CustomDatePicker
+  CustomDatePicker,
+  Toggle
 } from './ui-atoms'

@@ -71,6 +71,24 @@ export const editDeviceName = async ({
   })
 }
 
+export const editSensorName = async ({
+  token,
+  sensorId,
+  sensorName
+}) => {
+  const apiCall = async () => callApi({
+    method: 'POST',
+    service: '/sensors/edit',
+    payload: {
+      sensorId,
+      sensorName
+    },
+    token
+  })
+
+  return tryToCallService({ apiCall })
+}
+
 export const setDefaultDevice = async ({ deviceId, token }) => {
   try {
     const res = await callApi({

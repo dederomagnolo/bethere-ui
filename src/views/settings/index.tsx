@@ -126,7 +126,7 @@ export const Settings = () => {
       <InputOption
         onSave={saveChanges}
         name='interval'
-        title='Intervalo'
+        title='Intervalo (min)'
         onChange={handleChangeSettings}
         value={settings.interval}
       />
@@ -134,7 +134,7 @@ export const Settings = () => {
       <InputOption
         onSave={saveChanges}
         name='duration'
-        title='Tempo de irrigação'
+        title='Tempo de irrigação (min)'
         onChange={handleChangeSettings}
         value={settings.duration}
       />
@@ -148,7 +148,7 @@ export const Settings = () => {
     <div className='options options--single'>
       <InputOption
         onSave={saveChanges}
-        title='Timer da irrigação manual'
+        title='Tempo de irrigação manual (min)'
         onChange={handleChangeSettings}
         value={settings.wateringTimer}
         name='wateringTimer'
@@ -161,7 +161,7 @@ export const Settings = () => {
     <div className='options options--single'>
       <InputOption
         onSave={saveChanges}
-        title='Intervalo de envio'
+        title='Intervalo de envio (min)'
         onChange={handleChangeSettings}
         value={settings.remoteMeasureInterval}
         name='remoteMeasureInterval'

@@ -6,16 +6,15 @@ import { getUserDevices } from 'redux/device/selectors'
 
 import { CustomSelect } from '../ui-atoms/select'
 
-import { EditIconWithTooltip, Input } from 'components'
+import { EditIconWithTooltip, Input, Toggle } from 'components'
 import { getDeviceOptionsToSelect } from 'global/functions'
-import { editDeviceName, fetchUserDevices, setDefaultDevice } from 'services/fetch'
+import { editDeviceName, fetchUserDevices, setDefaultDevice, editSensorName } from 'services/fetch'
 import { getToken } from 'redux/user/selectors'
 import { setUserDevices } from 'redux/device/actions'
 
 import { useFetch } from 'hooks/useFetch'
 
 import './styles.scss'
-import { Toggle } from 'components/ui-atoms/switch'
 
 interface DeviceSelectorProps {
   allowNameEdition?: boolean
@@ -45,13 +44,20 @@ export const DeviceSelector: React.FC<DeviceSelectorProps> = ({
   const defaultDevice = _.find(userDevices, (device) => device.defaultDevice)
   const defaultDeviceName = _.get(defaultDevice, 'deviceName')
 
-  const [selectedDevice, setSelectedDevice] = useState(defaultDevice || { _id: ''} )
+  const [selectedDevice, setSelectedDevice] = useState(defaultDevice || { _id: '' } )
+  const [selectedSensor, setSelectedSensor] = useState({ name:'', model: '', _id: '' })
   const [deviceNameEdition, setDeviceNameEdition] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [editedDeviceName, setEditedDeviceName] = useState(defaultDeviceName)
 
+  const [loading, setLoading] = useState(false)
+
+  const [editedDeviceName, setEditedDeviceName] = useState(defaultDeviceName)
+  const [editedSensorName, setEditedSensorName] = useState('')
   const deviceSerialKey = _.get(selectedDevice, 'deviceSerialKey')
-  const sensors = _.get(selectedDevice, 'sensors')
+  
+  // to get from most updated devices collection
+  const sensors = _.find(userDevices, (device) => {
+    return selectedDevice._id === device._id
+  }).sensors
 
   const deviceSelectOptions = getDeviceOptionsToSelect(userDevices)
   const indexOfDefaultDeviceInOptions =
@@ -76,14 +82,28 @@ export const DeviceSelector: React.FC<DeviceSelectorProps> = ({
     setEditedDeviceName(e.target.value)
   }
 
+  const handleChangeSelectedSensorName = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEditedSensorName(e.target.value)
+  }
+
   const handleDeviceChange = ({ value }: { value: string, label: string }) => {
     const deviceFromOption = _.find(userDevices, (device) => device._id === value)
     setSelectedDevice(deviceFromOption)
   }
+  
 
   const mappedSensors = _.map(sensors, (sensor: any) => {
+  const name = sensor.name || sensor.model
     return (
-      <p key={sensor._id} className='sensors__card'>{sensor.model}</p>
+      <div
+        onClick={() => {
+          setSelectedSensor(sensor)
+          setEditedSensorName(name)
+        }}
+        key={sensor._id}
+        className={`sensors-list__card ${selectedSensor._id === sensor._id ? 'selected' : ''}`}>
+        {name}
+      </div>
     )
   })
 
@@ -96,6 +116,24 @@ export const DeviceSelector: React.FC<DeviceSelectorProps> = ({
     dispatch(setUserDevices(userDevices))
     const deviceFromOption = _.find(userDevices, (device) => device._id === selectedDevice._id)
     setSelectedDevice(deviceFromOption)
+  }
+
+  const handleSaveSensorName = async () => {
+    setSelectedSensor({ name: '', model: '', _id: ''})
+
+    if(editedSensorName === selectedSensor.name) return null
+
+    await editSensorName({
+      token,
+      sensorId: selectedSensor._id,
+      sensorName: editedSensorName
+    })
+
+    const userDevices = await fetchUserDevices({
+      token
+    })
+
+    dispatch(setUserDevices(userDevices))
   }
 
   return (
@@ -122,12 +160,6 @@ export const DeviceSelector: React.FC<DeviceSelectorProps> = ({
             <p className='title'>Código Serial:</p>
             <p>{deviceSerialKey}</p>
           </div>
-          {sensors && sensors.length ? <div className='device-selector__info__container'>
-            <p className='title'>{sensors.length > 1 ? 'Sensores' : 'Sensor'}:</p>
-            <div className='sensors'>
-              {mappedSensors}
-            </div>
-          </div> : null}
           <div className='device-selector__info__container'>
             <p className='title'>Dispositivo padrão</p>
             <Toggle
@@ -136,6 +168,24 @@ export const DeviceSelector: React.FC<DeviceSelectorProps> = ({
               onChange={handleToggleDefaultDevice}
             />
           </div>
+          {sensors && sensors.length ? <div className='device-selector__info__container'>
+            <p className='title'>{sensors.length > 1 ? 'Sensores' : 'Sensor'}:</p>
+            <div className='sensors-list'>
+              {mappedSensors}
+            </div>
+          </div> : null}
+          {_.isEmpty(selectedSensor.model) ? null : (
+              <div className='device-selector__info__container'>
+                <p className='title'>Nome:</p>
+                <Input
+                  onChange={handleChangeSelectedSensorName}
+                  value={editedSensorName} />
+                <EditIconWithTooltip
+                  saveMode
+                  uniqueId='device-selector'
+                  onSave={handleSaveSensorName}/>
+              </div>
+          )}
         </div>
       )}
     </div>

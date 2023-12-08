@@ -6,3 +6,9 @@ export const setGlobalError = (payload: ErrorProps) => {
     payload
   }
 }
+
+export const clearGlobalState = () => {
+  return {
+    type: 'GLOBAL_CLEAR_STATE'
+  }
+}

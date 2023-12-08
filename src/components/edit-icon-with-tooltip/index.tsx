@@ -17,16 +17,18 @@ export interface EditWithTooltipProps {
   onSave?: MouseEventHandler
   onEdit?: MouseEventHandler,
   onToggle?: Function
-  uniqueId: string
+  uniqueId: string,
+  saveMode?: boolean
 }
 
 export const EditIconWithTooltip = ({
   onSave,
   onEdit,
   onToggle,
-  uniqueId
+  uniqueId,
+  saveMode
 } : EditWithTooltipProps ) => {
-  const [editMode, setEditMode] = useState(false)
+  const [editMode, setEditMode] = useState(saveMode)
 
   const handleSave = (event: any) => {
     onSave && onSave(event)

@@ -22,7 +22,8 @@ interface WateringCardDataProps {
   deviceRealTimeData: {
     defaultDeviceStatus: boolean
     measures: any
-    lastCommandReceived: string
+    lastCommandReceived: string,
+    wateringStatus: any
   }
   connectionLoading: boolean
 }
@@ -39,14 +40,22 @@ export const WateringCardData = ({
 
   const {
     defaultDeviceStatus,
-    lastCommandReceived
+    lastCommandReceived,
+    wateringStatus = {}
 } = deviceRealTimeData
+
+  console.log({deviceRealTimeData})
   const isRealTimeWateringStateEnabled = lastCommandReceived === COMMANDS.MANUAL_WATERING.OPTIONS.ON
   const deviceSettings = _.get(device, 'settings[0]')
-  const autoWateringEnabled = _.get(deviceSettings, 'automation.enabled')
+  const autoWateringModeEnabled = _.get(deviceSettings, 'automation.enabled')
+  const {
+    elapsedTime,
+    autoRelayEnabled,
+    manualRelayEnabled
+  } = wateringStatus
 
   const [wateringEnabled, setWateringEnabled] = useState(isRealTimeWateringStateEnabled)
-  const [autoModeEnabled, setAutoModeEnabled] = useState(autoWateringEnabled)
+  const [autoModeEnabled, setAutoModeEnabled] = useState(autoWateringModeEnabled)
 
   const deviceId = _.get(device, '_id')
 

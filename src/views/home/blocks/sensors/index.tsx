@@ -19,7 +19,7 @@ const renderGenericCard = (type: string, CustomData?: any) => {
   const { label, icon } = CARDS[type]
   return (
     <GenericCard
-      settingsButtonRoute='configuracoes'
+      // settingsButtonRoute='configuracoes'
       type={type}
       icon={icon}
       label={label}

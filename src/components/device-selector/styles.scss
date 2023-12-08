@@ -5,6 +5,9 @@
 
   &__info {
     margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 
     .title {
       font-weight: bold;
@@ -21,7 +24,7 @@
       margin: 10px 0;
     }
 
-    .sensors {
+    .sensors-list {
       display: flex;
       gap: 12px;
 
@@ -31,6 +34,15 @@
         padding: 6px;
         border-radius: 6px;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 3px 5px rgba(0, 0, 0, 0.1);
+
+        &:hover {
+          transition: all 300ms ease;
+          background-color: rgba(132, 141, 173, 0.116);
+        }
+
+        &.selected {
+          background-color: rgba(132, 141, 173, 0.116);
+        }
       }
     }
   }
