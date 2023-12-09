@@ -2,8 +2,13 @@ import React, { useState } from 'react';
 import _  from 'lodash'
 import { useDispatch, useSelector } from 'react-redux';
 
-
-import { AppCollapsible, Button, CustomSelect, EditIconWithTooltip} from 'components';
+import {
+  AppCollapsible,
+  Button,
+  CustomSelect,
+  EditIconWithTooltip,
+  Checkbox
+} from 'components';
 import { getTimeOptions } from './functions';
 
 import './styles.scss'
@@ -12,8 +17,9 @@ import { DeviceSelector } from 'components/device-selector';
 import { InputOption } from './input-option';
 
 import { getToken } from 'redux/user/selectors';
-import { editSettingsAndSendCommand } from 'services/fetch';
+import { editSettingsAndSendCommand, fetchUserDevices } from 'services/fetch';
 import { setUserDevices } from 'redux/device/actions';
+import { editSettings } from 'services/settings';
 
 type OptionType = {
   value: Number | String
@@ -31,7 +37,8 @@ export const Settings = () => {
     interval: '',
     duration: '',
     wateringTimer: '',
-    remoteMeasureInterval: ''
+    remoteMeasureInterval: '',
+    intervalInHours: false
   }
 
   // evolution: need to update here to get default settings selected by user
@@ -43,19 +50,21 @@ export const Settings = () => {
       endTime,
       interval,
       duration,
+      intervalInHours
     },
     wateringTimer,
     remoteMeasureInterval
   } = defaultDeviceSettings
 
-  const [loading, setLoading] = useState(false)
+  // const [loading, setLoading] = useState(false)
   const [settings, setSettings] = useState({
     startTime,
     endTime,
     interval,
     duration,
     wateringTimer,
-    remoteMeasureInterval
+    remoteMeasureInterval,
+    intervalInHours
   })
   const [editActivityPeriod, setEditActivityPeriod] = useState(false)
 
@@ -84,12 +93,38 @@ export const Settings = () => {
           settingsId, 
           deviceId,
           automation,
-          ..._.omit(settings, 'startTime, endTime, interval, duration')
+          ..._.omit(settings, 'startTime, endTime, interval, duration, intervalInHours')
         },
       }
     )
 
     dispatch(setUserDevices(res))
+  }
+
+  const saveIntervalInHours = async () => {
+    const { startTime, endTime, interval, duration } = settings
+
+    const automation = {
+      startTime, endTime, interval, duration, intervalInHours: !intervalInHours
+    }
+
+    const deviceId = defaultDevice._id
+    const settingsId = defaultDeviceSettings._id
+    const res = await editSettings({
+      token,
+      settingsPayload: {
+        settingsId,
+        deviceId,
+        automation,
+        ..._.omit(settings, 'startTime, endTime, interval, duration, intervalInHours')
+      }
+    })
+
+    const updatedDevices = await fetchUserDevices({
+      token
+    })
+
+    dispatch(setUserDevices(updatedDevices))
   }
 
   const getCurrentTimeOption = (timeValue: number) => {
@@ -123,13 +158,21 @@ export const Settings = () => {
       <div className='description'>
         O período de atividade é o intervalo do dia em que a estação local irá fazer o ciclo de automação.
       </div>
-      <InputOption
-        onSave={saveChanges}
-        name='interval'
-        title='Intervalo (min)'
-        onChange={handleChangeSettings}
-        value={settings.interval}
-      />
+      <div className='interval-option'>
+        <InputOption
+          onSave={saveChanges}
+          name='interval'
+          title={`Intervalo (${intervalInHours ? 'hrs' : 'min'})`}
+          onChange={handleChangeSettings}
+          value={settings.interval}
+        />
+        <Checkbox
+          inititalState={intervalInHours}
+          className='interval-option__checkbox'
+          label='Utilizar intervalo de  tempo em horas'
+          onChange={saveIntervalInHours}
+        />
+      </div>
       <div className='description'>O intervalo é o tempo entre um ciclo de irrigação e outro.</div>
       <InputOption
         onSave={saveChanges}

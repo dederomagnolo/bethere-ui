@@ -77,6 +77,16 @@
             width: 120px;
           }
         }
+
+        .interval-option {
+          display: flex;
+          gap: 60px;
+          align-items: center;
+
+          &__checkbox {
+            font-size: 12px;
+          }
+        }
       }
     }
   }

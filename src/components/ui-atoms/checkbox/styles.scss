@@ -1,0 +1,9 @@
+.app-checkbox {
+  display: flex;
+  align-items: center;
+
+  input[type='checkbox'] {
+    margin-left: 0;
+    accent-color: #4e9eac;
+  }
+}

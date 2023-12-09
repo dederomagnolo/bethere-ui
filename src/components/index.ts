@@ -11,5 +11,6 @@ export {
   Input,
   Loading,
   CustomDatePicker,
-  Toggle
+  Toggle,
+  Checkbox
 } from './ui-atoms'
