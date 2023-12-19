@@ -13,14 +13,22 @@ import { CustomLineChart } from './custom-line-chart'
 
 import './styles.scss'
 
+const checkForFailurePoint = (value: any, positionAhead: any) => {
+  console.log({value, failure: value > 900, positionAhead})
+  return value > 900 ? positionAhead : value
+}
+
 const mergeMeasureBatchDataToPlot = (dataToMerge: any) => {
   const formattedData = [] as any
   _.forEach(dataToMerge, (batch, key: any) => {
-    const formattedBatch = _.map(batch, (measure) => ({
-      x: (moment(measure.createdAt)).valueOf(),
-      [measure.origin]: measure.value,
-    }))
-    formattedData.push(formattedBatch)
+    const formattedBatch = _.map(batch, (measure: any, index: any) => {
+      if (measure.value > 900) return null
+      return {
+        x: (moment(measure.createdAt)).valueOf(),
+        [measure.origin]: measure.value
+      }
+    })
+    formattedData.push(_.compact(formattedBatch))
   })
 
   return _.merge(formattedData[0], formattedData[1])
