@@ -72,12 +72,12 @@ export const Sensors = ({ sensors, measures = [], loading, isDeviceOffline }: an
   }
 
   const mappedSensorCards = _.map(sensors, (sensor) => {
-    const serialKey = _.get(sensor, 'serialKey', '').toLowerCase()
+    const serialKey = _.get(sensor, 'serialKey', '')
     const broadcastedSensors = _.keys(measures)
     const broadcastedMeasures = broadcastedSensors.includes(serialKey) ? measures[serialKey] : null
 
     return renderGenericCard(
-      'sht20',
+      sensor.model,
       () => <MeasureLabel type={sensor.model} measuresBySensor={broadcastedMeasures} />)
   })
 

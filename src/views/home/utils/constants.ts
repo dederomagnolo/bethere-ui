@@ -7,8 +7,12 @@ import {
 } from 'react-icons/bi'
 
 export const CARDS: any = {
-  sht20: {
+  SHT20: {
     label: 'Sensor SHT20',
+    icon: SensorIcon
+  },
+  HD38: {
+    label: 'Sensor HD-38',
     icon: SensorIcon
   },
   watering: {

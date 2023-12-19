@@ -32,7 +32,7 @@ export const sendCommandToServer = async ({
   commandPayload,
   deviceId
 }: SendCommandToServerArgs) => {
-  const categoryName = findCategoryForCommand('MP0')
+  const categoryName = findCategoryForCommand(commandName)
 
   const apiCall = async () => callApi({
     method: 'POST',

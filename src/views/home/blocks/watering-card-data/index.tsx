@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import _ from 'lodash'
+import moment from 'moment'
 import { useSelector,  useDispatch } from 'react-redux'
 
 import { COMMANDS, WsReadyState } from 'global/consts'
@@ -38,30 +39,37 @@ export const WateringCardData = ({
   const userId = useSelector(getUserId)
   const dispatch = useDispatch()
 
+  // first, static info from device received
+  const deviceId = _.get(device, '_id')
+  const deviceSettings = _.get(device, 'settings[0]')
+  const automationSettings = _.get(deviceSettings, 'automation')
+  console.log({automationSettings})
+  const autoWateringModeEnabled = _.get(automationSettings, 'enabled')
+
+  const [updatedWateringStatus, setUpdatedWateringStatus] = useState({
+    manualRelayEnabled: false,
+    autoRelayEnabled: false
+  })
+
   const {
     defaultDeviceStatus,
     lastCommandReceived,
     wateringStatus = {}
 } = deviceRealTimeData
 
-  console.log({deviceRealTimeData})
-  const isRealTimeWateringStateEnabled = lastCommandReceived === COMMANDS.MANUAL_WATERING.OPTIONS.ON
-  const deviceSettings = _.get(device, 'settings[0]')
-  const autoWateringModeEnabled = _.get(deviceSettings, 'automation.enabled')
-  const {
-    elapsedTime,
-    autoRelayEnabled,
-    manualRelayEnabled
-  } = wateringStatus
+const {
+  elapsedTime,
+  autoRelayEnabled,
+  manualRelayEnabled
+} = wateringStatus
 
-  const [wateringEnabled, setWateringEnabled] = useState(isRealTimeWateringStateEnabled)
-  const [autoModeEnabled, setAutoModeEnabled] = useState(autoWateringModeEnabled)
-
-  const deviceId = _.get(device, '_id')
+const [wateringEnabled, setWateringEnabled] = useState(manualRelayEnabled)
+const [autoModeEnabled, setAutoModeEnabled] = useState(autoWateringModeEnabled)
 
   useEffect(() => {
-    setWateringEnabled(isRealTimeWateringStateEnabled)
-  }, [isRealTimeWateringStateEnabled])
+    setUpdatedWateringStatus(wateringStatus)
+    setWateringEnabled(manualRelayEnabled)
+  }, [elapsedTime, autoRelayEnabled, manualRelayEnabled])
 
   const handleSendCommand = async () => {
     if(wsStatus === WsReadyState.OPEN && defaultDeviceStatus) {
@@ -111,6 +119,11 @@ export const WateringCardData = ({
   }
 
   const renderOperationLabel = () => {
+    const {
+      manualRelayEnabled,
+      autoRelayEnabled
+    } = updatedWateringStatus
+  
     let operationLabel = 'Offline' 
     let pulsingCircleType = 'offline'
 
@@ -122,9 +135,14 @@ export const WateringCardData = ({
       pulsingCircleType = 'online'
       operationLabel = 'Disponível'
       
-      if (wateringEnabled) {
+      if (manualRelayEnabled) {
         pulsingCircleType = 'progress'
         operationLabel = 'Irrigação manual ligada'
+      }
+
+      if(autoRelayEnabled) {
+        pulsingCircleType = 'progress'
+        operationLabel = 'Irrigação automática ligada'
       }
     }
 
@@ -137,6 +155,23 @@ export const WateringCardData = ({
     )
   }
 
+  const renderNextCycleLabel = () => {
+    if (!autoModeEnabled) return ''
+    
+    const isIntervalInHours = _.get(automationSettings, 'intervalInHours')
+    const autoWateringInterval = _.get(automationSettings, 'interval')
+
+    const factorToConvert = isIntervalInHours ?  60 * 60 * 1000 : 60 * 1000
+    const momentTypeToConvert = isIntervalInHours ? 'hours' : 'minutes'
+    const convertedElapsedTime = elapsedTime / factorToConvert
+  
+    const remainingTime = autoWateringInterval - convertedElapsedTime
+  
+    const next = moment().add(remainingTime, momentTypeToConvert)
+  
+    return `Próxima ligação: ${next.format('HH:mm')}`
+  }
+  
   return (
     <div className='watering-card'>
       {renderOperationLabel()}
@@ -145,17 +180,19 @@ export const WateringCardData = ({
           <span>Auto</span>
           <div>
             <Toggle
-              disabled={connectionLoading}
+              disabled={connectionLoading || !defaultDeviceStatus}
               checked={autoModeEnabled}
               onChange={handleSendAutoCommand}
             />
           </div>
         </div>
-        <span className='option__status-label'>Próxima ligação:</span>
+        <span className='option__status-label'>
+          {connectionLoading || !defaultDeviceStatus ? null : renderNextCycleLabel()}
+        </span>
         <div className='option option--toggle'>
             <span>Manual</span>
             <Toggle
-              disabled={connectionLoading}
+              disabled={connectionLoading || !defaultDeviceStatus}
               checked={wateringEnabled}
               onChange={handleSendCommand}
             />

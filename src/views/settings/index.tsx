@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import _  from 'lodash'
 import { useDispatch, useSelector } from 'react-redux';
+import moment from 'moment'
 
 import {
   AppCollapsible,
@@ -31,19 +32,19 @@ export const Settings = () => {
   const token = useSelector(getToken)
   const timeOptions = getTimeOptions()
   const defaultDevice = _.find(userDevices, (device) => device.defaultDevice)
-  const settingsInitialState = {
-    startTime: '',
-    endTime: '',
-    interval: '',
-    duration: '',
-    wateringTimer: '',
-    remoteMeasureInterval: '',
-    intervalInHours: false
-  }
 
   // evolution: need to update here to get default settings selected by user
-  const defaultDeviceSettings = _.get(defaultDevice, 'settings[0]', settingsInitialState)
-
+  const defaultDeviceSettings = _.get(defaultDevice, 'settings[0]', {
+    automation: {
+      startTime: '',
+      endTime: '',
+      interval: '',
+      duration: '',
+      intervalInHours: false,
+    },
+    wateringTimer: '',
+    remoteMeasureInterval: ''
+  })
   const {
     automation: {
       startTime,
@@ -56,8 +57,7 @@ export const Settings = () => {
     remoteMeasureInterval
   } = defaultDeviceSettings
 
-  // const [loading, setLoading] = useState(false)
-  const [settings, setSettings] = useState({
+  const initialState = {
     startTime,
     endTime,
     interval,
@@ -65,7 +65,9 @@ export const Settings = () => {
     wateringTimer,
     remoteMeasureInterval,
     intervalInHours
-  })
+  }
+
+  const [settings, setSettings] = useState(initialState)
   const [editActivityPeriod, setEditActivityPeriod] = useState(false)
 
   const handleChangeSettings = (e: React.ChangeEvent<HTMLInputElement> & OptionType, name?: string) => {
@@ -87,6 +89,7 @@ export const Settings = () => {
 
     const deviceId = defaultDevice._id
     const settingsId = defaultDeviceSettings._id
+
     const res = await editSettingsAndSendCommand({
         token,
         settingsPayload: {
@@ -184,6 +187,7 @@ export const Settings = () => {
       <div className='description'>
         O tempo de irrigação corresponde ao tempo em que a irrigação permanece ligada quando é dado o tempo de intervalo.
       </div>
+      {/* {ADICIONAR RESET DO TIMER DE AUTO} */}
     </div>
   )
 

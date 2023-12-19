@@ -17,7 +17,7 @@ export const CommandCard: React.FC<CommandCardProps> = ({ command }) => {
     categoryName
   } = command
 
-  const getCommandTranslatedInfos = ({ 
+  const getCommandTranslatedInfos = ({
     commandName, categoryName 
   }: { commandName: string, categoryName: string }) => {
     if(!commandName || !categoryName) return {}

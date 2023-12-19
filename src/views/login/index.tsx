@@ -80,7 +80,6 @@ export const Login = () => {
     const { status } = errorOnLogin
     let label
 
-    console.log({ errorOnLogin })
     if (status === 400) {
       label = 'Usuário/senha incorretos. Tente novamente.'
     }

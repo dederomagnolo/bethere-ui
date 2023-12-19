@@ -32,6 +32,13 @@ export const COMMANDS: any = {
     OPTIONS: {
       SET: 'RESET_ESP'
     }
+  },
+  SETTINGS: {
+    CATEGORY_NAME: 'System',
+    CATEGORY_NAME_PT: 'Sistema',
+    OPTIONS: {
+      SET: 'SETTINGS'
+    }
   }
 }
 

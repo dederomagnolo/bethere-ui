@@ -39,17 +39,12 @@ export const Home = () => {
   const defaultDevice = _.find(userDevices, (device) => device.defaultDevice)
   const deviceName = _.get(defaultDevice, 'deviceName')
   const deviceSensors = _.get(defaultDevice, 'sensors')
-  const isDeviceOffline = error.type !== ''
 
   const {
     defaultDeviceStatus,
     measures,
     wateringStatus
   } = deviceRealTimeData
-
-  console.log({
-    wateringStatus
-  })
 
   const handleDeviceNonResponding = () => {
     setLoading(false)
@@ -135,7 +130,7 @@ export const Home = () => {
     }
 
     const offlineLabel = (
-      isDeviceOffline && (
+      !defaultDeviceStatus && (
         <div className='device-status__offline-label'>
           <OfflineIcon   className='wifi-error-icon'/>
           <p>Offline</p>
@@ -154,10 +149,6 @@ export const Home = () => {
   const renderWebsocketConnectionStatus = () => {
     const containerClass = 'server-connection-status'
     const StatusLabelWithIcon = () => {
-      if (loading) {
-        return <LoadingIcon />
-      }
-
       switch (readyState) {
         case WsReadyState.OPEN:
           return (
