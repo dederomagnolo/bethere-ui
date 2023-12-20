@@ -168,8 +168,21 @@ const [autoModeEnabled, setAutoModeEnabled] = useState(autoWateringModeEnabled)
     const remainingTime = autoWateringInterval - convertedElapsedTime
   
     const next = moment().add(remainingTime, momentTypeToConvert)
-  
-    return `Próxima ligação: ${next.format('HH:mm')}`
+
+    const autoOperationStartTime = _.get(automationSettings, 'startTime')
+    const autoOperationEndTime = _.get(automationSettings, 'endTime')
+
+    const startOfCurrentDay = moment().startOf('day')
+    const startTime = moment(startOfCurrentDay).add(autoOperationStartTime, 'hours')
+    const endTime = moment(startOfCurrentDay).add(autoOperationEndTime, 'hours')
+
+    const currentTime = moment()
+    const isCurrentTimeOnValidInterval = currentTime >= startTime && currentTime <= endTime
+
+    const timeToStartOperation = moment.duration(startTime.diff(currentTime)).asMinutes()
+    console.log({startTime, endTime, isCurrentTimeOnValidInterval, timeToStartOperation})
+
+    return `Próxima ligação: ${isCurrentTimeOnValidInterval ? next.format('HH:mm') : startTime.format('HH:mm')}`
   }
   
   return (
