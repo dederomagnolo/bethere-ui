@@ -113,7 +113,7 @@ export const Settings = () => {
 
     const deviceId = defaultDevice._id
     const settingsId = defaultDeviceSettings._id
-    const res = await editSettings({
+    const res = await editSettingsAndSendCommand({
       token,
       settingsPayload: {
         settingsId,
