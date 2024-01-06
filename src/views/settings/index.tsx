@@ -169,12 +169,12 @@ export const Settings = () => {
           onChange={handleChangeSettings}
           value={settings.interval}
         />
-        <Checkbox
+        {/* <Checkbox
           inititalState={intervalInHours}
           className='interval-option__checkbox'
           label='Utilizar intervalo de  tempo em horas'
           onChange={saveIntervalInHours}
-        />
+        /> */}
       </div>
       <div className='description'>O intervalo é o tempo entre um ciclo de irrigação e outro.</div>
       <InputOption
