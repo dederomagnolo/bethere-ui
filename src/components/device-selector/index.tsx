@@ -19,11 +19,13 @@ import './styles.scss'
 interface DeviceSelectorProps {
   allowNameEdition?: boolean
   showDeviceInfo?: boolean
+  onChange?: Function
 }
 
 export const DeviceSelector: React.FC<DeviceSelectorProps> = ({
   allowNameEdition,
-  showDeviceInfo
+  showDeviceInfo,
+  onChange
 }) => {
   const userDevices = useSelector(getUserDevices)
   const token = useSelector(getToken)
@@ -45,19 +47,10 @@ export const DeviceSelector: React.FC<DeviceSelectorProps> = ({
   const defaultDeviceName = _.get(defaultDevice, 'deviceName')
 
   const [selectedDevice, setSelectedDevice] = useState(defaultDevice || { _id: '' } )
-  const [selectedSensor, setSelectedSensor] = useState({ name:'', model: '', _id: '' })
   const [deviceNameEdition, setDeviceNameEdition] = useState(false)
 
-  const [loading, setLoading] = useState(false)
-
   const [editedDeviceName, setEditedDeviceName] = useState(defaultDeviceName)
-  const [editedSensorName, setEditedSensorName] = useState('')
   const deviceSerialKey = _.get(selectedDevice, 'deviceSerialKey')
-  
-  // to get from most updated devices collection
-  const sensors = _.find(userDevices, (device) => {
-    return selectedDevice._id === device._id
-  }).sensors
 
   const deviceSelectOptions = getDeviceOptionsToSelect(userDevices)
   const indexOfDefaultDeviceInOptions =
@@ -82,30 +75,11 @@ export const DeviceSelector: React.FC<DeviceSelectorProps> = ({
     setEditedDeviceName(e.target.value)
   }
 
-  const handleChangeSelectedSensorName = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEditedSensorName(e.target.value)
-  }
-
   const handleDeviceChange = ({ value }: { value: string, label: string }) => {
     const deviceFromOption = _.find(userDevices, (device) => device._id === value)
+    onChange && onChange(deviceFromOption)
     setSelectedDevice(deviceFromOption)
   }
-  
-
-  const mappedSensors = _.map(sensors, (sensor: any) => {
-  const name = sensor.name || sensor.model
-    return (
-      <div
-        onClick={() => {
-          setSelectedSensor(sensor)
-          setEditedSensorName(name)
-        }}
-        key={sensor._id}
-        className={`sensors-list__card ${selectedSensor._id === sensor._id ? 'selected' : ''}`}>
-        {name}
-      </div>
-    )
-  })
 
   const handleToggleDefaultDevice = async (value: any) => {
     const res = await setDefaultDevice({ token, deviceId: selectedDevice._id })
@@ -116,24 +90,6 @@ export const DeviceSelector: React.FC<DeviceSelectorProps> = ({
     dispatch(setUserDevices(userDevices))
     const deviceFromOption = _.find(userDevices, (device) => device._id === selectedDevice._id)
     setSelectedDevice(deviceFromOption)
-  }
-
-  const handleSaveSensorName = async () => {
-    setSelectedSensor({ name: '', model: '', _id: ''})
-
-    if(editedSensorName === selectedSensor.name) return null
-
-    await editSensorName({
-      token,
-      sensorId: selectedSensor._id,
-      sensorName: editedSensorName
-    })
-
-    const userDevices = await fetchUserDevices({
-      token
-    })
-
-    dispatch(setUserDevices(userDevices))
   }
 
   return (
@@ -168,24 +124,6 @@ export const DeviceSelector: React.FC<DeviceSelectorProps> = ({
               onChange={handleToggleDefaultDevice}
             />
           </div>
-          {sensors && sensors.length ? <div className='device-selector__info__container'>
-            <p className='title'>{sensors.length > 1 ? 'Sensores' : 'Sensor'}:</p>
-            <div className='sensors-list'>
-              {mappedSensors}
-            </div>
-          </div> : null}
-          {_.isEmpty(selectedSensor.model) ? null : (
-              <div className='device-selector__info__container'>
-                <p className='title'>Nome:</p>
-                <Input
-                  onChange={handleChangeSelectedSensorName}
-                  value={editedSensorName} />
-                <EditIconWithTooltip
-                  saveMode
-                  uniqueId='device-selector'
-                  onSave={handleSaveSensorName}/>
-              </div>
-          )}
         </div>
       )}
     </div>

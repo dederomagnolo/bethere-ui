@@ -1,4 +1,5 @@
 const BE_HOST = process.env.REACT_APP_BE_HOST
+
 interface callApiProps {
   method: String,
   service: String,

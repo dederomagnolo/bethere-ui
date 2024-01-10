@@ -1,11 +1,17 @@
 .loading-container {
   position: absolute;
-  left: 50%;
+  top: 50%;
   right: 50%;
+  transform: translate(50%,-50%);
   bottom: 50%;
   height: 60px;
   top: 50%;
   align-items: center;
   display: flex;
   justify-content: center;
+}
+
+.animated-dashed-loading {
+  animation: rotation 3s infinite linear;
+  color: #0da2bc;
 }

@@ -1,3 +1,5 @@
+import { toast } from "react-toastify"
+
 import callApi from './callApi'
 import { editSettings } from './settings'
 import { sendCommandToServer } from './commands'
@@ -130,27 +132,48 @@ export const editSettingsAndSendCommand = async ({
 }) => {
   const { deviceId, settingsId } = settingsPayload
 
-  await editSettings({
-    token,
-    settingsPayload
-  })
-
-  await sendCommandToServer({
-    token,
-    commandName: 'SETTINGS',
-    commandPayload: {
-      settingsId
-    },
-    deviceId
-  })
-
-  const updatedDevices = await fetchUserDevices({
-    token
-  })
+  const callServices = async () => {
+    try {
+      const editRes = await editSettings({
+        token,
+        settingsPayload
+      })
+    
+      const sendCommandRes = await sendCommandToServer({
+        token,
+        commandName: 'SETTINGS',
+        commandPayload: {
+          settingsId
+        },
+        deviceId
+      })
+    
+      const updatedDevices = await fetchUserDevices({
+        token
+      })
+  
+      return updatedDevices
+    } catch (err) {
+      console.log('aqui')
+      return err
+    }
+  }
+  
+  const response = await toast.promise(
+    callServices,
+    {
+      pending: 'Enviando informações...',
+      success: 'Dados salvos com sucesso.',
+      error: (err) => {
+        console.log(err)
+        return 'Ocorreu um erro'
+      } 
+    }
+  )
 
   //  need to improve this call
-
-  return updatedDevices
+  console.log({ response })
+  return response
 }
 
 export const checkToken = async (token) => {

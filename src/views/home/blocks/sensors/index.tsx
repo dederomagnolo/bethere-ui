@@ -11,28 +11,16 @@ import {
 
 import { LoadingIcon } from '../loading-icon'
 import { GenericCard } from 'components'
-import { CARDS } from '../../utils/constants'
+import { CARDS, SENSORS } from '../../utils/constants'
 
 import './styles.scss'
 
-const renderGenericCard = (type: string, CustomData?: any) => {
-  const { label, icon } = CARDS[type]
-  return (
-    <GenericCard
-      // settingsButtonRoute='configuracoes'
-      type={type}
-      icon={icon}
-      label={label}
-      CustomData={CustomData} />
-  )
-}
-
-export const Sensors = ({ sensors, measures = [], loading, isDeviceOffline }: any) => {// type here
-  const MeasureLabel = ({ type, measuresBySensor }: any ) => {
-    if (type === 'SHT20') {
+export const Sensors = ({ sensors, measures = [], loading, isDeviceOffline }: any) => {
+  const MeasureCardContent = ({ sensorModel, measuresBySensor, sensorId }: any ) => {
+    if (sensorModel === 'SHT20') {
       const humidity = _.get(measuresBySensor, 'humidity') 
       const temperature = _.get(measuresBySensor, 'temperature')
-
+  
       const renderMeasure = (data: number, unit: string) => {
         return loading ? <LoadingIcon /> : (
           <div className='measure-data'>
@@ -41,15 +29,15 @@ export const Sensors = ({ sensors, measures = [], loading, isDeviceOffline }: an
           </div>
         )
       }
-
+  
       return (
-        isDeviceOffline ? (
+        isDeviceOffline || !measuresBySensor ? (
           <div className='measures unavalible'>
             <OfflineIcon />
             <p>Indisponível</p>
           </div>
         ) : (
-          <div className='measures' key={type}>
+          <div className='measures' key={sensorId}>
             <div className='measure'>
               <div className='measure-label'>
                 <TintIcon className='measure-icon--humidity' />
@@ -73,12 +61,29 @@ export const Sensors = ({ sensors, measures = [], loading, isDeviceOffline }: an
 
   const mappedSensorCards = _.map(sensors, (sensor) => {
     const serialKey = _.get(sensor, 'serialKey', '')
+    const sensorModel = _.get(sensor, 'model')
+    const sensorId = _.get(sensor, '_id')
+
     const broadcastedSensors = _.keys(measures)
     const broadcastedMeasures = broadcastedSensors.includes(serialKey) ? measures[serialKey] : null
 
-    return renderGenericCard(
-      sensor.model,
-      () => <MeasureLabel type={sensor.model} measuresBySensor={broadcastedMeasures} />)
+    const errorValue = SENSORS[sensor.model].errorValue
+
+    const sensorMeasuresWithErrorsMapped = _.map(broadcastedMeasures, (broadcastedValue, key) =>
+    ({ [key]: broadcastedValue, error: broadcastedValue === errorValue }) )
+
+    const cardStructureByModel = CARDS[sensorModel]
+
+    return (
+      <GenericCard
+        {...cardStructureByModel}
+        type={sensorModel}
+        CustomData={() => (
+          <MeasureCardContent
+            sensorId={sensorId}
+            sensorModel={sensorModel}
+            measuresBySensor={broadcastedMeasures} />
+        )} />)
   })
 
   return (

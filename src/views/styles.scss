@@ -1,14 +1,12 @@
-@import '../styles/breakpoints.scss';
+@import 'styles/breakpoints.scss';
 
 .page-container {
-  display: block;
   box-sizing: border-box;
-  height: 100%;
   width: 100%;
-  padding: 5vh 42px 90px 42px;
+  height: 100%;
+  padding: 5vh 10px 80px 10px;
 
   @include md {
-    height: auto;
     padding: 10vh 42px 0 142px;
   }
 }

@@ -1,3 +1,5 @@
+@import 'styles/breakpoints.scss';
+
 .measures {
   display: flex;
   width: 100%;
@@ -25,6 +27,12 @@
     width: 100%;
     align-items: center;
     justify-content: space-between;
+    flex-direction: column;
+
+    @include md {
+      margin-bottom: 0;
+      flex-direction: row;
+    }
 
     .measure-label {
       display: flex;
@@ -51,12 +59,19 @@
     }
 
     .measure-data {
-      line-height: 29px;
-      font-size: 24px;
+      @include md  {
+        line-height: 29px;
+        font-size: 24px;
+      }
+
       .unit {
         margin-left: 2px;
-        font-size: 14px;
+
+        @include md {
+          font-size: 14px;
+        }
       }
+
       svg {
         width: 16px;
       }

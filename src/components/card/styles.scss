@@ -43,24 +43,44 @@
     }
   }
 
+  
+  &--default {
+    width: 100%;
+
+    @include md {
+      width: 230px;
+    }
+  }
+
   &--watering {
     flex-direction: column-reverse;
     height: auto;
-    width: 480px;
+    width: 100%;
 
     .card-label-icon {
       color: #a3da5a63;
     }
+
+    @include md {
+      width: 480px;
+    }
   }
 
   &--SHT20 {
+    justify-content: space-between;
     flex-direction: column-reverse;
-    height: 230px;
-    width: 230px;
+    width: 100%;
+    height: auto;
 
     .card-infos {
       border-top: #6B6B6B18 solid 1px;
-      padding-top: 8px;
+      padding-top: 10px;
+      margin-top: 10px;
+    }
+
+    @include md {
+      height: 230px;
+      width: 230px;
     }
   }
 

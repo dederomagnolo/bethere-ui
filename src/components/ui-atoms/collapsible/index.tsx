@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import Collapsible from 'react-collapsible';
 
 import { 
@@ -20,11 +21,11 @@ const renderCollapsibleTitle = (title: string, whenOpen?: boolean) => {
 
 interface CollapsibleProps {
   title: string
-  innerComponent: any
+  InnerComponent: any
   className?: string
 }
 
-export const AppCollapsible: React.FC<CollapsibleProps> = ({ title, innerComponent, className }) => {
+export const AppCollapsible: React.FC<CollapsibleProps> = ({ title, InnerComponent, className }) => {
   return (
     <Collapsible
       className={`app-collapsible ${className}`}
@@ -35,7 +36,7 @@ export const AppCollapsible: React.FC<CollapsibleProps> = ({ title, innerCompone
       )}
       transitionTime={150}
     >
-      {innerComponent}
+      <InnerComponent />
     </Collapsible>
   )
 }

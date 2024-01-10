@@ -17,11 +17,12 @@ import {
 import '../styles.scss'
 import './styles.scss'
 import { WsReadyState } from 'global/consts';
-import { LoadingIcon } from './blocks/loading-icon';
 import { Sensors } from './blocks/sensors';
 import { CARDS } from './utils/constants';
 import { checkToken } from 'services/fetch';
 import { clearUserState } from 'redux/user/actions';
+
+import { LoadingIcon } from './blocks/loading-icon';
 
 export const Home = () => {
   const userDevices = useSelector(getUserDevices)
@@ -82,6 +83,8 @@ export const Home = () => {
     const receivedData = lastMessage && lastMessage.data
     const parsedData = JSON.parse(receivedData)
 
+    console.log({ parsedData })
+  
     setTimeout(() => {
       handleDeviceNonResponding()
     }, 18000)

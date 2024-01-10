@@ -7,7 +7,8 @@ import {
   BsLockFill as LockIcon,
 } from 'react-icons/bs'
 
-import { Button, Input } from 'components/ui-atoms'
+
+import { Button, Input, Loading } from 'components/ui-atoms'
 
 import { setUserInfo } from 'redux/user/actions'
 import { setGlobalError, clearGlobalState } from 'redux/global/actions'
@@ -57,6 +58,7 @@ export const Login = () => {
       if (res) {
         // the response with status 200 is being filtered on callApi
         if (res.error) {
+          setLoading(false)
           return dispatch(setGlobalError({ message: res.message, service: 'login', status: res.status }))
         }
 
@@ -121,10 +123,14 @@ export const Login = () => {
                 placeholder=''
               />
             </div>
-            <Button onClick={handleLoginRequest}>Entrar</Button>
+            {<Button onClick={handleLoginRequest}>
+              {loading
+                ? <Loading className='login-loading' size={12} />
+                : 'Entrar'}
+            </Button>}
             {getErrorLabel()}
           </div>
-          <a href=''>Esqueceu sua senha?</a>
+          {/* <a href=''>Esqueceu sua senha?</a> */}
         </div>
       </div>
     </div>

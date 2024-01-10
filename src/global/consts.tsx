@@ -26,11 +26,11 @@ export const COMMANDS: any = {
       OFF: 'AW0'
     }
   },
-  RESET_LOCAL_STATION: {
-    CATEGORY_NAME: 'Reset',
-    CATEGORY_NAME_PT: 'Reinicialização',
+  RESET: {
+    CATEGORY_NAME: 'Restart',
+    CATEGORY_NAME_PT: 'Sistema',
     OPTIONS: {
-      SET: 'RESET_ESP'
+      SET: 'RESET'
     }
   },
   SETTINGS: {

@@ -1,5 +1,6 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
+import { ToastContainer } from 'react-toastify'
 import _ from 'lodash'
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 
@@ -10,6 +11,7 @@ import { getAuthenticatedStatus, getToken } from 'redux/user/selectors';
 import { Menu } from '../menu'
 
 import './styles.scss'
+import "react-toastify/dist/ReactToastify.css";
 
 const routesList = [
   {
@@ -53,7 +55,11 @@ export const Layout: React.FunctionComponent = () => {
       return isLoginRoute ? <Component /> : <Navigate to='/login' replace={true} />
     }
     
-    return <Component />;
+    return (
+      <div className='page-container'>
+        <Component />
+      </div>
+    )
   }
 
   const routes = _.map(routesList, (route: any) => {
@@ -65,11 +71,10 @@ export const Layout: React.FunctionComponent = () => {
   return (
     <div className='app-layout'>
       {authenticated && <Menu />}
-      <div className='page-container'>
-        <Routes>
-          {routes}
-        </Routes>
-      </div>
+      <Routes>
+        {routes}
+      </Routes>
+      <ToastContainer autoClose={2000}/>
     </div>
   )
 }
