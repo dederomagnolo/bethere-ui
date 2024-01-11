@@ -81,8 +81,12 @@ export const History = () => {
       (command: any) => command.categoryName === filter.value
     ) : historyForDate
   
-    const commandCards = _.map(historyFilteredByCategoryName, (command: CommandType) =>
-      <CommandCard key={command._id} command={command} />)
+    const commandCards = _.map(historyFilteredByCategoryName, (command: CommandType) => {
+      const commandsToFilter = ['@SET_AW_TIMER#']
+      const commandName = _.get(command, 'commandName')
+      const invalidCommand = _.find(commandsToFilter, (commandToFilter) => commandName.includes(commandToFilter))
+      return invalidCommand ? null : <CommandCard key={command._id} command={command} />
+    })
     
     return (
       historyForDate && historyForDate.length ? (
@@ -96,7 +100,7 @@ export const History = () => {
           </div>
           <h2>Histórico</h2>
           <div className='history__command-cards'>
-            {commandCards.length ? commandCards : 'Não foram registrados comandos nesta data.'}
+            {commandCards.length ? _.compact(commandCards) : 'Não foram registrados comandos nesta data.'}
           </div>
         </div>
       ) : (
