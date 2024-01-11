@@ -10,6 +10,7 @@ export const ManualWateringConfig = ({
   return (
     <div className='options options--single'>
       <InputOption
+        initialValue={manualWateringTimer}
         onSave={() => saveChanges({ wateringTimer: editedWateringTimer })}
         title='Tempo de irrigação manual (min)'
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditedWateringTimer(e.target.value)}

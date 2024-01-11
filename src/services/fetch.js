@@ -130,22 +130,11 @@ export const editSettingsAndSendCommand = async ({
   token,
   settingsPayload
 }) => {
-  const { deviceId, settingsId } = settingsPayload
-
   const callServices = async () => {
     try {
       const editRes = await editSettings({
         token,
         settingsPayload
-      })
-    
-      const sendCommandRes = await sendCommandToServer({
-        token,
-        commandName: 'SETTINGS',
-        commandPayload: {
-          settingsId
-        },
-        deviceId
       })
     
       const updatedDevices = await fetchUserDevices({
@@ -154,7 +143,6 @@ export const editSettingsAndSendCommand = async ({
   
       return updatedDevices
     } catch (err) {
-      console.log('aqui')
       return err
     }
   }
@@ -172,7 +160,6 @@ export const editSettingsAndSendCommand = async ({
   )
 
   //  need to improve this call
-  console.log({ response })
   return response
 }
 

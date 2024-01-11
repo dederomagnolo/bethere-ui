@@ -21,7 +21,8 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   disabled?: boolean,
   type?: string
   Icon?: React.FunctionComponent
-  iconCustomClassName?: string
+  iconCustomClassName?: string,
+  initialValue?: string
 }
 
 export const Input: React.FC<InputProps> = ({

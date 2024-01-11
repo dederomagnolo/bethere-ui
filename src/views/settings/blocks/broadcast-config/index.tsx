@@ -9,6 +9,7 @@ export const BroadcastConfig =  ({
   return (
     <div className='options options--single'>
       <InputOption
+        initialValue={remoteMeasureInterval}
         onSave={() => saveChanges({ remoteMeasureInterval: editedBroadcastTime })}
         title='Intervalo de envio (min)'
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditedBroadcastTime(e.target.value)}

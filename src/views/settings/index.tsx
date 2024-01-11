@@ -26,7 +26,6 @@ export const Settings = () => {
   const token = useSelector(getToken)
   const defaultDevice = _.find(userDevices, (device) => device.defaultDevice)
 
-  console.log({ defaultDevice})
   // evolution: need to update here to get default settings selected by user
 
   const initialState = {
@@ -44,8 +43,6 @@ export const Settings = () => {
   const [selectedDevice, setSelectedDevice] = useState(defaultDevice || { _id: ''})
   const selectedDeviceSettings = _.get(selectedDevice, 'settings[0]', initialState)
 
-  console.log({selectedDevice, selectedDeviceSettings})
-
   const saveChanges = async (payload: any) => {
     const deviceId = selectedDevice._id
     const settingsId = _.get(selectedDevice, 'settings[0]._id')
@@ -59,10 +56,8 @@ export const Settings = () => {
           ...payload,
         }
       })
-      console.log({ res })
 
       dispatch(setUserDevices(res))
-      console.log({ result: _.find(res, (device) => device._id === deviceId )})
       setSelectedDevice(_.find(res, (device) => device._id === deviceId ))
     } catch(err) {
       toast.error("Ocorreu um erro na solicitação", {

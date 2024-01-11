@@ -13,11 +13,6 @@ import { CustomLineChart } from './custom-line-chart'
 
 import './styles.scss'
 
-const checkForFailurePoint = (value: any, positionAhead: any) => {
-  console.log({value, failure: value > 900, positionAhead})
-  return value > 900 ? positionAhead : value
-}
-
 const mergeMeasureBatchDataToPlot = (dataToMerge: any) => {
   const formattedData = [] as any
   _.forEach(dataToMerge, (batch, key: any) => {
@@ -67,17 +62,12 @@ export const Charts = () => {
 
   const renderCharts = () => {
     let mapped = {}
-    console.log({measures})
     _.forEach(measures, (sensor, index) => {
       const groupedByType = _.groupBy(sensor, 'origin')
       console.log({
         groupedByType
       })
       mapped = { ...mapped, [index]: groupedByType }
-    })
-
-    console.log({
-      mapped
     })
 
     const mappedCharts = _.map(mapped, (measureType, key: any) => {
@@ -89,7 +79,6 @@ export const Charts = () => {
       }
 
       const shouldRenderChart = !_.isEmpty(dataToPlot)
-      console.log({dataToPlot, measureType, key, keys})
       return (
         <div className='charts__chart-container'>
           {shouldRenderChart ? <CustomLineChart

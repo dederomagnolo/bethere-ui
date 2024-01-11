@@ -15,15 +15,17 @@ import './styles.scss'
 
 export interface EditWithTooltipProps {
   onSave?: MouseEventHandler
-  onEdit?: MouseEventHandler,
+  onEdit?: MouseEventHandler
   onToggle?: Function
-  uniqueId: string,
+  onCancel?: Function
+  uniqueId: string
   saveMode?: boolean
 }
 
 export const EditIconWithTooltip = ({
   onSave,
   onEdit,
+  onCancel,
   onToggle,
   uniqueId,
   saveMode
@@ -51,6 +53,7 @@ export const EditIconWithTooltip = ({
           <SaveIcon id={id} onClick={handleSave} />
           <CancelIcon id={`app-tooltip-cancel-${id}`} onClick={() => {
               setEditMode(false)
+              onCancel && onCancel()
               onToggle && onToggle()
             }}
           />

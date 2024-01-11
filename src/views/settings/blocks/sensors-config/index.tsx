@@ -56,16 +56,16 @@ export const SensorsConfig = ({
       <div key={id} className='sensor-settings'>
         <div className='sensor-info'>
             <div className='sensor-info__name-container'>
-              {/* {sensorToEdit._id === id
+              {sensorToEdit._id === id
                 ? <Input value={editedSensorName} onChange={handleEditSensorName} />
                 : <span>{name}</span>}
               <EditIconWithTooltip
-              uniqueId={id}
-              onSave={handleEditSensorInfo}
-              onEdit={() => {
-                setEditedSensorName(name)
-                setSensorToEdit(sensor)
-              }} /> */}
+                uniqueId={id}
+                onSave={handleEditSensorInfo}
+                onEdit={() => {
+                  setEditedSensorName(name)
+                  setSensorToEdit(sensor)
+              }} />
             </div>
             <span className='sensor-info__model'>Modelo: {sensor.model}</span>
         </div>

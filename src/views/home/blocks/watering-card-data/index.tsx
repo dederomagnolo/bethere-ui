@@ -43,7 +43,6 @@ export const WateringCardData = ({
   const deviceId = _.get(device, '_id')
   const deviceSettings = _.get(device, 'settings[0]')
   const automationSettings = _.get(deviceSettings, 'automation')
-  console.log({automationSettings})
   const autoWateringModeEnabled = _.get(automationSettings, 'enabled')
 
   const [updatedWateringStatus, setUpdatedWateringStatus] = useState({
@@ -180,7 +179,6 @@ const [autoModeEnabled, setAutoModeEnabled] = useState(autoWateringModeEnabled)
     const isCurrentTimeOnValidInterval = currentTime >= startTime && currentTime <= endTime
 
     const timeToStartOperation = moment.duration(startTime.diff(currentTime)).asMinutes()
-    console.log({startTime, endTime, isCurrentTimeOnValidInterval, timeToStartOperation})
 
     return `Próxima ligação: ${isCurrentTimeOnValidInterval ? next.format('HH:mm') : startTime.format('HH:mm')}`
   }

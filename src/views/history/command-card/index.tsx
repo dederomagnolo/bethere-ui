@@ -22,7 +22,6 @@ export const CommandCard: React.FC<CommandCardProps> = ({ command }) => {
   }: { commandName: string, categoryName: string }) => {
     if(!commandName || !categoryName) return {}
     
-
     const category = _.find(MAPPED_COMMANDS, (command) => 
       command.categoryName === categoryName)
 

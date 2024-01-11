@@ -48,17 +48,14 @@ export const AutoWateringConfig = ({
   const handleChangeSettings = (e: React.ChangeEvent<HTMLInputElement> & OptionType, name?: string) => {
     if (name) {
       const value = e.value
-      return setEditedAutomationSettings ({ ...automationSettings, [name]: value })
+      return setEditedAutomationSettings ({ ...editedAutomationSettings, [name]: value })
     }
 
     const value = e.target.value
-    setEditedAutomationSettings({ ...automationSettings, [e.target.name]: value })
+    setEditedAutomationSettings({ ...editedAutomationSettings, [e.target.name]: value })
   }
 
   const saveAutomationChanges = () => {
-    console.log({
-      editedAutomationSettings
-    })
     return saveChanges({ automation: editedAutomationSettings })
   }
 
