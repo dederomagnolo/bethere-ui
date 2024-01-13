@@ -61,6 +61,10 @@ export const SensorsConfig = ({
                 : <span>{name}</span>}
               <EditIconWithTooltip
                 uniqueId={id}
+                onCancel={() => {
+                  setEditedSensorName('')
+                  setSensorToEdit({ _id: '' })
+                }}
                 onSave={handleEditSensorInfo}
                 onEdit={() => {
                   setEditedSensorName(name)
@@ -69,7 +73,6 @@ export const SensorsConfig = ({
             </div>
             <span className='sensor-info__model'>Modelo: {sensor.model}</span>
         </div>
-
         <Toggle checked={isSensorEnabled} onChange={handleEditSensorInfo} />
       </div>
     )

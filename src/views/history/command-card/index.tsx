@@ -54,6 +54,7 @@ export const CommandCard: React.FC<CommandCardProps> = ({ command }) => {
       <div className='command-card__time'>{moment(createdAt).format('HH:mm')}</div>
       <div className='command-card__info'>
         <span>{categoryNameTranslated}</span>
+        {/* <span>{commandName}</span> */}
         <span className={statusClassName}>{commandStatus}</span>
       </div>
     </div>

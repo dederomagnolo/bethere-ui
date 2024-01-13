@@ -1,16 +1,12 @@
 import _ from 'lodash'
 import { useState } from 'react'
-import { getTimeOptions } from '../../functions';
+import { getTimeOptions } from '../../functions'
 
 import {
-  AppCollapsible,
-  Button,
   CustomSelect,
-  EditIconWithTooltip,
-  Checkbox,
-  Toggle
-} from 'components';
-import { InputOption } from 'views/settings/input-option';
+  EditIconWithTooltip
+} from 'components'
+import { InputOption } from 'views/settings/input-option'
 
 type OptionType = {
   value: Number | String
@@ -27,7 +23,8 @@ export const AutoWateringConfig = ({
   saveChanges,
   deviceId
 }: any) => {
-  const [editActivityPeriod, setEditActivityPeriod] = useState(false)
+  const [editStartTime, setEditStartTime] = useState(false)
+  const [editEndTime, setEditEndTime] = useState(false)
 
   const {
     startTime,
@@ -85,6 +82,12 @@ export const AutoWateringConfig = ({
   //   dispatch(setUserDevices(updatedDevices))
   // }
 
+  const setEndTimeOptionsBasedOnStartTime = () => {
+    const editedStartTime = editedAutomationSettings.startTime
+    const possibleTimeOptions =_.filter(timeOptions, (option) => option.value > editedStartTime)
+    return possibleTimeOptions
+  }
+
 
   return (
     <div className='options options--auto-watering'>
@@ -92,23 +95,41 @@ export const AutoWateringConfig = ({
         <div className='cycle-period__time-select-container'>
           <span className='title'>Período de atividade</span> de
           <CustomSelect
-            isDisabled={!editActivityPeriod}
-            onChange={(option: any) => handleChangeSettings(option, 'startTime')}
+            isDisabled={!editStartTime}
+            onChange={(option: any) => {
+              setEditEndTime(true)
+              handleChangeSettings(option, 'startTime')
+            }}
+            value={getCurrentTimeOption(editedAutomationSettings.startTime)}
             options={timeOptions}
             defaultValue={getCurrentTimeOption(editedAutomationSettings.startTime)} />
         </div>
         <div className='cycle-period__time-select-container'>
           até
           <CustomSelect
-            isDisabled={!editActivityPeriod}
+            isDisabled={!editEndTime}
             onChange={(option: any) => handleChangeSettings(option, 'endTime')}
-            options={timeOptions}
+            options={setEndTimeOptionsBasedOnStartTime()}
+            value={getCurrentTimeOption(editedAutomationSettings.endTime)}
             defaultValue={getCurrentTimeOption(editedAutomationSettings.endTime)} />
         </div>
         <EditIconWithTooltip
-          onSave={saveAutomationChanges}
+          onSave={() => {
+            setEditStartTime(false)
+            setEditEndTime(false)
+            saveAutomationChanges()
+          }}
           uniqueId='timeField'
-          onToggle={() => setEditActivityPeriod(!editActivityPeriod)} />
+          onCancel={() => {
+            setEditStartTime(false)
+            setEditEndTime(false)
+            setEditedAutomationSettings({ 
+              ...editedAutomationSettings,
+              startTime: automationSettings.startTime,
+              endTime: automationSettings.endTime
+            })
+          }}
+          onEdit={() => setEditStartTime(true)} />
       </div>
       <div className='description'>
         O período de atividade é o intervalo do dia em que a estação local irá fazer o ciclo de automação.
