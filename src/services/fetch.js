@@ -7,17 +7,14 @@ import { sendCommandToServer } from './commands'
 export const tryToCallService = async({
   apiCall
 }) => {
-
   try {
-    const res = apiCall()
+    const res = await apiCall()
 
-    if(res) {
+    if (res) {
       return res
     }
-
-    return console.error('Não foi possível realizar a chamada')
-  } catch (error) {
-    console.error(error)
+  } catch (err) {
+    throw new Error(err) // need to handle this on UI too
   }
 }
 
@@ -49,7 +46,7 @@ export const fetchUserDevices = async ({
       token
     })
   } catch (error) {
-    console.error(error)
+    throw new Error(error)
   }
 }
 
@@ -132,7 +129,7 @@ export const editSettingsAndSendCommand = async ({
 }) => {
   const callServices = async () => {
     try {
-      const editRes = await editSettings({
+      await editSettings({
         token,
         settingsPayload
       })
@@ -143,7 +140,7 @@ export const editSettingsAndSendCommand = async ({
   
       return updatedDevices
     } catch (err) {
-      return err
+      throw new Error(err)
     }
   }
   
@@ -151,9 +148,16 @@ export const editSettingsAndSendCommand = async ({
     callServices,
     {
       pending: 'Enviando informações...',
-      success: 'Dados salvos com sucesso.',
-      error: (err) => {
-        console.log(err)
+      success: {
+        render({ data }){
+          console.log()
+          // if (error) {
+          //   return 'Ocorreu um  erro'
+          // }
+          return 'Dados salvos com sucesso!'
+      }},
+      error: ({ data }) => {
+        console.log(data)
         return 'Ocorreu um erro'
       } 
     }
@@ -169,4 +173,24 @@ export const checkToken = async (token) => {
     method: 'POST',
     service: '/user/check'
   })
+}
+
+export const fetchAlerts = async ({
+  token,
+  deviceId
+}) => {
+  try {
+    const res = await callApi({
+      payload: {
+        deviceId
+      },
+      method: 'POST',
+      service: '/alerts/all',
+      token
+    })
+
+    return res
+  } catch (error) {
+    throw new Error(error)
+  }
 }

@@ -56,3 +56,34 @@ export const MAPPED_COMMANDS: any = _.map(COMMANDS, (command) => {
     options: mappedOptions
   }
 })
+
+export const SENSORS: any = {
+  SHT20: {
+    params: [
+      {
+        type: 'humidity',
+        translatedTypeName: 'Umidade relativa do ar',
+        unity: '%',
+        unityName: 'Percentage',
+      },
+      {
+        type: 'temperature',
+        translatedTypeName: 'Temperatura',
+        unity: 'C',
+        unityName: 'Celsius',
+      }
+    ],
+    errorValue: '998.00'
+  },
+  HD38: {
+    params: [
+      {
+        type: 'moisture',
+        translatedTypeName: 'Umidade do solo',
+        unity: 'none',
+        unityName: 'analogic signal'
+      }
+    ],
+    errorValue: 'nan'
+  }
+}

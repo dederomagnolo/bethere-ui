@@ -78,9 +78,21 @@ export const SensorsConfig = ({
     )
   })
 
+  const renderDescriptionLabel = () => {
+    const sensorsQuantity = sensors.length
+    if(!sensorsQuantity) return 'Esta estação local não possui sensores cadastrados.'
+
+    const adjustedLabel =
+      sensorsQuantity > 1
+        ? `${sensorsQuantity} sensores cadastrados`
+        : `${sensorsQuantity} sensor cadastrado`
+    
+    return `Esta estação local possui ${adjustedLabel}. Configure abaixo o nome e a exibição da medição na tela de dashboard.`
+  }
+
   return (
     <div className='options options--single'>
-      <span className='description'>{`Esta estação local possui ${sensors.length} cadastrados. Configure abaixo o nome e a exibição da medição na tela de dashboard.`}</span>
+      <span className='description'>{renderDescriptionLabel()}</span>
       <div className='sensors-list'>
         {sensorsToRender && sensorsToRender.length ? (
           <div className='device-selector__info__container'>

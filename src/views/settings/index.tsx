@@ -3,22 +3,24 @@ import _  from 'lodash'
 import { useDispatch, useSelector } from 'react-redux';
 
 import {
-  AppCollapsible
+  AppCollapsible,
+  DeviceSelector
 } from 'components';
 
-import './styles.scss'
-import { getUserDevices } from 'redux/device/selectors';
-import { DeviceSelector } from 'components/device-selector';
+import { editSettingsAndSendCommand } from 'services/fetch';
 
-import { getToken } from 'redux/user/selectors';
-import { editSettingsAndSendCommand, fetchUserDevices } from 'services/fetch';
 import { setUserDevices } from 'redux/device/actions';
+import { getToken } from 'redux/user/selectors';
+import { getUserDevices } from 'redux/device/selectors';
+
 import { ResetSection } from './blocks/reset-section';
 import { SensorsConfig } from './blocks/sensors-config';
 import { AutoWateringConfig } from './blocks/auto-watering-config';
 import { ManualWateringConfig } from './blocks/manual-watering-config';
 import { BroadcastConfig } from './blocks/broadcast-config';
-import { toast } from 'react-toastify';
+
+import './styles.scss'
+import { AlertsConfig } from './blocks/alerts-config';
 
 export const Settings = () => {
   const dispatch = useDispatch()
@@ -26,7 +28,7 @@ export const Settings = () => {
   const token = useSelector(getToken)
   const defaultDevice = _.find(userDevices, (device) => device.defaultDevice)
 
-  // evolution: need to update here to get default settings selected by user
+  // TODO: need to update here to get default settings selected by user
 
   const initialState = {
     _id: '',
@@ -57,12 +59,12 @@ export const Settings = () => {
         }
       })
 
-      dispatch(setUserDevices(res))
-      setSelectedDevice(_.find(res, (device) => device._id === deviceId ))
-    } catch(err) {
-      toast.error("Ocorreu um erro na solicitação", {
-        position: toast.POSITION.TOP_RIGHT
-      });
+      if(!res.error) {
+        dispatch(setUserDevices(res))
+        setSelectedDevice(_.find(res, (device) => device._id === deviceId ))
+      }
+    } catch(err: any) {
+      throw new Error(err)
     }
   }
 
@@ -84,6 +86,13 @@ export const Settings = () => {
           automationSettings={selectedDeviceSettings.automation}
         />)
     },
+    // {
+    //   title: 'Alertas',
+    //   component: () => (
+    //     <AlertsConfig
+    //       deviceId={selectedDevice._id}
+    //       sensors={selectedDevice.sensors} />)
+    // },
     {
       title: 'Sensores',
       component: () => 
@@ -121,7 +130,7 @@ export const Settings = () => {
       <div className='collapsible-options'>
         {renderCollapsibleOptions}
       </div>
-      <ResetSection deviceId={selectedDevice._id}/>
+      <ResetSection deviceId={_.get(selectedDevice, '_id')}/>
     </div>
   )
 }

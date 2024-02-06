@@ -19,22 +19,20 @@ const unityByType = {
   humidity: '%'
 } as any
 
-const sensors = {
-  hf3ni: 'sensor externo',
-  l8l8a: 'sensor interno'
-} as any
-
 export const CustomLineChart = ({
   dataToPlot,
   lineDataKeys = ['nop', 'nop'],
   dateToAjdustTicks,
-  measureType
+  measureType,
+  sensors
 }: any) => {
   const ticks = generateTicks({
     date: dateToAjdustTicks,
     valueToIncrement: 30,
     momentType: 'minutes'
   })
+
+  console.log({lineDataKeys})
 
   const initialTimeDomainPoint =  (moment(_.get(dataToPlot, '[0].x')).subtract(10, 'minutes')).valueOf()
   const finalTimeDomainPoint =
@@ -72,8 +70,8 @@ export const CustomLineChart = ({
         <Legend formatter={(value: any) => {
             return sensors[value]}
           } />
-        <Line type='monotone' dataKey={lineDataKeys[0]} stroke="#8884d8" />
-        <Line type='monotone' dataKey={lineDataKeys[1]} stroke="#82ca9d" />
+        {lineDataKeys[0] && <Line type='monotone' dataKey={lineDataKeys[0]} stroke="#8884d8" />}
+        {lineDataKeys[1] && <Line type='monotone' dataKey={lineDataKeys[1]} stroke="#82ca9d" />}
       </LineChart>
     </ResponsiveContainer>
   )

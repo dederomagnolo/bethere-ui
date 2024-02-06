@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import _ from 'lodash'
 
@@ -8,7 +8,7 @@ import { CustomSelect } from '../ui-atoms/select'
 
 import { EditIconWithTooltip, Input, Toggle } from 'components'
 import { getDeviceOptionsToSelect } from 'global/functions'
-import { editDeviceName, fetchUserDevices, setDefaultDevice, editSensorName } from 'services/fetch'
+import { editDeviceName, fetchUserDevices, setDefaultDevice } from 'services/fetch'
 import { getToken } from 'redux/user/selectors'
 import { setUserDevices } from 'redux/device/actions'
 

@@ -1,11 +1,12 @@
-import { CustomDatePicker, DeviceSelector, Loading } from 'components'
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { PuffLoader } from 'react-spinners'
 import _ from 'lodash'
 import moment from 'moment'
 
-import { getDefaultDeviceId } from 'redux/device/selectors'
+import { CustomDatePicker, DeviceSelector, Loading } from 'components'
+
+import { getDefaultDeviceData, getDefaultDeviceId, getUserDevices } from 'redux/device/selectors'
 import { getToken } from 'redux/user/selectors'
 
 import { getMeasuresHistory } from 'services/fetch'
@@ -31,8 +32,26 @@ const mergeMeasureBatchDataToPlot = (dataToMerge: any) => {
 
 export const Charts = () => {
   const token = useSelector(getToken)
-  const deviceId = useSelector(getDefaultDeviceId)
 
+  // TODO: need to add device selection
+  const deviceId = useSelector(getDefaultDeviceId) // useless
+  const defaultDevice = useSelector(getDefaultDeviceData)
+  const selectedDeviceSensors = _.get(defaultDevice, 'sensors')
+
+  console.log(selectedDeviceSensors)
+  let mappedSensorsByName = {}
+  selectedDeviceSensors.forEach((sensor: any) => {
+    const name = sensor.name || sensor.serialKey
+
+    mappedSensorsByName = { 
+      ...mappedSensorsByName,
+      [sensor.serialKey]: name
+    }
+  })
+
+  console.log({
+    mappedSensorsByName
+  })
   const todaysStartDate = moment().startOf('day')
   const startDateToQuery = moment(todaysStartDate).utc().format()
 
@@ -41,12 +60,20 @@ export const Charts = () => {
   const [selectedDate, setSelectedDate] = useState(todaysStartDate)
   
   const updateMeasuresHistory = async (dayToRetrieveHistory: any) => {
-    const measuresHistory = await getMeasuresHistory({
-      token,
-      deviceId,
-      dayToRetrieveHistory
-    })
-    setMeasures(_.get(measuresHistory, 'historyForDate'))
+    try {
+      setLoading(true)
+      const measuresHistory = await getMeasuresHistory({
+        token,
+        deviceId,
+        dayToRetrieveHistory
+      })
+
+      setMeasures(_.get(measuresHistory, 'historyForDate'))
+      setLoading(false)
+    } catch (err) {
+      setLoading(false)
+    }
+
   }
 
   useEffect(() => {
@@ -74,19 +101,21 @@ export const Charts = () => {
       const dataToPlot = mergeMeasureBatchDataToPlot(measureType)
       const keys = _.keys(measureType)
 
-      if(loading) {
+      if (loading) {
         return <Loading Component={PuffLoader} />
       }
 
       const shouldRenderChart = !_.isEmpty(dataToPlot)
       return (
-        <div className='charts__chart-container'>
-          {shouldRenderChart ? <CustomLineChart
+        <div className='charts__chart-container' key={`${measureType}-${key}`}>
+          {shouldRenderChart ? (
+            <CustomLineChart
+              sensors={mappedSensorsByName}
               key={`${measureType}-${key}`}
               measureType={key}
               dataToPlot={dataToPlot}
               lineDataKeys={keys}
-              dateToAjdustTicks={selectedDate} /> : null}
+              dateToAjdustTicks={selectedDate} />) : null}
         </div>
       )
     })

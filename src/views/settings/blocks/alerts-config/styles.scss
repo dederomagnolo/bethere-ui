@@ -1,0 +1,29 @@
+.alert-configs {
+  margin-top: 16px;
+
+  &__button {
+    min-width: 80px;
+    margin-top: 16px;
+  }
+
+  &__new-alert-title {
+    font-size: 16px;
+    font-weight: bold;
+  }
+  
+  .alert-form {
+    margin-top: 16px;
+    padding-left: 10px;
+  
+    .react-select-container {
+      width: 200px;
+    }
+
+    &__button-components {
+      width: 100%;
+      gap: 10px;
+      display: flex;
+    }
+  }
+}
+

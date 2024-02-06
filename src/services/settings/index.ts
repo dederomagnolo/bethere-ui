@@ -10,14 +10,18 @@ export const editSettings = async ({
   token,
   settingsPayload
 } : EditSettingsArgs) => {
-  const apiCall = async () => callApi({
-    method: 'POST',
-    service: '/settings/edit',
-    payload: settingsPayload,
-    token
-  })
-
-  return tryToCallService({
-    apiCall
-  })
+  try {
+    const apiCall = async () => await callApi({
+      method: 'POST',
+      service: '/settings/edit',
+      payload: settingsPayload,
+      token
+    })
+  
+    return await tryToCallService({
+      apiCall
+    })
+  } catch(err: any) {
+    throw new Error(err)
+  }
 }

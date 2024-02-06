@@ -1,17 +1,21 @@
 import React from 'react'
-import { useSelector } from 'react-redux'
-import { ToastContainer } from 'react-toastify'
+import * as moment from "moment-timezone"
 import _ from 'lodash'
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { useSelector } from 'react-redux'
+import { ToastContainer } from 'react-toastify'
+
 
 import { Charts, Login, Home, Settings, History } from 'views'
 
-import { getAuthenticatedStatus, getToken } from 'redux/user/selectors';
+import { getAuthenticatedStatus, getToken } from 'redux/user/selectors'
 
 import { Menu } from '../menu'
 
 import './styles.scss'
-import "react-toastify/dist/ReactToastify.css";
+import 'react-toastify/dist/ReactToastify.css'
+
+moment.tz.setDefault('America/Sao_Paulo')
 
 const routesList = [
   {

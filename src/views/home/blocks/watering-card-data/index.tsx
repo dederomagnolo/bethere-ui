@@ -3,19 +3,18 @@ import _ from 'lodash'
 import moment from 'moment'
 import { useSelector,  useDispatch } from 'react-redux'
 
-import { COMMANDS, WsReadyState } from 'global/consts'
-import callApi from 'services/callApi'
-
-import { getToken, getUserId } from 'redux/user/selectors'
-import { Toggle } from 'components/ui-atoms/switch'
-
+import { Toggle, Loading } from 'components'
 import { PulsingCircle } from 'components/ui-atoms/pulsing-circle'
 
-import './styles.scss'
-import { LoadingIcon } from '../loading-icon'
+import { COMMANDS, WsReadyState } from 'global/consts'
+
+import callApi from 'services/callApi'
 import { editSettingsAndSendCommand } from 'services/fetch'
+
+import { getToken, getUserId } from 'redux/user/selectors'
 import { setUserDevices } from 'redux/device/actions'
 
+import './styles.scss'
 
 interface WateringCardDataProps {
   wsStatus: number
@@ -47,7 +46,8 @@ export const WateringCardData = ({
 
   const [updatedWateringStatus, setUpdatedWateringStatus] = useState({
     manualRelayEnabled: false,
-    autoRelayEnabled: false
+    autoRelayEnabled: false,
+    dynamicAutoRemainingTime: 0
   })
 
   const {
@@ -57,9 +57,11 @@ export const WateringCardData = ({
 } = deviceRealTimeData
 
 const {
-  elapsedTime,
+  wateringElapsedTime,
   autoRelayEnabled,
-  manualRelayEnabled
+  manualRelayEnabled,
+  dynamicAutoRemainingTime,
+  nextTimeSlot
 } = wateringStatus
 
 const [wateringEnabled, setWateringEnabled] = useState(manualRelayEnabled)
@@ -68,7 +70,7 @@ const [autoModeEnabled, setAutoModeEnabled] = useState(autoWateringModeEnabled)
   useEffect(() => {
     setUpdatedWateringStatus(wateringStatus)
     setWateringEnabled(manualRelayEnabled)
-  }, [elapsedTime, autoRelayEnabled, manualRelayEnabled])
+  }, [dynamicAutoRemainingTime, autoRelayEnabled, manualRelayEnabled, nextTimeSlot])
 
   const handleSendCommand = async () => {
     if(wsStatus === WsReadyState.OPEN && defaultDeviceStatus) {
@@ -127,7 +129,7 @@ const [autoModeEnabled, setAutoModeEnabled] = useState(autoWateringModeEnabled)
     let pulsingCircleType = 'offline'
 
     if (connectionLoading) {
-      return <LoadingIcon />
+      return <Loading />
     }
 
     if (defaultDeviceStatus) {
@@ -154,33 +156,31 @@ const [autoModeEnabled, setAutoModeEnabled] = useState(autoWateringModeEnabled)
     )
   }
 
-  const renderNextCycleLabel = () => {
+  const renderAutoWateringInfoLabel = () => {
     if (!autoModeEnabled) return ''
-    
-    const isIntervalInHours = _.get(automationSettings, 'intervalInHours')
-    const autoWateringInterval = _.get(automationSettings, 'interval')
 
-    const factorToConvert = isIntervalInHours ?  60 * 60 * 1000 : 60 * 1000
-    const momentTypeToConvert = isIntervalInHours ? 'hours' : 'minutes'
-    const convertedElapsedTime = elapsedTime / factorToConvert
+    if (!autoRelayEnabled) {
+      const currentTime = moment()
+
+      const isSameDay = moment(nextTimeSlot).isSame(currentTime, 'day')
+
+      if (!isSameDay) {
+        return `Próxima ligação: ${moment(nextTimeSlot).format('DD/MM, HH:mm')}`
+      }
+
+      const nextCycleTime =
+        moment(currentTime).clone().add(dynamicAutoRemainingTime, 'milliseconds')
   
-    const remainingTime = autoWateringInterval - convertedElapsedTime
-  
-    const next = moment().add(remainingTime, momentTypeToConvert)
+      return `Próxima ligação: Hoje, ${moment(nextTimeSlot).format('HH:mm')}`
+    }
 
-    const autoOperationStartTime = _.get(automationSettings, 'startTime')
-    const autoOperationEndTime = _.get(automationSettings, 'endTime')
+    const interval = _.get(automationSettings, 'interval')
+    const autoWateringEstimatedToEndAt = moment().clone().add(interval, 'minutes')
+    const pastTime = moment(autoWateringEstimatedToEndAt).clone().subtract(wateringElapsedTime, 'milliseconds')
 
-    const startOfCurrentDay = moment().startOf('day')
-    const startTime = moment(startOfCurrentDay).add(autoOperationStartTime, 'hours')
-    const endTime = moment(startOfCurrentDay).add(autoOperationEndTime, 'hours')
+    const remainingTime = autoWateringEstimatedToEndAt.diff(pastTime)
 
-    const currentTime = moment()
-    const isCurrentTimeOnValidInterval = currentTime >= startTime && currentTime <= endTime
-
-    const timeToStartOperation = moment.duration(startTime.diff(currentTime)).asMinutes()
-
-    return `Próxima ligação: ${isCurrentTimeOnValidInterval ? next.format('HH:mm') : startTime.format('HH:mm')}`
+    return `Termina em: ${moment(remainingTime).format('mm')} minutos` 
   }
   
   return (
@@ -198,7 +198,7 @@ const [autoModeEnabled, setAutoModeEnabled] = useState(autoWateringModeEnabled)
           </div>
         </div>
         <span className='option__status-label'>
-          {connectionLoading || !defaultDeviceStatus ? null : renderNextCycleLabel()}
+          {connectionLoading || !defaultDeviceStatus ? null : renderAutoWateringInfoLabel()}
         </span>
         <div className='option option--toggle'>
             <span>Manual</span>

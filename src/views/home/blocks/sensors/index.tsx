@@ -9,9 +9,14 @@ import {
   TbCircleXFilled as OfflineIcon,
 } from  'react-icons/tb'
 
-import { LoadingIcon } from '../loading-icon'
 import { GenericCard } from 'components'
-import { CARDS, SENSORS } from '../../utils/constants'
+
+import { SENSORS } from 'global/consts'
+
+import { LoadingIcon } from '../loading-icon'
+
+import { CARDS } from '../../utils/constants'
+
 
 import './styles.scss'
 

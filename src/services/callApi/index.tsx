@@ -34,16 +34,18 @@ async function callApi({
         return content
       }
 
-      return {
+      let error = new Error();
+      const responseError = {
         status: res.status,
         message: content.error,
         service: res.url,
         error: true
       }
+      error = {...error, ...responseError}
+      throw(error);
     }
   } catch (err: any) {
-    throw new Error(err.message) // need to handle this on UI too
-    // return { message: 'Internal Server Error', service: err }
+    throw new Error(err)
   }
 }
 

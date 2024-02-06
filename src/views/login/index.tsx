@@ -1,22 +1,22 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch,  useSelector } from 'react-redux'
+import { resetGlobalState } from 'react-use-websocket';
 import _ from 'lodash'
+
 import {
   BsFillPersonFill as UserIcon,
   BsLockFill as LockIcon,
 } from 'react-icons/bs'
 
+import callApi from 'services/callApi'
 
 import { Button, Input, Loading } from 'components/ui-atoms'
 
 import { setUserInfo } from 'redux/user/actions'
 import { setGlobalError, clearGlobalState } from 'redux/global/actions'
 import { setUserDevices } from 'redux/device/actions'
-
 import { getGlobalError } from 'redux/global/selectors'
-
-import callApi from 'services/callApi'
 
 import logo from '../../assets/bethere_logo.png'
 
@@ -29,6 +29,10 @@ export const Login = () => {
   const errorOnLogin = useSelector(getGlobalError)
 
   useEffect(() => {
+    window.addEventListener('unload', () => {
+      resetGlobalState(process.env.REACT_APP_WS_HOST || '');
+    });
+
     dispatch(clearGlobalState())
   }, [])
 
