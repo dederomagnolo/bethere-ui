@@ -27,6 +27,7 @@ export const COMMANDS: any = {
     }
   },
   RESET: {
+    COMMAND_NAME_PT: 'Reinicialização',
     CATEGORY_NAME: 'Restart',
     CATEGORY_NAME_PT: 'Sistema',
     OPTIONS: {
@@ -34,6 +35,7 @@ export const COMMANDS: any = {
     }
   },
   SETTINGS: {
+    COMMAND_NAME_PT: 'Configuração',
     CATEGORY_NAME: 'System',
     CATEGORY_NAME_PT: 'Sistema',
     OPTIONS: {
@@ -43,7 +45,12 @@ export const COMMANDS: any = {
 }
 
 export const MAPPED_COMMANDS: any = _.map(COMMANDS, (command) => {
-  const { CATEGORY_NAME, CATEGORY_NAME_PT, OPTIONS } = command
+  const {
+      COMMAND_NAME_PT,
+      CATEGORY_NAME,
+      CATEGORY_NAME_PT,
+      OPTIONS
+    } = command
   const mappedOptions = _.map(OPTIONS, (option, key: any) => {
     return {
       command: option,
@@ -51,6 +58,7 @@ export const MAPPED_COMMANDS: any = _.map(COMMANDS, (command) => {
     }
   })
   return {
+    commandNameTranslated: COMMAND_NAME_PT,
     categoryName: CATEGORY_NAME,
     categoryNameTranslated: CATEGORY_NAME_PT,
     options: mappedOptions

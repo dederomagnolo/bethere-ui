@@ -45,7 +45,7 @@ async function callApi({
       throw(error);
     }
   } catch (err: any) {
-    throw new Error(err)
+    throw new Error(err.message)
   }
 }
 

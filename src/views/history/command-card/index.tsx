@@ -23,23 +23,32 @@ export const CommandCard: React.FC<CommandCardProps> = ({ command }) => {
     if(!commandName || !categoryName) return {}
     
     const category = _.find(MAPPED_COMMANDS, (command) => 
-      command.categoryName === categoryName)
+      command.categoryName === categoryName || command.categoryNameTranslated === categoryName)
 
     if(!category) return {}
 
     const commandInfo = 
       _.find(category.options, (option) => option.command === commandName)
+    
+    const commandStatus = _.get(commandInfo, 'status')
+    const commandLabel = commandStatus === 'SET'
+      ? _.get(category, 'commandNameTranslated')
+      : category.categoryNameTranslated
       
     return {
-      commandStatus: _.get(commandInfo, 'status'),
-      categoryNameTranslated: category.categoryNameTranslated
+      commandStatus,
+      categoryNameTranslated: commandLabel
     }
   }
+
+  const commandToRender = getCommandTranslatedInfos({ commandName, categoryName })
+
+  if (_.isEmpty(commandToRender)) return null
 
   const {
     categoryNameTranslated,
     commandStatus
-  } = getCommandTranslatedInfos({ commandName, categoryName })
+  } = commandToRender
 
   const commandStatusType: any = {
     'ON': 'on',

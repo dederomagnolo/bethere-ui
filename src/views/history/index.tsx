@@ -82,6 +82,7 @@ export const History = () => {
     ) : historyForDate
   
     const commandCards = _.map(historyFilteredByCategoryName, (command: CommandType) => {
+      console.log({historyFilteredByCategoryName})
       const commandsToFilter = ['@SET_AW_TIMER#']
       const commandName = _.get(command, 'commandName')
       const invalidCommand = _.find(commandsToFilter, (commandToFilter) => commandName.includes(commandToFilter))

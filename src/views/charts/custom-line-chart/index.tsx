@@ -32,8 +32,6 @@ export const CustomLineChart = ({
     momentType: 'minutes'
   })
 
-  console.log({lineDataKeys})
-
   const initialTimeDomainPoint =  (moment(_.get(dataToPlot, '[0].x')).subtract(10, 'minutes')).valueOf()
   const finalTimeDomainPoint =
     (moment(_.get(dataToPlot, `[${dataToPlot.length - 1}].x`)).add(10, 'minutes')).valueOf()

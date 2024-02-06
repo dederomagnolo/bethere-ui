@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux';
-import useWebSocket from 'react-use-websocket';
+import { useDispatch, useSelector } from 'react-redux'
+import useWebSocket from 'react-use-websocket'
+import { useNavigate } from 'react-router'
 import _ from 'lodash'
 
 import { GenericCard } from 'components'
@@ -28,6 +29,8 @@ export const Home = () => {
   const userDevices = useSelector(getUserDevices)
   const token = useSelector(getToken)
   const dispatch = useDispatch()
+  const navigate = useNavigate()
+
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState({ type: '' })
   const [deviceRealTimeData, setDeviceRealTimeData] = useState({
@@ -64,7 +67,10 @@ export const Home = () => {
     onError: async (err: any) => {
       setError({ type: 'websocket'})
       const res = await checkToken(token)
-      if(res && res.status === 401) {
+      console.log({res})
+
+      if (res && res instanceof Error) {
+        navigate('/login')
         dispatch(clearUserState())
       }
     },

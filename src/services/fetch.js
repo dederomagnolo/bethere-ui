@@ -168,11 +168,17 @@ export const editSettingsAndSendCommand = async ({
 }
 
 export const checkToken = async (token) => {
-  return await callApi({
-    token,
-    method: 'POST',
-    service: '/user/check'
-  })
+  try {
+    const res = await callApi({
+      token,
+      method: 'POST',
+      service: '/user/check'
+    })
+
+    return res
+  } catch (err) {
+    return err
+  }
 }
 
 export const fetchAlerts = async ({
