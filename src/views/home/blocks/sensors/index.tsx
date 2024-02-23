@@ -21,27 +21,30 @@ import { CARDS } from '../../utils/constants'
 import './styles.scss'
 
 export const Sensors = ({ sensors, measures = [], loading, isDeviceOffline }: any) => {
+  const renderMeasure = (data: number | string, unit: string) => {
+    return loading ? <LoadingIcon /> : (
+      <div className='measure-data'>
+        <span>{data}</span>
+        <span className='unit'>{unit}</span>
+      </div>
+    )
+  }
+
   const MeasureCardContent = ({ sensorModel, measuresBySensor, sensorId }: any ) => {
-    if (sensorModel === 'SHT20') {
+    const UnavailableMeasure = () => (
+      <div className='measures unavalible'>
+        <OfflineIcon />
+        <p>Indisponível</p>
+      </div>
+    )
+
+    const MeasuresBySensor = () => {
       const humidity = _.get(measuresBySensor, 'humidity') 
       const temperature = _.get(measuresBySensor, 'temperature')
-  
-      const renderMeasure = (data: number, unit: string) => {
-        return loading ? <LoadingIcon /> : (
-          <div className='measure-data'>
-            <span>{data}</span>
-            <span className='unit'>{unit}</span>
-          </div>
-        )
-      }
-  
-      return (
-        isDeviceOffline || !measuresBySensor ? (
-          <div className='measures unavalible'>
-            <OfflineIcon />
-            <p>Indisponível</p>
-          </div>
-        ) : (
+      const moisture = _.get(measuresBySensor, 'moisture')
+
+      if (sensorModel === 'SHT20') {
+        return (
           <div className='measures' key={sensorId}>
             <div className='measure'>
               <div className='measure-label'>
@@ -59,9 +62,32 @@ export const Sensors = ({ sensors, measures = [], loading, isDeviceOffline }: an
             </div>
           </div>
         )
-      )
+      }
+      
+      if (sensorModel === 'HD38') {
+        const normalizedValue = (100*Number(moisture) / 1024).toFixed(1)
+        return (
+          <div className='measures' key={sensorId}>
+            <div className='measure'>
+              <div className='measure-label'>
+                <TintIcon className='measure-icon--humidity' />
+                <span className='measure-category'>Umidade do solo</span>
+              </div>
+              {renderMeasure(normalizedValue, '%')}
+            </div>
+          </div>
+        )
+      }
+
+      return null
     }
-    return null
+
+    console.log({measuresBySensor})
+    return (
+      isDeviceOffline || !measuresBySensor ?
+        <UnavailableMeasure /> :
+        <MeasuresBySensor />
+    )
   }
 
   const mappedSensorCards = _.map(sensors, (sensor) => {

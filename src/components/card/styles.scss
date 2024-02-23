@@ -66,7 +66,7 @@
     }
   }
 
-  &--SHT20 {
+  &--SHT20, &--HD38 {
     justify-content: space-between;
     flex-direction: column-reverse;
     width: 100%;
@@ -80,6 +80,13 @@
 
     @include md {
       height: 230px;
+      width: 230px;
+    }
+  }
+
+  &--HD38 {
+    @include md {
+      height: 180px;
       width: 230px;
     }
   }
