@@ -16,8 +16,10 @@ import { generateTicks } from 'global/functions'
 
 const unityByType = {
   temperature: '°C',
-  humidity: '%'
+  humidity: '%',
+  moisture: '%'
 } as any
+
 
 export const CustomLineChart = ({
   dataToPlot,
@@ -32,6 +34,26 @@ export const CustomLineChart = ({
     momentType: 'minutes'
   })
 
+  const getYDomainByUnitType = () => {
+    if (measureType === 'moisture') {
+      const initialYDomain = _.get(dataToPlot, `[0].${lineDataKeys[0]}`) - 50
+      const finalYDomain = _.get(dataToPlot, `[${dataToPlot.length - 1}].${lineDataKeys[0]}`) + 50
+      
+      return {
+        initialYDomain,
+        finalYDomain
+      }
+    }
+
+    const initialYDomain = _.get(dataToPlot, `[0].${lineDataKeys[0]}`) - 2
+    const finalYDomain = _.get(dataToPlot, `[${dataToPlot.length - 1}].${lineDataKeys[0]}`) + 2 
+
+    return {
+      initialYDomain,
+      finalYDomain
+    }
+  }
+
   const initialTimeDomainPoint =  (moment(_.get(dataToPlot, '[0].x')).subtract(10, 'minutes')).valueOf()
   const finalTimeDomainPoint =
     (moment(_.get(dataToPlot, `[${dataToPlot.length - 1}].x`)).add(10, 'minutes')).valueOf()
@@ -39,9 +61,11 @@ export const CustomLineChart = ({
   const adjustedTicks = _.compact(_.map(ticks, (tick) => 
     tick > initialTimeDomainPoint && tick < finalTimeDomainPoint ? tick : null))
   
-  const initialYDomain = _.get(dataToPlot, `[0].${lineDataKeys[0]}`) - 2
-  const finalYDomain = _.get(dataToPlot, `[${dataToPlot.length - 1}].${lineDataKeys[0]}`) + 2 
-  
+  const {
+    initialYDomain,
+    finalYDomain
+  } = getYDomainByUnitType()
+
   return (
     <ResponsiveContainer width="100%" height={400}>
       <LineChart
@@ -59,7 +83,17 @@ export const CustomLineChart = ({
           tickFormatter={(t) => moment(t).format('HH:mm')}
         />
         <YAxis
-          tickFormatter={(tick) => `${tick}${unityByType[measureType]}`}
+          tickFormatter={(tick) => {
+            const unit = unityByType[measureType]
+            if (measureType === 'moisture') {
+              console.log({tick})
+              const normalizedTick = (100*Number(tick) / 1024).toFixed(1)
+
+              return `${normalizedTick}${unit}`
+            }
+
+            return `${tick}${unit}`
+          }}
           type='number'
           scale='linear'
           domain={[initialYDomain, finalYDomain]} />
