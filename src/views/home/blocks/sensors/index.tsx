@@ -65,7 +65,14 @@ export const Sensors = ({ sensors, measures = [], loading, isDeviceOffline }: an
       }
       
       if (sensorModel === 'HD38') {
-        const normalizedValue = (100*Number(moisture) / 1024).toFixed(1)
+        const outMax = 100
+        const outMin = 0
+        const inMax = 270
+        const inMin = 556
+
+        const normalizedValue = 
+          ((Number(moisture) - inMin) * (outMax - outMin)) / (inMax - inMin) + outMin
+
         return (
           <div className='measures' key={sensorId}>
             <div className='measure'>

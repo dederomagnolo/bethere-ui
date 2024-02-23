@@ -35,15 +35,15 @@ export const CustomLineChart = ({
   })
 
   const getYDomainByUnitType = () => {
-    if (measureType === 'moisture') {
-      const initialYDomain = _.get(dataToPlot, `[0].${lineDataKeys[0]}`) - 50
-      const finalYDomain = _.get(dataToPlot, `[${dataToPlot.length - 1}].${lineDataKeys[0]}`) + 50
+    // if (measureType === 'moisture') {
+    //   const initialYDomain = _.get(dataToPlot, `[0].${lineDataKeys[0]}`) - 50
+    //   const finalYDomain = _.get(dataToPlot, `[${dataToPlot.length - 1}].${lineDataKeys[0]}`) + 50
       
-      return {
-        initialYDomain,
-        finalYDomain
-      }
-    }
+    //   return {
+    //     initialYDomain,
+    //     finalYDomain
+    //   }
+    // }
 
     const initialYDomain = _.get(dataToPlot, `[0].${lineDataKeys[0]}`) - 2
     const finalYDomain = _.get(dataToPlot, `[${dataToPlot.length - 1}].${lineDataKeys[0]}`) + 2 
@@ -85,12 +85,11 @@ export const CustomLineChart = ({
         <YAxis
           tickFormatter={(tick) => {
             const unit = unityByType[measureType]
-            if (measureType === 'moisture') {
-              console.log({tick})
-              const normalizedTick = (100*Number(tick) / 1024).toFixed(1)
+            // if (measureType === 'moisture') {
+            //   console.log({tick})
 
-              return `${normalizedTick}${unit}`
-            }
+            //   return `${normalizedTick}${unit}`
+            // }
 
             return `${tick}${unit}`
           }}

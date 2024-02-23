@@ -14,14 +14,44 @@ import { CustomLineChart } from './custom-line-chart'
 
 import './styles.scss'
 
+// console.log({tick})
+// const outMax = 100
+// const outMin = 0
+// const inMax = 270
+// const inMin = 556
+
+// const normalizedTick = 
+//   ((Number(tick) - inMin) * (outMax - outMin)) / (inMax - inMin) + outMin
+
+const getNormalizedValue = (value: number) => {
+  const outMax = 100
+  const outMin = 0
+  const inMax = 270
+  const inMin = 700 // linear coeficient
+  const angularCoeficient = (outMax - outMin) / (inMax - inMin)
+
+  const normalizedTick = angularCoeficient * value + 556
+
+  const percentual = normalizedTick * 100 / 700
+  return Number(percentual.toFixed(2))
+}
+
 const mergeMeasureBatchDataToPlot = (dataToMerge: any) => {
   const formattedData = [] as any
   _.forEach(dataToMerge, (batch, key: any) => {
+
     const formattedBatch = _.map(batch, (measure: any, index: any) => {
-      if (measure.value > 900) return null
+      const measureType = measure.type
+      const value = measure.value
+
+      if (measureType !== 'moisture' && value > 900) return null 
+
+      const xTick = (moment(measure.createdAt)).valueOf()
+
       return {
-        x: (moment(measure.createdAt)).valueOf(),
-        [measure.origin]: measure.value
+        x: xTick,
+        [measure.origin]: measureType === 'moisture' ? getNormalizedValue(value) : value,
+        // [measure.origin]: value
       }
     })
     formattedData.push(_.compact(formattedBatch))
