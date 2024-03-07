@@ -85,9 +85,14 @@ export const AutoWateringConfig = ({
   const setEndTimeOptionsBasedOnStartTime = () => {
     const editedStartTime = editedAutomationSettings.startTime
     const possibleTimeOptions =_.filter(timeOptions, (option) => option.value > editedStartTime)
+
+    possibleTimeOptions && possibleTimeOptions.push({
+      value: 24,
+      label: '00h00',
+    })
+
     return possibleTimeOptions
   }
-
 
   return (
     <div className='options options--auto-watering'>

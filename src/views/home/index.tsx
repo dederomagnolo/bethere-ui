@@ -24,6 +24,7 @@ import { checkToken } from 'services/fetch';
 import { clearUserState } from 'redux/user/actions';
 
 import { LoadingIcon } from './blocks/loading-icon';
+import { Devices } from './blocks/devices'
 
 export const Home = () => {
   const userDevices = useSelector(getUserDevices)
@@ -40,7 +41,9 @@ export const Home = () => {
     wateringStatus: {}
   })
 
+  const [devicesRealTimeData, setDevicesRealTimeData] = useState({} as any)
   const defaultDevice = _.find(userDevices, (device) => device.defaultDevice)
+
   const deviceName = _.get(defaultDevice, 'deviceName')
   const deviceSensors = _.get(defaultDevice, 'sensors')
 
@@ -61,7 +64,7 @@ export const Home = () => {
     } = useWebSocket(process.env.REACT_APP_WS_HOST || '', {
     onMessage: (event) => {},
     onOpen: (event) => {
-      console.log(`Connecting to WebSocket Server...`)
+      console.log(`Connection opened`)
       setLoading(true)
     },
     onError: async (err: any) => {
@@ -95,7 +98,7 @@ export const Home = () => {
       handleDeviceNonResponding()
     }, 18000)
 
-    if(parsedData) {
+    if (parsedData) {
       const {
         connectedDevices,
         measures,
@@ -103,10 +106,15 @@ export const Home = () => {
         wateringStatus
       } = parsedData
 
+
+      // this approach should be the final, should remove all of default device logics after migration
+      const devicesRealTimeDataCollection = _.omit(
+        parsedData, 'connectedDevices', 'measures', 'lastCommandReceived', 'wateringStatus')
+
+      setDevicesRealTimeData(devicesRealTimeDataCollection)
       // need to get last command received from DB while this is loading
 
       let connectedDeviceData // lets type devices!
-
       // check user devices connected if it exists in the collection
       _.every(connectedDevices, (connectedDevice) => {
         const existsInUserCollection =
@@ -131,29 +139,6 @@ export const Home = () => {
       }
     }
   }, [lastMessage])
-
-
-  const StatusLabel = () => {
-    if (loading) {
-      return <LoadingIcon />
-    }
-
-    const offlineLabel = (
-      !defaultDeviceStatus && (
-        <div className='device-status__offline-label'>
-          <OfflineIcon   className='wifi-error-icon'/>
-          <p>Offline</p>
-        </div>
-      )
-    )
-
-    return (
-      <div
-        className={`device-status device-status--${defaultDeviceStatus ? 'online' : 'offline'}`}>
-        {defaultDeviceStatus ? <p>Online</p> : offlineLabel}
-      </div>
-    )
-  }
 
   const renderWebsocketConnectionStatus = () => {
     const containerClass = 'server-connection-status'
@@ -192,11 +177,13 @@ export const Home = () => {
   return(
     <div className='page-content home-view'>
       {renderWebsocketConnectionStatus()}
-      <h2>Estação local</h2>
-      <GenericCard
-        CustomData={StatusLabel}
-        settingsButtonRoute='/configuracoes'
-        label={deviceName} />
+      <h2>Dispositivos</h2>
+      <Devices
+        devicesRealTimeData={devicesRealTimeData}
+        userDevices={userDevices}
+        defaultDeviceStatus={defaultDeviceStatus}
+        loading={loading}
+      />
       <div className='dashboard'>
         <Sensors
           isDeviceOffline={!defaultDeviceStatus}
@@ -204,7 +191,6 @@ export const Home = () => {
           loading={loading}
           sensors={deviceSensors} />
         <GenericCard
-          settingsButtonRoute='configuracoes'
           type='watering'
           icon={CARDS['watering'].icon}
           label={CARDS['watering'].label}

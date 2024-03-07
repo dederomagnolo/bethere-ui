@@ -2,9 +2,9 @@ import {
   FaLeaf as Leaf,
 } from 'react-icons/fa'
 
-import {
-  BiStation as SensorIcon
-} from 'react-icons/bi'
+import { 
+  TbActivityHeartbeat as SensorIcon
+} from 'react-icons/tb'
 
 export const CARDS: any = {
   SHT20: {

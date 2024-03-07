@@ -2,21 +2,24 @@ import {
   HiCog as Cog
 } from 'react-icons/hi'
 
+import {
+  BiStation as OnlineIcon
+} from 'react-icons/bi'
+
 import './styles.scss'
-import { useEffect } from 'react'
 
 interface CardLabelProps {
   label: string
   Icon?: any
 }
+
 interface GenericCardProps {
   columnOrientation?: string
   className?: string
-  settingsButtonRoute?: string
   label: string
   type?: string
   CustomData?: () => JSX.Element
-  icon?: any,
+  icon?: any
   children?: any
 }
 
@@ -40,23 +43,21 @@ const CardLabel = ({ label, Icon } : CardLabelProps) => {
 export const GenericCard = ({
   type = 'default',
   className,
-  settingsButtonRoute,
   CustomData,
   label,
   icon,
   children
 } : GenericCardProps) => {
 
-  const renderSettingsButton = () =>
-    settingsButtonRoute && (
-      <div className='generic-card__settings'>
-        <Cog size={18} />
-      </div>
-    )
+  const renderDeviceSignalIcon = () => (
+    <div className='generic-card__settings'>
+      <OnlineIcon size={22} />
+    </div>
+  )
 
   return (
     <div className={`generic-card generic-card--${type} ${className ? className : ''}`}>
-      {renderSettingsButton()}
+      {type === 'default' && renderDeviceSignalIcon()}
       <div className='card-infos'>
         <CardLabel Icon={icon} label={label} />
       </div>

@@ -5,8 +5,7 @@
   display: flex;
   box-shadow:0 1px 3px rgba(0,0,0,0.2), 0 3px 5px rgba(0,0,0,0.1);
   border-radius: 15px;
-  width: 230px;
-  height: 80px;
+  height: 100px;
   color: #6B6B6B;
   padding: 12px;
   justify-content: space-between;
@@ -39,7 +38,7 @@
     }
 
     span {
-      font-size: 14px;
+      font-size: 12px;
     }
   }
 
@@ -48,7 +47,7 @@
     width: 100%;
 
     @include md {
-      width: 230px;
+      width: 150px;
     }
   }
 
@@ -79,15 +78,8 @@
     }
 
     @include md {
-      height: 230px;
-      width: 230px;
-    }
-  }
-
-  &--HD38 {
-    @include md {
-      height: 180px;
-      width: 230px;
+      height: 200px;
+      width: 200px;
     }
   }
 
