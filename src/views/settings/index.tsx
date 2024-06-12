@@ -1,26 +1,26 @@
-import { useState } from 'react';
+import { useState } from 'react'
 import _  from 'lodash'
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux'
 
 import {
   AppCollapsible,
   DeviceSelector
-} from 'components';
+} from 'components'
 
-import { editSettingsAndSendCommand } from 'services/fetch';
+import { editSettingsAndSendCommand } from 'services/fetch'
 
-import { setUserDevices } from 'redux/device/actions';
-import { getToken } from 'redux/user/selectors';
-import { getUserDevices } from 'redux/device/selectors';
+import { setUserDevices } from 'redux/device/actions'
+import { getToken } from 'redux/user/selectors'
+import { getUserDevices } from 'redux/device/selectors'
 
 import { ResetSection } from './blocks/reset-section';
-import { SensorsConfig } from './blocks/sensors-config';
-import { AutoWateringConfig } from './blocks/auto-watering-config';
-import { ManualWateringConfig } from './blocks/manual-watering-config';
-import { BroadcastConfig } from './blocks/broadcast-config';
+import { SensorsConfig } from './blocks/sensors-config'
+import { AutoWateringConfig } from './blocks/auto-watering-config'
+import { ManualWateringConfig } from './blocks/manual-watering-config'
+import { BroadcastConfig } from './blocks/broadcast-config'
+import { AlertsConfig } from './blocks/alerts-config'
 
 import './styles.scss'
-import { AlertsConfig } from './blocks/alerts-config';
 
 export const Settings = () => {
   const dispatch = useDispatch()
@@ -86,13 +86,13 @@ export const Settings = () => {
           automationSettings={selectedDeviceSettings.automation}
         />)
     },
-    // {
-    //   title: 'Alertas',
-    //   component: () => (
-    //     <AlertsConfig
-    //       deviceId={selectedDevice._id}
-    //       sensors={selectedDevice.sensors} />)
-    // },
+    {
+      title: 'Alertas',
+      component: () => (
+        <AlertsConfig
+          deviceId={selectedDevice._id}
+          sensors={selectedDevice.sensors} />)
+    },
     {
       title: 'Sensores',
       component: () => 

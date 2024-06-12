@@ -4,11 +4,6 @@ import {
   FaThermometerHalf as ThermometerIcon,
 } from 'react-icons/fa'
 
-import {
-  TbCircleFilled as OnlineIcon,
-  TbCircleXFilled as OfflineIcon,
-} from  'react-icons/tb'
-
 import { GenericCard } from 'components'
 
 import { SENSORS } from 'global/consts'
@@ -16,11 +11,11 @@ import { SENSORS } from 'global/consts'
 import { LoadingIcon } from '../loading-icon'
 
 import { CARDS } from '../../utils/constants'
-
+import { UnavailableConnection } from '../unavailable-connection'
 
 import './styles.scss'
 
-export const Sensors = ({ sensors, measures = [], loading, isDeviceOffline }: any) => {
+export const Sensors = ({ sensors, measures = [], loading, deviceStatus }: any) => {
   const renderMeasure = (data: number | string, unit: string) => {
     return loading ? <LoadingIcon /> : (
       <div className='measure-data'>
@@ -31,13 +26,6 @@ export const Sensors = ({ sensors, measures = [], loading, isDeviceOffline }: an
   }
 
   const MeasureCardContent = ({ sensorModel, measuresBySensor, sensorId }: any ) => {
-    const UnavailableMeasure = () => (
-      <div className='measures unavalible'>
-        <OfflineIcon />
-        <p>Indisponível</p>
-      </div>
-    )
-
     const MeasuresBySensor = () => {
       const humidity = _.get(measuresBySensor, 'humidity') 
       const temperature = _.get(measuresBySensor, 'temperature')
@@ -89,12 +77,9 @@ export const Sensors = ({ sensors, measures = [], loading, isDeviceOffline }: an
       return null
     }
 
-    console.log({measuresBySensor})
-    return (
-      isDeviceOffline || !measuresBySensor ?
-        <UnavailableMeasure /> :
-        <MeasuresBySensor />
-    )
+    return deviceStatus && measuresBySensor ?
+      <MeasuresBySensor /> :
+      <UnavailableConnection />
   }
 
   const mappedSensorCards = _.map(sensors, (sensor) => {

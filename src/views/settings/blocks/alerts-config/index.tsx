@@ -1,20 +1,23 @@
 import { useState, useEffect } from 'react'
 import _ from 'lodash'
-import { Button, CustomSelect, Input } from 'components'
+import { Button, CustomSelect, EditIconWithTooltip, Input } from 'components'
 
 import { SENSORS } from 'global/consts'
 import { InputOption } from 'views/settings/input-option'
 
-import './styles.scss'
 import { useSelector } from 'react-redux'
 import { getToken } from 'redux/user/selectors'
 
 import { useFetch } from 'hooks/useFetch'
 import { fetchAlerts } from 'services/fetch'
 
+import './styles.scss'
+
 export const AlertsConfig = ({ sensors, deviceId }: any) => {
   const [showNewAlertForm,  setShowNewAlertForm] = useState(false)
+  const [showEditAlertForm, setShowEditAlertForm] = useState(false)
   const [selectedSensor, setSelectedSensor] = useState({ _id: '', model: '' })
+  const [selectedAlertFromList, setSelectedAlertFromList] = useState('') as any
   const token = useSelector(getToken)
 
   const {
@@ -53,7 +56,10 @@ export const AlertsConfig = ({ sensors, deviceId }: any) => {
           Salvar
         </Button>
         <Button
-          onClick={() => setShowNewAlertForm(false)}
+          onClick={() =>{
+            setShowNewAlertForm(false)
+            setSelectedSensor({ _id: '', model: '' })
+          }}
           className='alert-configs__button'
           variant='cancel'>
             Cancelar
@@ -65,7 +71,7 @@ export const AlertsConfig = ({ sensors, deviceId }: any) => {
   const Alerts = () => {
     const alertsByDevice = _.get(data, 'data')
     const mappedAlerts = _.map(alertsByDevice, (alert) => {
-      console.log({alert})
+      const alertId = _.get(alert, '_id', '')
       const sensorId = _.get(alert, 'sensorId')
       const paramName = _.get(alert, 'paramName')
       const alertValue = _.get(alert, 'value')
@@ -82,16 +88,43 @@ export const AlertsConfig = ({ sensors, deviceId }: any) => {
       )
 
       return (
-        <div>
-          <div>{sensorName}</div>
-          <div>{translatedParamName}</div>
-          <div>{alertValue}</div>
+        <div className='alert__row'>
+          <div
+            className={`alert ${alertId === selectedAlertFromList ? 'selected' : ''}`}
+            onClick={() => setSelectedAlertFromList(alertId)}>
+            <span className='alert__sensor-name'>
+              Sensor: {sensorName}
+            </span>
+            <div className='alert__params'>
+              <span>
+                Parâmetro: {translatedParamName}
+              </span>
+              <span>
+                Limite: {alertValue}
+              </span>
+            </div>
+          </div>
+          <EditIconWithTooltip uniqueId={alertId} />
         </div>
       )
     })
 
     return (
       <div className='alerts-list'>
+        Meus Alertas
+        <div className='alerts-list__button-components'>
+        <Button
+          className='alert-configs__button'
+          onClick={() => setShowEditAlertForm(true)}>
+          Editar
+        </Button>
+        <Button
+          onClick={() => {}}
+          className='alert-configs__button'
+          variant='cancel'>
+            Excluir
+        </Button>
+      </div>
         {mappedAlerts}
       </div>
     )
@@ -100,9 +133,6 @@ export const AlertsConfig = ({ sensors, deviceId }: any) => {
   return (
     <div className='options options'>
       <div>
-        <div className='alerts-configs'>
-          <Alerts />
-        </div>
         <div className='description'>
           Configure o envio de alertas para o seu email caso um limite de medição seja atingido por um sensor.
         </div>
@@ -137,6 +167,9 @@ export const AlertsConfig = ({ sensors, deviceId }: any) => {
             Novo Alerta
           </Button>
         )}
+        <div className='alerts-configs'>
+          <Alerts />
+        </div>
       </div>
     </div>
   )

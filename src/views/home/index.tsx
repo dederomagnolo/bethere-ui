@@ -25,6 +25,7 @@ import { clearUserState } from 'redux/user/actions';
 
 import { LoadingIcon } from './blocks/loading-icon';
 import { Devices } from './blocks/devices'
+import { DeviceCard } from './blocks/device-card'
 
 export const Home = () => {
   const userDevices = useSelector(getUserDevices)
@@ -173,24 +174,57 @@ export const Home = () => {
       </div>
     )
   }
+
+  const mappedDeviceCards =
+    _.map(userDevices, (device) => {
+      const realTimeData = devicesRealTimeData[device._id] || {}
+      return <DeviceCard loading={loading} device={device} realTimeData={realTimeData} />
+    })
+  
+  const devicesWithActuators = _.map(devicesRealTimeData, (realTimeData, id) => { 
+    // need to think about this structure to avoid something different than string
+    if (typeof realTimeData === 'string') return null
+    
+    const device =
+      _.find(userDevices, (deviceFromCollection) => deviceFromCollection._id === id)
+    
+    const actuators = _.get(device, 'actuators', [])
+
+    return {
+      actuators,
+      realTimeData,
+      device
+    }
+  })
+
+  let mappedAutomationCards = [] as any
+  _.forEach(_.compact(devicesWithActuators), (item) => {
+    const actuators = item?.actuators ?? []
+
+    mappedAutomationCards = _.map(actuators, (data) => (
+      <GenericCard
+          type='watering'
+          icon={CARDS['watering'].icon}
+          label={CARDS['watering'].label}
+        >
+        <WateringCardData
+          connectionLoading={loading}
+          deviceRealTimeData={item?.realTimeData || {}}
+          device={item?.device}
+          wsStatus={1} />
+      </GenericCard>
+    ))
+  })
   
   return(
     <div className='page-content home-view'>
       {renderWebsocketConnectionStatus()}
       <h2>Dispositivos</h2>
-      <Devices
-        devicesRealTimeData={devicesRealTimeData}
-        userDevices={userDevices}
-        defaultDeviceStatus={defaultDeviceStatus}
-        loading={loading}
-      />
+      <div className='device-cards'>
+        {mappedDeviceCards}
+      </div>
       <div className='dashboard'>
-        <Sensors
-          isDeviceOffline={!defaultDeviceStatus}
-          measures={measures}
-          loading={loading}
-          sensors={deviceSensors} />
-        <GenericCard
+        {/* <GenericCard
           type='watering'
           icon={CARDS['watering'].icon}
           label={CARDS['watering'].label}
@@ -200,7 +234,8 @@ export const Home = () => {
             deviceRealTimeData={deviceRealTimeData}
             device={defaultDevice}
             wsStatus={1} />
-        </GenericCard>
+        </GenericCard> */}
+        {mappedAutomationCards}
       </div>
     </div>
   )

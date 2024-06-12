@@ -9,6 +9,10 @@
   align-items: center;
   display: flex;
   justify-content: center;
+  
+  svg {
+    width: 16px;
+  }
 }
 
 .animated-dashed-loading {

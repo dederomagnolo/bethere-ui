@@ -7,16 +7,17 @@
 
   &__options {
     display: flex;
-    margin-top: 14px;
+    margin-block: 14px;
     flex-direction: column;
     height: 100%;
+    width: 100%;
     justify-content: center;
   }
 
   .option {
     display: flex;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: center;
     width: 100%;
     gap: 8px;
 
@@ -26,14 +27,14 @@
     }
 
     span {
-      font-size: 14px;
+      font-size: 12px;
     }
 
     &--toggle {
-      width: 150px;
+      justify-content: flex-start;
 
       span {
-        width: 60px;
+        width: 50px;
       }
     }
   }

@@ -27,3 +27,50 @@
   }
 }
 
+.alerts-list {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  &__button-components {
+    width: 100%;
+    gap: 10px;
+    display: flex;
+  }
+
+  .alert__row {
+    display: flex;
+  }
+
+  .alert {
+    max-width: 240px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 6px;
+    border-radius: 6px;
+    font-size: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 3px 5px rgba(0, 0, 0, 0.1);
+
+    &:hover {
+      transition: all 300ms ease;
+      background-color: rgba(132, 141, 173, 0.116);
+    }
+
+    &.selected {
+      background-color: rgba(132, 141, 173, 0.116);
+    }
+    
+    &__sensor-name {
+
+    }
+
+    &__params {
+      width: 100%;
+      display: flex;
+      gap: 8px;
+    }
+  }
+}
+

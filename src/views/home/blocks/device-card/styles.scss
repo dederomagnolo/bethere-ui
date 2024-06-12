@@ -1,0 +1,47 @@
+.device-card {
+  display: flex;
+  flex-direction: column;
+  border-radius: 12px;
+  background-color: #fcfcfc;
+  border: #55555518 solid 1px;
+  width: auto;
+  padding: 18px;
+
+  .card-infos {
+    display: flex;
+    color: #6B6B6B;
+    font-size: 12px;
+    padding-bottom: 8px;
+    width: 420px;
+    border-bottom: rgba(107, 107, 107, 0.1) solid 1px;
+    justify-content: space-between;
+    align-items: center;
+
+    &__name {
+      width: 100%;
+      display: flex;
+      align-items: center;
+
+      svg {
+        margin-right: 4px;
+        color: #6B6B6B;
+      }
+    }
+
+    &__status {
+      &--online {
+        color: #0C9C7A;
+      }
+  
+      &--offline {
+        color:#f53a17; 
+      }
+    }
+  }
+
+  .sensors {
+    display: flex;
+    gap: 18px;
+    margin-top: 14px;
+  }
+}

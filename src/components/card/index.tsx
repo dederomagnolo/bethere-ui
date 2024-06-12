@@ -23,7 +23,7 @@ interface GenericCardProps {
   children?: any
 }
 
-const renderIcon = (BaseIcon: any) => <BaseIcon className='card-label-icon' size={22} />
+const renderIcon = (BaseIcon: any) => <BaseIcon className='card-label-icon' size={20} />
 
 const CardLabel = ({ label, Icon } : CardLabelProps) => {
   const icon = Icon && (
@@ -58,7 +58,7 @@ export const GenericCard = ({
   return (
     <div className={`generic-card generic-card--${type} ${className ? className : ''}`}>
       {type === 'default' && renderDeviceSignalIcon()}
-      <div className='card-infos'>
+      <div className='generic-card-infos'>
         <CardLabel Icon={icon} label={label} />
       </div>
       <div className={`card-data card-data--${type}`}>

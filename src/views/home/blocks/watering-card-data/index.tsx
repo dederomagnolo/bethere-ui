@@ -15,6 +15,7 @@ import { getToken, getUserId } from 'redux/user/selectors'
 import { setUserDevices } from 'redux/device/actions'
 
 import './styles.scss'
+import { UnavailableConnection } from '../unavailable-connection'
 
 interface WateringCardDataProps {
   wsStatus: number
@@ -37,6 +38,7 @@ export const WateringCardData = ({
   const token = useSelector(getToken)
   const userId = useSelector(getUserId)
   const dispatch = useDispatch()
+  const isDeviceConnected = !_.isEmpty(deviceRealTimeData)
 
   // first, static info from device received
   const deviceId = _.get(device, '_id')
@@ -73,7 +75,7 @@ const [autoModeEnabled, setAutoModeEnabled] = useState(autoWateringModeEnabled)
   }, [dynamicAutoRemainingTime, autoRelayEnabled, manualRelayEnabled, nextTimeSlot])
 
   const handleSendCommand = async () => {
-    if(wsStatus === WsReadyState.OPEN && defaultDeviceStatus) {
+    if(wsStatus === WsReadyState.OPEN && isDeviceConnected) {
       const { ON, OFF } = COMMANDS.MANUAL_WATERING.OPTIONS
       const shouldEnableWatering = !wateringEnabled && lastCommandReceived !== ON
       const commandToSend = shouldEnableWatering ? ON : OFF
@@ -132,7 +134,7 @@ const [autoModeEnabled, setAutoModeEnabled] = useState(autoWateringModeEnabled)
       return <Loading />
     }
 
-    if (defaultDeviceStatus) {
+    if (isDeviceConnected) {
       pulsingCircleType = 'online'
       operationLabel = 'Disponível'
       
@@ -182,6 +184,10 @@ const [autoModeEnabled, setAutoModeEnabled] = useState(autoWateringModeEnabled)
 
     return `Termina em: ${moment(remainingTime).format('mm')} minutos` 
   }
+
+  if (!isDeviceConnected) {
+    return <UnavailableConnection />
+  }
   
   return (
     <div className='watering-card'>
@@ -191,19 +197,19 @@ const [autoModeEnabled, setAutoModeEnabled] = useState(autoWateringModeEnabled)
           <span>Auto</span>
           <div>
             <Toggle
-              disabled={connectionLoading || !defaultDeviceStatus}
+              disabled={connectionLoading || !isDeviceConnected}
               checked={autoModeEnabled}
               onChange={handleSendAutoCommand}
             />
           </div>
         </div>
         <span className='option__status-label'>
-          {connectionLoading || !defaultDeviceStatus ? null : renderAutoWateringInfoLabel()}
+          {connectionLoading || !isDeviceConnected ? null : renderAutoWateringInfoLabel()}
         </span>
         <div className='option option--toggle'>
             <span>Manual</span>
             <Toggle
-              disabled={connectionLoading || !defaultDeviceStatus}
+              disabled={connectionLoading || !isDeviceConnected}
               checked={wateringEnabled}
               onChange={handleSendCommand}
             />

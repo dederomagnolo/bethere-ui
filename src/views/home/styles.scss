@@ -35,6 +35,11 @@
     }
   }
 
+  .device-cards {
+    display: flex;
+    gap: 12px;
+  }
+
   .server-connection-status {
     display: flex;
     align-items: center;
@@ -61,7 +66,7 @@
         width: 16px;
         height: 16px;
         margin: 0 auto 0;
-        box-shadow: 0 0 0 0 rgba(#5a99d4, .5);
+        box-shadow: 0 0 0 0 rgba(#0C9C7A, .5);
         background: #fff;
         animation: pulse 2.5s infinite;
         border-radius: 50%;

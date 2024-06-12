@@ -9,19 +9,6 @@
   align-items: center;
   gap: 14px;
 
-  &.unavalible {
-    gap: 6px;
-    
-    p {
-      margin: 0;
-      font-size: 14px;
-    }
-
-    svg {
-      color: #f53a17;
-    }
-  }
-
   .measure {
     display: flex;
     width: 100%;

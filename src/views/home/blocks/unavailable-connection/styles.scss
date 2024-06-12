@@ -1,0 +1,20 @@
+@import 'styles/breakpoints.scss';
+
+.unavailable-connection {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: column;
+
+  p {
+    margin: 0;
+    font-size: 12px;
+  }
+
+  svg {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    color: #f53a17;
+  }
+}

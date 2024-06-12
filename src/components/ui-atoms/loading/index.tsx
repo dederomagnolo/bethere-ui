@@ -7,7 +7,7 @@ export const Loading = ({ Component, size, className }: any) => {
   Component
     ? <div className='loading-container'><Component /></div>
     : <ConnectingIcon
-        size={size}
+        size={size || 20}
         className={`animated-dashed-loading ${className}`} />
   )
 }
