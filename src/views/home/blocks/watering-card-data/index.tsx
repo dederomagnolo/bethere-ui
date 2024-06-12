@@ -15,7 +15,15 @@ import { getToken, getUserId } from 'redux/user/selectors'
 import { setUserDevices } from 'redux/device/actions'
 
 import './styles.scss'
+import {
+  FaLeaf as Leaf,
+} from 'react-icons/fa'
 import { UnavailableConnection } from '../unavailable-connection'
+
+interface CardLabelProps {
+  label: string
+  Icon?: any
+}
 
 interface WateringCardDataProps {
   wsStatus: number
@@ -27,6 +35,23 @@ interface WateringCardDataProps {
     wateringStatus: any
   }
   connectionLoading: boolean
+}
+
+const renderIcon = (BaseIcon: any) => <BaseIcon className='card-label-icon' size={20} />
+
+const CardLabel = ({ label, Icon } : CardLabelProps) => {
+  const icon = Icon && (
+    <div className='icon-container'>
+      {renderIcon(Icon)}
+    </div>
+  )
+
+  return (
+    <div className='card-label'>
+      {icon}
+      <span>{label}</span>
+    </div>
+  )
 }
 
 export const WateringCardData = ({
@@ -215,6 +240,9 @@ const [autoModeEnabled, setAutoModeEnabled] = useState(autoWateringModeEnabled)
             />
         </div>
         {wateringEnabled ? <span className='option__status-label'>Tempo restante:</span> : null}
+      </div>
+      <div className='watering-card__bottom-label'>
+        <CardLabel Icon={Leaf} label='Irrigação' />
       </div>
     </div>
   )

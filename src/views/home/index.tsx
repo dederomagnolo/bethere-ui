@@ -26,6 +26,7 @@ import { clearUserState } from 'redux/user/actions';
 import { LoadingIcon } from './blocks/loading-icon';
 import { Devices } from './blocks/devices'
 import { DeviceCard } from './blocks/device-card'
+import { AppCard } from 'components/app-card'
 
 export const Home = () => {
   const userDevices = useSelector(getUserDevices)
@@ -202,17 +203,13 @@ export const Home = () => {
     const actuators = item?.actuators ?? []
 
     mappedAutomationCards = _.map(actuators, (data) => (
-      <GenericCard
-          type='watering'
-          icon={CARDS['watering'].icon}
-          label={CARDS['watering'].label}
-        >
+      <AppCard key={data._id}>
         <WateringCardData
           connectionLoading={loading}
           deviceRealTimeData={item?.realTimeData || {}}
           device={item?.device}
           wsStatus={1} />
-      </GenericCard>
+      </AppCard>
     ))
   })
   
@@ -224,17 +221,6 @@ export const Home = () => {
         {mappedDeviceCards}
       </div>
       <div className='dashboard'>
-        {/* <GenericCard
-          type='watering'
-          icon={CARDS['watering'].icon}
-          label={CARDS['watering'].label}
-        >
-          <WateringCardData
-            connectionLoading={loading}
-            deviceRealTimeData={deviceRealTimeData}
-            device={defaultDevice}
-            wsStatus={1} />
-        </GenericCard> */}
         {mappedAutomationCards}
       </div>
     </div>

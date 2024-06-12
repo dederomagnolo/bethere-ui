@@ -86,13 +86,13 @@ export const Settings = () => {
           automationSettings={selectedDeviceSettings.automation}
         />)
     },
-    {
-      title: 'Alertas',
-      component: () => (
-        <AlertsConfig
-          deviceId={selectedDevice._id}
-          sensors={selectedDevice.sensors} />)
-    },
+    // {
+    //   title: 'Alertas',
+    //   component: () => (
+    //     <AlertsConfig
+    //       deviceId={selectedDevice._id}
+    //       sensors={selectedDevice.sensors} />)
+    // },
     {
       title: 'Sensores',
       component: () => 

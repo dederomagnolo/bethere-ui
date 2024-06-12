@@ -1,12 +1,14 @@
+import './styles.scss'
+
 interface AppCardProps {
-  Content: () => JSX.Element
-  className: String
+  children: any
+  className?: string
 }
 
-export const AppCard = ({ Content, className } : AppCardProps) => {
+export const AppCard = ({ children, className } : AppCardProps) => {
   return (
-    <div className={`neo-generic-card ${className}`}>
-      {Content && <Content />}
+    <div className={`neo-generic-card ${className || ''}`}>
+      {children}
     </div>
   )
 }
