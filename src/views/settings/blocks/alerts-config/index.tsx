@@ -1,23 +1,25 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
+import { useSelector } from 'react-redux'
+
 import _ from 'lodash'
-import { Button, CustomSelect, EditIconWithTooltip, Input } from 'components'
+import {
+  Button,
+  Modal
+} from 'components'
 
 import { SENSORS } from 'global/consts'
-import { InputOption } from 'views/settings/input-option'
-
-import { useSelector } from 'react-redux'
-import { getToken } from 'redux/user/selectors'
-
-import { useFetch } from 'hooks/useFetch'
 import { fetchAlerts } from 'services/fetch'
+
+import { getToken } from 'redux/user/selectors'
+import { useFetch } from 'hooks/useFetch'
 
 import './styles.scss'
 
-export const AlertsConfig = ({ sensors, deviceId }: any) => {
-  const [showNewAlertForm,  setShowNewAlertForm] = useState(false)
-  const [showEditAlertForm, setShowEditAlertForm] = useState(false)
-  const [selectedSensor, setSelectedSensor] = useState({ _id: '', model: '' })
-  const [selectedAlertFromList, setSelectedAlertFromList] = useState('') as any
+import { ModalContent } from './blocks/modal-content'
+
+export const AlertsConfig = ({ sensors, deviceId }: any ) => {
+  const [showAlertForm,  setShowAlertForm] = useState(false)
+  const [selectedAlert, setSelectedAlert] = useState(undefined) as any
   const token = useSelector(getToken)
 
   const {
@@ -27,49 +29,9 @@ export const AlertsConfig = ({ sensors, deviceId }: any) => {
     token
   }), [deviceId])
 
-  const getSensorParamOptions = () => {
-    const model = selectedSensor.model
-    const sensorInfoByModel = SENSORS[model] || {}
-
-    const modelTypesAvailable = _.get(sensorInfoByModel, 'params')
-    return _.map(modelTypesAvailable, (param) => ({
-      value: param.type,
-      label: param.translatedTypeName
-    }))
-  }
-
-  const sensorOptions = _.map(sensors, (sensor) => ({
-    value: sensor._id,
-    label: sensor.name || sensor.serialKey
-  }))
-
-  const handleSelectedSensorChange = ({ value: selectedSensorId }: any) => {
-    const sensorById = _.find(sensors, (sensor) => sensor._id === selectedSensorId)
-    setSelectedSensor(sensorById)
-  }
-
-  const ButtonComponents = () => {
-    return (
-      <div className='alert-form__button-components'>
-        <Button
-          className='alert-configs__button'>
-          Salvar
-        </Button>
-        <Button
-          onClick={() =>{
-            setShowNewAlertForm(false)
-            setSelectedSensor({ _id: '', model: '' })
-          }}
-          className='alert-configs__button'
-          variant='cancel'>
-            Cancelar
-        </Button>
-      </div>
-    )
-  }
+  const alertsByDevice = _.get(data, 'data', [])
 
   const Alerts = () => {
-    const alertsByDevice = _.get(data, 'data')
     const mappedAlerts = _.map(alertsByDevice, (alert) => {
       const alertId = _.get(alert, '_id', '')
       const sensorId = _.get(alert, 'sensorId')
@@ -88,44 +50,33 @@ export const AlertsConfig = ({ sensors, deviceId }: any) => {
       )
 
       return (
-        <div className='alert__row'>
-          <div
-            className={`alert ${alertId === selectedAlertFromList ? 'selected' : ''}`}
-            onClick={() => setSelectedAlertFromList(alertId)}>
-            <span className='alert__sensor-name'>
-              Sensor: {sensorName}
+        <div
+          className={`alert ${alertId === selectedAlert ? 'selected' : ''}`}
+          onClick={() => {
+            setShowAlertForm(true)
+            setSelectedAlert(alert)
+          }}>
+          <span className='alert__sensor-name'>
+            Sensor: {sensorName}
+          </span>
+          <div className='alert__params'>
+            <span>
+              Parâmetro: {translatedParamName}
             </span>
-            <div className='alert__params'>
-              <span>
-                Parâmetro: {translatedParamName}
-              </span>
-              <span>
-                Limite: {alertValue}
-              </span>
-            </div>
+            <span>
+              Limite: {alertValue}
+            </span>
           </div>
-          <EditIconWithTooltip uniqueId={alertId} />
         </div>
       )
     })
 
     return (
       <div className='alerts-list'>
-        Meus Alertas
-        <div className='alerts-list__button-components'>
-        <Button
-          className='alert-configs__button'
-          onClick={() => setShowEditAlertForm(true)}>
-          Editar
-        </Button>
-        <Button
-          onClick={() => {}}
-          className='alert-configs__button'
-          variant='cancel'>
-            Excluir
-        </Button>
-      </div>
-        {mappedAlerts}
+        <h4>Meus Alertas ({alertsByDevice.length})</h4>
+        <div className='alerts-list__grid'>
+          {mappedAlerts}
+        </div>
       </div>
     )
   }
@@ -135,40 +86,26 @@ export const AlertsConfig = ({ sensors, deviceId }: any) => {
       <div>
         <div className='description'>
           Configure o envio de alertas para o seu email caso um limite de medição seja atingido por um sensor.
+          É possível configurar no máximo 6 alertas.
         </div>
-        {showNewAlertForm ? (
-          <div className='alert-configs'>
-            <div className='alert-configs__new-alert-title'>Configuração de novo alerta</div>
-            <div className='alert-form'>
-              <div className='input-option'>
-                <div className='title'>Sensor</div>
-                <CustomSelect
-                  defaultValue={sensorOptions && sensorOptions[0]}
-                  options={sensorOptions}
-                  onChange={handleSelectedSensorChange} />
-              </div>
-              <div className='input-option'>
-                <div className='title'>Parâmetros disponíveis</div>
-                <CustomSelect
-                  defaultValue={getSensorParamOptions()[0]}
-                  options={getSensorParamOptions()} />
-              </div>
-              <InputOption
-                showEditAndSave={false}
-                onChange={() => {}}
-                title='Limite para disparo do alerta' />
-              <ButtonComponents />
-            </div>
-          </div>
-        ) : (
+        <Modal
+          onRequestClose={() => {setShowAlertForm(false)}}
+          isOpen={showAlertForm} >
+          <ModalContent
+            deviceId={deviceId}
+            onClose={() => setSelectedAlert(null)}
+            sensorToEdit={selectedAlert}
+            toggleModal={setShowAlertForm}
+            sensors={sensors} />
+        </Modal>
+        <div className='alerts-configs'>
+          {alertsByDevice.length ? <Alerts /> : null}
           <Button
+            disabled={alertsByDevice.length >= 6}
             className='alert-configs__button'
-            onClick={() => setShowNewAlertForm(true)}>
+            onClick={() => setShowAlertForm(true)}>
             Novo Alerta
           </Button>
-        )}
-        <div className='alerts-configs'>
-          <Alerts />
         </div>
       </div>
     </div>

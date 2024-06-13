@@ -200,3 +200,31 @@ export const fetchAlerts = async ({
     throw new Error(error)
   }
 }
+
+export const createAlert = async ({
+  token,
+  deviceId,
+  sensorId,
+  alertName,
+  paramName,
+  value
+}) => {
+  try {
+    const res = await callApi({
+      payload: {
+        deviceId,
+        sensorId,
+        alertName,
+        paramName,
+        value
+      },
+      method: 'POST',
+      service: '/alerts/create',
+      token
+    })
+
+    return res
+  } catch (error) {
+    throw new Error(error)
+  }
+}

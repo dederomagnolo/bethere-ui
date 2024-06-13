@@ -3,7 +3,7 @@
 
   &__button {
     min-width: 80px;
-    margin-top: 16px;
+    margin-top: 30px;
   }
 
   &__new-alert-title {
@@ -12,11 +12,14 @@
   }
   
   .alert-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
     margin-top: 16px;
-    padding-left: 10px;
   
     .react-select-container {
-      width: 200px;
+      width: 300px;
     }
 
     &__button-components {
@@ -24,14 +27,32 @@
       gap: 10px;
       display: flex;
     }
+
+    .param-value-input {
+      width: 80px;
+    }
+
+    .name-input {
+      width: 300px;
+    }
+
+    .input-option {
+      .title {
+        margin-bottom: 8px;
+      }
+    }
   }
 }
 
 .alerts-list {
-  margin-top: 14px;
+  margin-top: 32px;
   display: flex;
   flex-direction: column;
   gap: 4px;
+
+  h4 {
+    margin: 0
+  }
 
   &__button-components {
     width: 100%;
@@ -39,19 +60,23 @@
     display: flex;
   }
 
-  .alert__row {
+  &__grid {
     display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 12px;
   }
 
   .alert {
-    max-width: 240px;
+    width: 240px;
     display: flex;
     flex-direction: column;
     gap: 8px;
+    font-size: 12px;
     padding: 6px;
     border-radius: 6px;
-    font-size: 12px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 3px 5px rgba(0, 0, 0, 0.1);
+    flex-direction: column;
 
     &:hover {
       transition: all 300ms ease;
@@ -63,7 +88,7 @@
     }
     
     &__sensor-name {
-
+      font-weight: 700;
     }
 
     &__params {
@@ -74,3 +99,13 @@
   }
 }
 
+.ReactModal__Content {
+  height: auto;
+
+  &--after-open {
+    inset: unset !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%);
+  }
+}

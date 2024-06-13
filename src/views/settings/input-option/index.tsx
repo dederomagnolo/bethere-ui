@@ -2,14 +2,16 @@ import { MouseEventHandler, useState, useEffect } from 'react'
 import { Input, InputProps } from 'components/ui-atoms/input';
 import { EditIconWithTooltip, EditWithTooltipProps } from 'components/edit-icon-with-tooltip';
 
-export const InputOption = ({ 
+export const InputOption = ({
+  className,
   value,
   onChange, 
   name, 
   title,
   onSave,
   initialValue,
-  showEditAndSave = true
+  showEditAndSave = true,
+  disabled = false
 } : InputProps & { title: string, onSave?: MouseEventHandler, showEditAndSave?: boolean }) => {
   const [editMode, setEditMode] = useState(false)
   const [editedValue, setEditedValue] = useState(value)
@@ -24,9 +26,10 @@ export const InputOption = ({
 
   return (
     <div className='input-option' key={name}>
-      <span className='title'>{title}</span>
+      <div className='title'>{title}</div>
       <Input
-        disabled={!editMode}
+        className={className}
+        disabled={showEditAndSave ? !editMode : disabled}
         name={name}
         onChange={onChange}
         value={editedValue} />
