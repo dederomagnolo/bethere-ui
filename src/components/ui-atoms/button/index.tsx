@@ -11,10 +11,12 @@ export const Button: React.FC<ButtonProps> = ({
   onClick,
   className,
   variant = 'primary',
-  disabled
+  disabled,
+  id
 }) => {
   return (
     <button
+      id={id}
       disabled={disabled}
       onClick={onClick}
       className={`app-button app-button--${variant} ${className}`}>

@@ -8,7 +8,7 @@ import {
 } from 'components'
 
 import { SENSORS } from 'global/consts'
-import { fetchAlerts } from 'services/fetch'
+import { fetchAlerts } from 'services/alerts'
 
 import { getToken } from 'redux/user/selectors'
 import { useFetch } from 'hooks/useFetch'
@@ -37,6 +37,8 @@ export const AlertsConfig = ({ sensors, deviceId }: any ) => {
       const sensorId = _.get(alert, 'sensorId')
       const paramName = _.get(alert, 'paramName')
       const alertValue = _.get(alert, 'value')
+      const alertName = _.get(alert, 'alertName')
+      const operator = _.get(alert, 'operator')
 
       const alertSensor = _.find(sensors, (sensor) => sensor._id === sensorId)
       const model = _.get(alertSensor, 'model')
@@ -51,21 +53,25 @@ export const AlertsConfig = ({ sensors, deviceId }: any ) => {
 
       return (
         <div
+          key={alertId}
           className={`alert ${alertId === selectedAlert ? 'selected' : ''}`}
           onClick={() => {
             setShowAlertForm(true)
             setSelectedAlert(alert)
           }}>
-          <span className='alert__sensor-name'>
-            Sensor: {sensorName}
+          <span>
+            {alertName}
           </span>
+          <div className='alert__sensor-name'>
+            Sensor: {sensorName}
+          </div>
           <div className='alert__params'>
-            <span>
+            <div>
               Parâmetro: {translatedParamName}
-            </span>
-            <span>
+            </div>
+            <div>
               Limite: {alertValue}
-            </span>
+            </div>
           </div>
         </div>
       )
@@ -82,7 +88,7 @@ export const AlertsConfig = ({ sensors, deviceId }: any ) => {
   }
 
   return (
-    <div className='options options'>
+    <div className='options'>
       <div>
         <div className='description'>
           Configure o envio de alertas para o seu email caso um limite de medição seja atingido por um sensor.
@@ -94,11 +100,11 @@ export const AlertsConfig = ({ sensors, deviceId }: any ) => {
           <ModalContent
             deviceId={deviceId}
             onClose={() => setSelectedAlert(null)}
-            sensorToEdit={selectedAlert}
+            alertToEdit={selectedAlert}
             toggleModal={setShowAlertForm}
             sensors={sensors} />
         </Modal>
-        <div className='alerts-configs'>
+        <div className='alert-configs'>
           {alertsByDevice.length ? <Alerts /> : null}
           <Button
             disabled={alertsByDevice.length >= 6}

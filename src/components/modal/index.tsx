@@ -1,5 +1,7 @@
 import ReactModal from 'react-modal'
 
+ReactModal.setAppElement('#root');
+
 export const Modal = ({
   children,
   isOpen,
