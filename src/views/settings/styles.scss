@@ -70,11 +70,22 @@
           display: flex;
           gap: 10px;
           overflow: visible;
-          align-items: center;
           flex-direction: column;
 
           @include md {
+            align-items: center;
             flex-direction: row;
+          }
+
+          &__content {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            margin-bottom: 4px;
+            
+            @include md {
+              margin-bottom: 0;
+            }
           }
 
           &__time-select-container {

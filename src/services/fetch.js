@@ -150,7 +150,6 @@ export const editSettingsAndSendCommand = async ({
       pending: 'Enviando informações...',
       success: {
         render({ data }){
-          console.log()
           // if (error) {
           //   return 'Ocorreu um  erro'
           // }

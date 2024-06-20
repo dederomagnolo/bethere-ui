@@ -1,23 +1,6 @@
 
 import callApi from '../callApi'
-
-type FetchAlertsProps = { 
-  token: string,
-  deviceId: string
-}
-
-type CreateAlertProps = FetchAlertsProps & {
-  sensorId: string,
-  alertName: string,
-  paramName: string,
-  value: string,
-  operator: number
-}
-
-type DeleteAlertProps = FetchAlertsProps & {
-  sensorId: string
-  alertId: string
-}
+import { FetchAlertsProps, CreateAlertProps, EditAlertProps, DeleteAlertProps } from './types'
 
 export const fetchAlerts = async ({
   token,
@@ -48,9 +31,9 @@ export const createAlert = async ({
   deviceId,
   sensorId,
   alertName,
-  paramName,
+  paramType,
   value,
-  operator
+  operator,
 }: CreateAlertProps) => {
   try {
     const res = await callApi({
@@ -58,22 +41,19 @@ export const createAlert = async ({
         deviceId,
         sensorId,
         alertName,
-        paramName,
+        paramType,
         value,
         operator
       },
       method: 'POST',
       service: '/alerts/create',
-      token
+      token,
+      showToast: true
     })
 
     return res
   } catch (err: unknown) {
-    if (err instanceof Error) {
-      return {
-        message: `Error: (${err.message})`,
-      };
-    }
+    throw new Error('400');
   }
 }
 
@@ -82,32 +62,36 @@ export const editAlert = async ({
   deviceId,
   sensorId,
   alertName,
-  paramName,
+  paramType,
   value,
+  alertId,
   operator
-}: CreateAlertProps) => {
+}: EditAlertProps) => {
   try {
     const res = await callApi({
       payload: {
         deviceId,
         sensorId,
         alertName,
-        paramName,
+        paramType,
         value,
-        operator
+        operator,
+        alertId
       },
       method: 'POST',
       service: '/alerts/edit',
-      token
+      token,
+      showToast: true
     })
 
     return res
   } catch (err: unknown) {
-    if (err instanceof Error) {
-      return {
-        message: `Error: (${err.message})`,
-      };
-    }
+    // if (err instanceof Error) {
+    //   return {
+    //     message: `Error: (${err.message})`,
+    //   };
+    // }
+    throw new Error('400');
   }
 }
 
@@ -126,15 +110,12 @@ export const deleteAlert = async ({
       },
       method: 'POST',
       service: '/alerts/delete',
-      token
+      token,
+      showToast: true
     })
 
     return res
   } catch (err: unknown) {
-    if (err instanceof Error) {
-      return {
-        message: `Error: (${err.message})`,
-      };
-    }
+    throw new Error('400');
   }
 }

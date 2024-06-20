@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import _ from 'lodash'
 import { Button, Checkbox, CustomSelect } from 'components'
 import { InputOption } from 'views/settings/input-option'
@@ -15,7 +15,8 @@ export const ModalContent = ({
   onClose,
   toggleModal,
   deviceId,
-  alertToEdit
+  alertToEdit,
+  onUpdate
 }: any) => {
   const token = useSelector(getToken)
   const [selectedSensor, setSelectedSensor] = useState(sensors[0])
@@ -42,10 +43,10 @@ export const ModalContent = ({
       }
     }
 
-    const { paramName, sensorId } = alertToEdit
+    const { paramType, sensorId } = alertToEdit
     
     const sensorToShow = sensorOptions.find((option) => option.value === sensorId)
-    const paramToShow = sensorParamOptions.find((option) => option.value === paramName)
+    const paramToShow = sensorParamOptions.find((option) => option.value === paramType)
 
     return {
       sensor: sensorToShow,
@@ -56,12 +57,10 @@ export const ModalContent = ({
   const defaultValues = getDefaultValues() 
   const [alertParams, setAlertParams] = useState(alertToEdit || {
     value: '',
-    paramName: defaultValues.param?.value,
+    paramType: defaultValues.param?.value,
     alertName: '',
     operator: 0
   })
-
-  console.log({alertToEdit})
 
   const handleSelectedSensorChange = ({ value: selectedSensorId }: any) => {
     const sensorById = _.find(sensors, (sensor) => sensor._id === selectedSensorId)
@@ -69,7 +68,7 @@ export const ModalContent = ({
   }
 
   const handleSelectedParamTypeChange = ({ value }: any) => {
-    setAlertParams({...alertParams, paramName: value})
+    setAlertParams({...alertParams, paramType: value})
   }
 
   const handleParamValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -92,24 +91,33 @@ export const ModalContent = ({
       alertId: alertToEdit._id
     })
 
-    return 
+    if (updatedAlerts) {
+      const dataToUpdate = updatedAlerts.data
+      onUpdate && onUpdate(dataToUpdate)
+    }
+
+    setTimeout(() => toggleModal(false), 2000)
   }
 
   const saveChanges = async () => {
     const action = alertToEdit ? editAlert : createAlert
-    console.log({alertParams})
-    const { alertName, paramName, value, operator } = alertParams
+    const { alertName, paramType, value, operator } = alertParams
     const updatedAlerts = await action({
       token,
       deviceId,
       sensorId: selectedSensor._id,
       alertName,
-      paramName,
+      paramType,
       value,
-      operator
+      operator,
+      alertId: alertToEdit?._id || null
     })
 
-    console.log({updatedAlerts})
+    if (updatedAlerts) {
+      const dataToUpdate = updatedAlerts.data
+      onUpdate && onUpdate(dataToUpdate)
+      setTimeout(() => toggleModal(false), 1000) 
+    }
   }
   
   const ButtonComponents = () => {
@@ -182,13 +190,15 @@ export const ModalContent = ({
         <div className='limit-options__container'>
           <Checkbox
             radio
-            name='greater-than'
+            name='less-than'
+            checked={alertParams.operator === 0}
             initialState={alertParams.operator === 0}
-            label='Maior que'
+            label='Menor que'
             onChange={() => setAlertParams({...alertParams, operator: 0})} />
           <Checkbox
             radio
-            name='less-than'
+            checked={alertParams.operator === 1}
+            name='greater-than'
             initialState={alertParams.operator === 1}
             label='Maior que'
             onChange={() => setAlertParams({...alertParams, operator: 1})} />

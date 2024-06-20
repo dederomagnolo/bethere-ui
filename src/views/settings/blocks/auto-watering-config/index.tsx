@@ -97,44 +97,47 @@ export const AutoWateringConfig = ({
   return (
     <div className='options options--auto-watering'>
       <div className='cycle-period'>
-        <div className='cycle-period__time-select-container'>
-          <span className='title'>Período de atividade</span> de
-          <CustomSelect
-            isDisabled={!editStartTime}
-            onChange={(option: any) => {
-              setEditEndTime(true)
-              handleChangeSettings(option, 'startTime')
+        <span className='title'>Período de atividade</span>
+        <div className='cycle-period__content'>
+          <div className='cycle-period__time-select-container'>
+            de
+            <CustomSelect
+              isDisabled={!editStartTime}
+              onChange={(option: any) => {
+                setEditEndTime(true)
+                handleChangeSettings(option, 'startTime')
+              }}
+              value={getCurrentTimeOption(editedAutomationSettings.startTime)}
+              options={timeOptions}
+              defaultValue={getCurrentTimeOption(editedAutomationSettings.startTime)} />
+          </div>
+          <div className='cycle-period__time-select-container'>
+            até
+            <CustomSelect
+              isDisabled={!editEndTime}
+              onChange={(option: any) => handleChangeSettings(option, 'endTime')}
+              options={setEndTimeOptionsBasedOnStartTime()}
+              value={getCurrentTimeOption(editedAutomationSettings.endTime)}
+              defaultValue={getCurrentTimeOption(editedAutomationSettings.endTime)} />
+          </div>
+          <EditIconWithTooltip
+            onSave={() => {
+              setEditStartTime(false)
+              setEditEndTime(false)
+              saveAutomationChanges()
             }}
-            value={getCurrentTimeOption(editedAutomationSettings.startTime)}
-            options={timeOptions}
-            defaultValue={getCurrentTimeOption(editedAutomationSettings.startTime)} />
+            uniqueId='timeField'
+            onCancel={() => {
+              setEditStartTime(false)
+              setEditEndTime(false)
+              setEditedAutomationSettings({ 
+                ...editedAutomationSettings,
+                startTime: automationSettings.startTime,
+                endTime: automationSettings.endTime
+              })
+            }}
+            onEdit={() => setEditStartTime(true)} />
         </div>
-        <div className='cycle-period__time-select-container'>
-          até
-          <CustomSelect
-            isDisabled={!editEndTime}
-            onChange={(option: any) => handleChangeSettings(option, 'endTime')}
-            options={setEndTimeOptionsBasedOnStartTime()}
-            value={getCurrentTimeOption(editedAutomationSettings.endTime)}
-            defaultValue={getCurrentTimeOption(editedAutomationSettings.endTime)} />
-        </div>
-        <EditIconWithTooltip
-          onSave={() => {
-            setEditStartTime(false)
-            setEditEndTime(false)
-            saveAutomationChanges()
-          }}
-          uniqueId='timeField'
-          onCancel={() => {
-            setEditStartTime(false)
-            setEditEndTime(false)
-            setEditedAutomationSettings({ 
-              ...editedAutomationSettings,
-              startTime: automationSettings.startTime,
-              endTime: automationSettings.endTime
-            })
-          }}
-          onEdit={() => setEditStartTime(true)} />
       </div>
       <div className='description'>
         O período de atividade é o intervalo do dia em que a estação local irá fazer o ciclo de automação.

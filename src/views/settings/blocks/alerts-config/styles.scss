@@ -1,8 +1,14 @@
 .alert-configs {
-  margin-top: 18px;
+  display: flex;
+  flex-direction: column;
+  margin-top: 22px;
 
   &__button {
-    min-width: 80px;
+    width: 110px;
+  }
+
+  &__loading {
+    margin-bottom: 20px;
   }
 
   &__new-alert-title {
@@ -59,7 +65,6 @@
 }
 
 .alerts-list {
-  margin-top: 32px;
   margin-bottom: 22px;
   display: flex;
   flex-direction: column;

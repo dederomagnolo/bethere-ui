@@ -19,9 +19,10 @@ export const Checkbox: React.FC<CheckboxProps> = ({
   className,
   radio,
   value,
-  name
+  name,
+  checked
 }) => {
-  const [checked, setChecked] = useState(initialState)
+  const [internalChecked, setInternalChecked] = useState(initialState)
 
   return (
     <label className={`app-checkbox ${className}`}>
@@ -31,10 +32,10 @@ export const Checkbox: React.FC<CheckboxProps> = ({
       id='app-checkbox'
       className='app-checkbox__input'
       type={radio ? 'radio' : 'checkbox'}
-      checked={checked}
+      checked={checked !== undefined ? checked : internalChecked}
       onChange={(e) => {
         onChange && onChange(e)
-        setChecked(!checked)
+        setInternalChecked(!internalChecked)
       }} />
       <span className='app-checkbox__checkmark' />
       {label}
