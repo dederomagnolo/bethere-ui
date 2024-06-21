@@ -74,19 +74,22 @@ export const History = () => {
     )
   }
 
+  const commandsToFilter = ['@SET_AW_TIMER#']
+
   const renderHistoryData = () => {
     const historyForDate = _.get(data, 'historyForDate', []) 
-    const historyFilteredByCategoryName = filter.value !== 'all' ? _.filter(
-      historyForDate,
-      (command: any) => command.categoryName === filter.value
-    ) : historyForDate
-  
-    const commandCards = _.map(historyFilteredByCategoryName, (command: CommandType) => {
-      console.log({historyFilteredByCategoryName})
-      const commandsToFilter = ['@SET_AW_TIMER#']
+    const filteredByInvalidCommands = _.filter(historyForDate, (command: any) => {
       const commandName = _.get(command, 'commandName')
       const invalidCommand = _.find(commandsToFilter, (commandToFilter) => commandName.includes(commandToFilter))
-      return invalidCommand ? null : <CommandCard key={command._id} command={command} />
+      return !invalidCommand
+    } )
+    const historyFilteredByCategoryName =
+      filter.value !== 'all' 
+        ? _.filter(filteredByInvalidCommands, (command: any) => command.categoryName === filter.value)
+        : filteredByInvalidCommands
+  
+    const commandCards = _.map(historyFilteredByCategoryName, (command: CommandType) => {
+      return <CommandCard key={command._id} command={command} />
     })
     
     return (
