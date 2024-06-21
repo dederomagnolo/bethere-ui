@@ -46,6 +46,7 @@
     }
 
     .measure-data {
+      margin-left: 8px;
       @include md  {
         line-height: 29px;
         font-size: 18px;

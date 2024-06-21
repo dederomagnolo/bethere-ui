@@ -25,7 +25,7 @@ export const Sensors = ({ sensors, measures = [], loading, deviceStatus }: any) 
     )
   }
 
-  const MeasureCardContent = ({ sensorModel, measuresBySensor, sensorId }: any ) => {
+  const MeasureCardContent = ({ sensorModel, measuresBySensor, sensorId, enabled }: any ) => {
     const MeasuresBySensor = () => {
       const humidity = _.get(measuresBySensor, 'humidity') 
       const temperature = _.get(measuresBySensor, 'temperature')
@@ -68,7 +68,7 @@ export const Sensors = ({ sensors, measures = [], loading, deviceStatus }: any) 
                 <TintIcon className='measure-icon--humidity' />
                 <span className='measure-category'>Umidade do solo</span>
               </div>
-              {renderMeasure(normalizedValue, '%')}
+              {renderMeasure(normalizedValue.toFixed(2), '%')}
             </div>
           </div>
         )
@@ -77,15 +77,16 @@ export const Sensors = ({ sensors, measures = [], loading, deviceStatus }: any) 
       return null
     }
 
-    return deviceStatus && measuresBySensor ?
-      <MeasuresBySensor /> :
-      <UnavailableConnection />
+    return enabled && deviceStatus && measuresBySensor 
+      ? <MeasuresBySensor />
+      : <UnavailableConnection />
   }
 
   const mappedSensorCards = _.map(sensors, (sensor) => {
     const serialKey = _.get(sensor, 'serialKey', '')
     const sensorModel = _.get(sensor, 'model')
     const sensorId = _.get(sensor, '_id')
+    const enabled = _.get(sensor, 'enabled')
 
     const broadcastedSensors = _.keys(measures)
     const broadcastedMeasures = broadcastedSensors.includes(serialKey) ? measures[serialKey] : null
@@ -103,6 +104,7 @@ export const Sensors = ({ sensors, measures = [], loading, deviceStatus }: any) 
         type={sensorModel}
         CustomData={() => (
           <MeasureCardContent
+            enabled={enabled}
             sensorId={sensorId}
             sensorModel={sensorModel}
             measuresBySensor={broadcastedMeasures} />
