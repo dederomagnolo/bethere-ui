@@ -3,6 +3,10 @@ import { Input, InputProps } from 'components/ui-atoms/input';
 import { EditIconWithTooltip, EditWithTooltipProps } from 'components/edit-icon-with-tooltip';
 
 export const InputOption = ({
+  onBlur,
+  min,
+  pattern,
+  inputMode,
   className,
   value,
   onChange, 
@@ -11,6 +15,8 @@ export const InputOption = ({
   onSave,
   initialValue,
   showEditAndSave = true,
+  type,
+  error,
   disabled = false
 } : InputProps & { title: string, onSave?: MouseEventHandler, showEditAndSave?: boolean }) => {
   const [editMode, setEditMode] = useState(false)
@@ -28,6 +34,12 @@ export const InputOption = ({
     <div className='input-option' key={name}>
       <div className='title'>{title}</div>
       <Input
+        onBlur={onBlur}
+        error={error}
+        pattern={pattern}
+        inputMode={inputMode}
+        min={min}
+        type={type}
         className={className}
         disabled={showEditAndSave ? !editMode : disabled}
         name={name}

@@ -77,7 +77,7 @@ export const SENSORS: any = {
       {
         type: 'temperature',
         translatedTypeName: 'Temperatura',
-        unity: 'C',
+        unity: '°C',
         unityName: 'Celsius',
       }
     ],

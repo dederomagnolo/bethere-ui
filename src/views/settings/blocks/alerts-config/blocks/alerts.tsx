@@ -1,35 +1,55 @@
 import _ from 'lodash'
 import { SENSORS } from 'global/consts'
 
+import { Alert, Sensor, Operators } from 'types/interfaces'
+
+
+type AlertsListProps = {
+  alerts: Alert[],
+  sensors: Sensor[]
+  handleAlertClick: Function
+  selectedAlert: Alert
+}
+
+const getOperatorLabel = (operator: Operators | undefined) => {
+  if (operator === Operators.GREATER_THAN) {
+    return 'maior que'
+  }
+
+  return 'menor que'
+}
+
 export const Alerts = ({
   alerts,
   sensors,
   handleAlertClick,
   selectedAlert
-}: any) => {
+}: AlertsListProps) => {
   const mappedAlerts = _.map(alerts, (alert) => {
-    const alertId = _.get(alert, '_id', '')
-    const sensorId = _.get(alert, 'sensorId')
-    const paramType = _.get(alert, 'paramType')
-    const alertValue = _.get(alert, 'value')
-    const alertName = _.get(alert, 'alertName')
-    const operator = _.get(alert, 'operator')
+    const alertId = alert._id
+    const sensorId = alert.sensorId
+    const paramType = alert.paramType
+    const alertValue = alert.value
+    const alertName = alert.alertName
+    const operator = alert.operator
+    const operatorLabel = getOperatorLabel(operator)
 
     const alertSensor = _.find(sensors, (sensor) => sensor._id === sensorId)
-    const model = _.get(alertSensor, 'model')
-    const sensorName = _.get(alertSensor, 'name') || _.get(alertSensor, 'model')
+    const model = alertSensor?.model
+    const sensorName = alertSensor?.name || model
 
-    const sensorInfo = SENSORS[model] 
+    const sensorInfo = model ? SENSORS[model] : {}
     const sensorParamsAvailable = _.get(sensorInfo, 'params')
-    const translatedParamType = _.get(
-      _.find(sensorParamsAvailable, (param) => param.type === paramType),
-      'translatedTypeName'
-    )
+
+    const paramTypeInfos =
+      _.find(sensorParamsAvailable, (param) => param.type === paramType)
+    const unity = paramTypeInfos.unity
+    const translatedParamType = paramTypeInfos.translatedTypeName || ''
 
     return (
       <div
         key={alertId}
-        className={`alert ${alertId === selectedAlert ? 'selected' : ''}`}
+        className={`alert ${alertId === selectedAlert._id ? 'selected' : ''}`}
         onClick={() => handleAlertClick(alert)}>
         <span>
           {alertName}
@@ -42,7 +62,7 @@ export const Alerts = ({
             Parâmetro: {translatedParamType}
           </div>
           <div>
-            Limite: {alertValue}
+            Limite: {operatorLabel} {alertValue}{unity}
           </div>
         </div>
       </div>

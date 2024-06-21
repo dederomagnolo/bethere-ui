@@ -11,7 +11,7 @@
     margin-bottom: 20px;
   }
 
-  &__new-alert-title {
+  &__modal-title {
     font-size: 16px;
     font-weight: bold;
   }
@@ -19,7 +19,7 @@
   .alert-form {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 16px;
 
     margin-top: 16px;
   
@@ -112,6 +112,10 @@
       gap: 8px;
     }
   }
+}
+
+.ReactModal__Overlay {
+  z-index: 1;
 }
 
 .ReactModal__Content {

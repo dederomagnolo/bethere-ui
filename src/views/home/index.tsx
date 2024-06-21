@@ -4,7 +4,6 @@ import useWebSocket from 'react-use-websocket'
 import { useNavigate } from 'react-router'
 import _ from 'lodash'
 
-import { GenericCard } from 'components'
 import { WateringCardData } from './blocks/watering-card-data'
 
 import { getToken } from 'redux/user/selectors'
@@ -15,18 +14,20 @@ import {
   TbCircleXFilled as OfflineIcon,
 } from  'react-icons/tb'
 
-import '../styles.scss'
-import './styles.scss'
-import { WsReadyState } from 'global/consts';
-import { Sensors } from './blocks/sensors';
-import { CARDS } from './utils/constants';
-import { checkToken } from 'services/fetch';
-import { clearUserState } from 'redux/user/actions';
+import { WsReadyState } from 'global/consts'
 
-import { LoadingIcon } from './blocks/loading-icon';
+import { checkToken } from 'services/fetch'
+
+import { AppCard } from 'components/app-card'
+
+import { clearUserState } from 'redux/user/actions'
+
+import { LoadingIcon } from './blocks/loading-icon'
 import { Devices } from './blocks/devices'
 import { DeviceCard } from './blocks/device-card'
-import { AppCard } from 'components/app-card'
+
+import '../styles.scss'
+import './styles.scss'
 
 export const Home = () => {
   const userDevices = useSelector(getUserDevices)
@@ -36,24 +37,8 @@ export const Home = () => {
 
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState({ type: '' })
-  const [deviceRealTimeData, setDeviceRealTimeData] = useState({
-    defaultDeviceStatus: false,
-    measures: [],
-    lastCommandReceived: '',
-    wateringStatus: {}
-  })
 
   const [devicesRealTimeData, setDevicesRealTimeData] = useState({} as any)
-  const defaultDevice = _.find(userDevices, (device) => device.defaultDevice)
-
-  const deviceName = _.get(defaultDevice, 'deviceName')
-  const deviceSensors = _.get(defaultDevice, 'sensors')
-
-  const {
-    defaultDeviceStatus,
-    measures,
-    wateringStatus
-  } = deviceRealTimeData
 
   const handleDeviceNonResponding = () => {
     setLoading(false)
@@ -98,47 +83,10 @@ export const Home = () => {
   
     setTimeout(() => {
       handleDeviceNonResponding()
-    }, 18000)
+    }, 10000)
 
     if (parsedData) {
-      const {
-        connectedDevices,
-        measures,
-        lastCommandReceived,
-        wateringStatus
-      } = parsedData
-
-
-      // this approach should be the final, should remove all of default device logics after migration
-      const devicesRealTimeDataCollection = _.omit(
-        parsedData, 'connectedDevices', 'measures', 'lastCommandReceived', 'wateringStatus')
-
-      setDevicesRealTimeData(devicesRealTimeDataCollection)
-      // need to get last command received from DB while this is loading
-
-      let connectedDeviceData // lets type devices!
-      // check user devices connected if it exists in the collection
-      _.every(connectedDevices, (connectedDevice) => {
-        const existsInUserCollection =
-          _.find(userDevices, (userDevice) => connectedDevice === userDevice.deviceSerialKey)
-        connectedDeviceData = existsInUserCollection
-        return existsInUserCollection
-      })
-
-      const isConnectedDeviceDefault = _.get(connectedDeviceData, 'defaultDevice', false)
-      
-      setDeviceRealTimeData({
-        measures,
-        lastCommandReceived,
-        defaultDeviceStatus: isConnectedDeviceDefault,
-        wateringStatus
-      })
-
-      setLoading(false)
-
-      if (!isConnectedDeviceDefault) {
-        setError({ type: 'device'})
-      }
+      setDevicesRealTimeData(parsedData)
     }
   }, [lastMessage])
 

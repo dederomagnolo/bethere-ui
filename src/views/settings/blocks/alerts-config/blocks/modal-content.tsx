@@ -1,14 +1,63 @@
 import { useState, useEffect } from 'react'
-import _ from 'lodash'
-import { Button, Checkbox, CustomSelect } from 'components'
-import { InputOption } from 'views/settings/input-option'
+import { useSelector } from 'react-redux'
+import _, { set } from 'lodash'
+
+import { Checkbox, CustomSelect } from 'components'
+
 import { SENSORS } from 'global/consts'
 import { createAlert, deleteAlert, editAlert } from 'services/alerts'
-import { getToken } from 'redux/user/selectors'
-import { useSelector } from 'react-redux'
 
-import { FaTrashAlt as TrashIcon } from "react-icons/fa";
-import { Tooltip } from 'react-tooltip'
+import { InputOption } from 'views/settings/input-option'
+import { getToken } from 'redux/user/selectors'
+import { Alert, Sensor } from 'types/interfaces'
+import { allowOnlyNumbers } from 'lib/validations'
+import { Actions } from './actions'
+
+type SelectOptions = {
+  label: string
+  value: any
+}
+
+const getSensorParamsSelectOptions = (model: string) => {
+  const sensorInfoByModel = SENSORS[model] || {}
+
+  const modelTypesAvailable = _.get(sensorInfoByModel, 'params')
+  const sensorParamOptions = _.map(modelTypesAvailable, (param) => ({
+    value: param.type,
+    label: param.translatedTypeName
+  }))
+
+  return sensorParamOptions
+}
+
+const sensorSelectOptions = (sensors: Sensor[]) => _.map(sensors, (sensor) => ({
+  value: sensor._id,
+  label: sensor.name || sensor.serialKey
+}))
+
+const getDefaultValues = ({ 
+  alertToEdit,
+  sensorOptions,
+  paramOptions
+}: { alertToEdit: Alert, sensorOptions: SelectOptions[], paramOptions: SelectOptions[]}) => {
+
+  if (alertToEdit._id === '') {
+    return {
+      sensor: sensorOptions && sensorOptions[0],
+      param: paramOptions && paramOptions[0]
+    }
+  }
+
+  const { paramType, sensorId } = alertToEdit
+  
+  const sensorToShow = sensorOptions.find((option) => option.value === sensorId)
+  const paramToShow = paramOptions.find((option) => option.value === paramType)
+
+  return {
+    sensor: sensorToShow || sensorOptions[0] ,
+    param: paramToShow || paramOptions[0]
+  }
+}
 
 export const ModalContent = ({
   sensors,
@@ -19,60 +68,94 @@ export const ModalContent = ({
   onUpdate
 }: any) => {
   const token = useSelector(getToken)
+  const sensorOptions = sensorSelectOptions(sensors)
+  const isNewAlert = alertToEdit._id === ''
+
   const [selectedSensor, setSelectedSensor] = useState(sensors[0])
+  const [paramOptions, setSensorParamOptions] = useState(
+    getSensorParamsSelectOptions(selectedSensor.model)
+  )
 
-  const model = selectedSensor.model 
-  const sensorInfoByModel = SENSORS[model] || {}
-  
-  const modelTypesAvailable = _.get(sensorInfoByModel, 'params')
-  const sensorParamOptions = _.map(modelTypesAvailable, (param) => ({
-      value: param.type,
-      label: param.translatedTypeName
-    }))
+  const [defaultValues, setSelectDefaultValues] = useState(
+    getDefaultValues({
+      paramOptions,
+      sensorOptions,
+      alertToEdit
+    })
+  )
 
-  const sensorOptions = _.map(sensors, (sensor) => ({
-    value: sensor._id,
-    label: sensor.name || sensor.serialKey
-  }))
+  const [alertParams, setAlertParams] = useState(alertToEdit)
 
-  const getDefaultValues = () => {
-    if (!alertToEdit) {
-      return {
-        sensor: sensorOptions && sensorOptions[0],
-        param: sensorParamOptions && sensorParamOptions[0]
-      }
-    }
-
-    const { paramType, sensorId } = alertToEdit
-    
-    const sensorToShow = sensorOptions.find((option) => option.value === sensorId)
-    const paramToShow = sensorParamOptions.find((option) => option.value === paramType)
-
-    return {
-      sensor: sensorToShow,
-      param: paramToShow
-    }
-  }
-
-  const defaultValues = getDefaultValues() 
-  const [alertParams, setAlertParams] = useState(alertToEdit || {
-    value: '',
-    paramType: defaultValues.param?.value,
-    alertName: '',
-    operator: 0
+  const [fieldsTouched, setFieldsTouched] = useState({
+    selectedSensor: false,
+    alertName: false,
+    paramType: false,
+    operator: false,
+    value: false
   })
 
-  const handleSelectedSensorChange = ({ value: selectedSensorId }: any) => {
+  const [errors, setErrors] = useState({ 
+    value: false,
+    selectedSensor: false,
+    operator: false,
+  })
+
+  useEffect(() => {
+    const updatedParamOptions = getSensorParamsSelectOptions(selectedSensor.model)
+    setSensorParamOptions(updatedParamOptions)
+    const updatedDefaultValues = getDefaultValues({
+      paramOptions: updatedParamOptions,
+      sensorOptions,
+      alertToEdit
+    })
+    setSelectDefaultValues(updatedDefaultValues)
+
+    setAlertParams({
+      ...alertParams,
+      paramType: updatedDefaultValues.param?.value
+    })
+  }, [selectedSensor])
+
+  const validateFields = () => {
+    const { value, operator } = alertParams
+
+    let errorsToSet = errors
+    
+    if (fieldsTouched.value) {
+      errorsToSet = {...errorsToSet, value: value === undefined || value === ''}
+    }
+
+    if (fieldsTouched.operator) {
+      errorsToSet = {...errorsToSet, operator: operator === undefined}
+    }
+
+    if (fieldsTouched.selectedSensor) {
+      errorsToSet = {...errorsToSet, selectedSensor: !selectedSensor}
+    }
+
+    return errorsToSet
+  }
+
+  useEffect(() => {
+    const errorsToSet = validateFields()
+    setErrors(errorsToSet)
+  }, [fieldsTouched, alertParams])
+
+  const handleTouchField = (fieldName: string) => {
+    setFieldsTouched({ ...fieldsTouched, [fieldName]: true})
+  }
+
+  const handleSelectedSensorChange = ({ value: selectedSensorId }: SelectOptions) => {
     const sensorById = _.find(sensors, (sensor) => sensor._id === selectedSensorId)
     setSelectedSensor(sensorById)
   }
 
-  const handleSelectedParamTypeChange = ({ value }: any) => {
+  const handleSelectedParamTypeChange = ({ value }: SelectOptions) => {
     setAlertParams({...alertParams, paramType: value})
   }
-
+  
   const handleParamValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value
+    const value = allowOnlyNumbers(e.target.value)
     setAlertParams({...alertParams, value})
   }
 
@@ -100,7 +183,7 @@ export const ModalContent = ({
   }
 
   const saveChanges = async () => {
-    const action = alertToEdit ? editAlert : createAlert
+    const action = isNewAlert ? createAlert : editAlert
     const { alertName, paramType, value, operator } = alertParams
     const updatedAlerts = await action({
       token,
@@ -119,62 +202,24 @@ export const ModalContent = ({
       setTimeout(() => toggleModal(false), 1000) 
     }
   }
-  
-  const ButtonComponents = () => {
-    return (
-      <div className='alert-form__button-components'>
-        <div className='alert-form__button-components__main'>
-          <Button
-            onClick={saveChanges}
-            className='alert-configs__button'>
-            Salvar
-          </Button>
-          <Button
-            onClick={() =>{
-              toggleModal(false)
-              setSelectedSensor({ _id: '', model: '' })
-              onClose()
-            }}
-            className='alert-configs__button'
-            variant='cancel'>
-              Cancelar
-          </Button>
-        </div>
-        <div className='alert-form__button-components__delete'>
-          <Tooltip id='app-tooltip' anchorSelect={`#alert-delete-button`}>
-            Excluir alerta
-          </Tooltip>
-          <Button
-            id='alert-delete-button'
-            onClick={() => {
-              handleDeleteAlert()
-              toggleModal(false)
-              setSelectedSensor({ _id: '', model: '' })
-              onClose()
-            }}
-            variant='cancel'>
-              <TrashIcon />
-          </Button>
-        </div>
-      </div>
-    )
-  }
-
 
   return (
     <div className='alert-configs'>
-      <div className='alert-configs__new-alert-title'>
-        {alertToEdit ? 'Editar alerta' : 'Novo alerta'}
+      <div className='alert-configs__modal-title'>
+        {isNewAlert ? 'Novo alerta' : 'Editar alerta'}
       </div>
       <div className='alert-form'>
         <div className='input-option'>
           <div className='title'>Sensor</div>
           <CustomSelect
+            name='selectedSensor'
+            // onBlur={() => handleTouchField('selectedSensor')}
             defaultValue={defaultValues.sensor}
             options={sensorOptions}
             onChange={handleSelectedSensorChange} />
         </div>
         <InputOption
+          name='alert-name'
           className='name-input'
           showEditAndSave={false}
           value={alertParams.alertName}
@@ -183,9 +228,11 @@ export const ModalContent = ({
         <div className='input-option'>
           <div className='title'>Parâmetros disponíveis</div>
           <CustomSelect
+            name='paramType'
+            value={paramOptions.find((option) => option.value === alertParams.paramType)}
             onChange={handleSelectedParamTypeChange}
             defaultValue={defaultValues.param}
-            options={sensorParamOptions} />
+            options={paramOptions} />
         </div>
         <div className='limit-options__container'>
           <Checkbox
@@ -204,13 +251,32 @@ export const ModalContent = ({
             onChange={() => setAlertParams({...alertParams, operator: 1})} />
         </div>
         <InputOption
-          name='param-value'
+          name='alert-param-value'
+          onBlur={() => handleTouchField('value')}
+          error={errors.value ? '*Campo obrigatório' : ''}
+          inputMode='numeric'
+          min={0}
+          type='text'
           className='param-value-input'
           showEditAndSave={false}
           value={alertParams.value}
           onChange={handleParamValueChange}
           title='Limite para disparo do alerta' />
-        <ButtonComponents />
+        <Actions
+          onSave={saveChanges}
+          onDelete={() => {
+            handleDeleteAlert()
+            toggleModal(false)
+            setSelectedSensor({ _id: '', model: '' })
+            onClose()
+          }}
+          onCancel={() =>{
+            toggleModal(false)
+            setSelectedSensor({ _id: '', model: '' })
+            onClose()
+          }}
+          showDelete={!isNewAlert}
+        />
       </div>
     </div>
   )

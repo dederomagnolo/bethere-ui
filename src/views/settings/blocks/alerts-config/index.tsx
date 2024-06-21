@@ -1,26 +1,38 @@
 import { useState } from 'react'
 import { useSelector } from 'react-redux'
-import { Loading } from 'components'
-
 import _ from 'lodash'
+
 import {
   Button,
+  Loading,
   Modal
 } from 'components'
 
 import { fetchAlerts } from 'services/alerts'
-
-import { getToken } from 'redux/user/selectors'
 import { useFetch } from 'hooks/useFetch'
 
-import './styles.scss'
+import { getToken } from 'redux/user/selectors'
 
 import { ModalContent } from './blocks/modal-content'
 import { Alerts } from './blocks/alerts'
 
+import './styles.scss'
+import { Alert } from 'types/interfaces'
+
+const alertInitialState = {
+  _id: '',
+  alertId: '',
+  sensorId: '',
+  paramType: '',
+  alertValue: '',
+  alertName: '',
+  value: '',
+  operator: 0
+} as Alert
+
 export const AlertsConfig = ({ sensors, deviceId }: any ) => {
   const [showAlertForm,  setShowAlertForm] = useState(false)
-  const [selectedAlert, setSelectedAlert] = useState(undefined) as any
+  const [selectedAlert, setSelectedAlert] = useState(alertInitialState)
   const [alertsToRender, setAlertsToRender] = useState([])
   const token = useSelector(getToken)
 
@@ -41,26 +53,28 @@ export const AlertsConfig = ({ sensors, deviceId }: any ) => {
           É possível configurar no máximo 6 alertas.
         </div>
         <Modal
-          onRequestClose={() => {setShowAlertForm(false)}}
+          onRequestClose={() => {
+            setShowAlertForm(false)
+            setSelectedAlert(alertInitialState) 
+          }}
           isOpen={showAlertForm} >
           <ModalContent
             onUpdate={setAlertsToRender}
             deviceId={deviceId}
-            onClose={() => setSelectedAlert(null)}
+            onClose={() => setSelectedAlert(alertInitialState)}
             alertToEdit={selectedAlert}
             toggleModal={setShowAlertForm}
             sensors={sensors} />
         </Modal>
         <div className='alert-configs'>
           {loading && <Loading className='alert-configs__loading' />}
-          {alertsToRender.length 
+          {alertsToRender.length
             ? (
               <Alerts
                 selectedAlert={selectedAlert}
-                setSelectedAlert={setSelectedAlert}
                 sensors={sensors}
                 alerts={alertsToRender} 
-                handleAlertClick={(alert: any) => {
+                handleAlertClick={(alert: Alert) => {
                   setShowAlertForm(true)
                   setSelectedAlert(alert)
                 }}
@@ -69,7 +83,10 @@ export const AlertsConfig = ({ sensors, deviceId }: any ) => {
           <Button
             disabled={alertsToRender.length >= 6}
             className='alert-configs__button'
-            onClick={() => setShowAlertForm(true)}>
+            onClick={() => {
+              setShowAlertForm(true)
+              setSelectedAlert(alertInitialState)  
+            }}>
             Novo Alerta
           </Button>
         </div>

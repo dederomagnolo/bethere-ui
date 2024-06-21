@@ -8,7 +8,7 @@ interface SwitchProps {
 
 export const Toggle = ({
   onChange,
-  checked,
+  checked = false,
   disabled
 }: SwitchProps) => {
   return (

@@ -1,9 +1,5 @@
 import _ from 'lodash'
-import { 
-  HiCog as Cog
-} from 'react-icons/hi'
-
-import { LoadingIcon } from '../loading-icon'
+import moment from 'moment'
 
 import {
   BiStation as StationIcon
@@ -12,9 +8,10 @@ import {
 import './styles.scss'
 import { Sensors } from '../sensors'
 import { Loading } from 'components'
+import { Device } from 'types/interfaces'
 
 interface DeviceCardProps {
-  device: any
+  device: Device
   realTimeData: any
   loading: Boolean
 }
@@ -23,6 +20,9 @@ export const DeviceCard = ({ device, realTimeData, loading }: DeviceCardProps) =
   const isDeviceConnected = !_.isEmpty(realTimeData)
   const deviceSensors = _.get(device, 'sensors')
   const measures = _.get(realTimeData, 'measures')
+  const lastSeen = device.lastSeen || ''
+  const lastSeenFormated = moment(lastSeen).isValid() ? moment(lastSeen).format("DD/MM/YY, HH:mm"): 'Sem registro'
+
   const {
     deviceName
   } = device
@@ -32,7 +32,10 @@ export const DeviceCard = ({ device, realTimeData, loading }: DeviceCardProps) =
 
     return (
       <div className={`card-infos__status card-infos__status--${isDeviceConnected ? 'online' : 'offline'}`}>
-        {isDeviceConnected ? 'Online' : 'Offline'}
+        <div>{isDeviceConnected ? 'Online' : 'Offline'}</div>
+        {!isDeviceConnected 
+          ? <div className='card-infos__last-seen'>Última conexão: {lastSeenFormated}</div> 
+          : null}
       </div>
     )
   }
@@ -46,23 +49,12 @@ export const DeviceCard = ({ device, realTimeData, loading }: DeviceCardProps) =
         </div>
         <StatusLabel />
       </div>
-      {loading ? null : <div className='device-components'>
+      {loading ? null : (<div className='device-components'>
         <Sensors
           deviceStatus={isDeviceConnected}
           measures={measures}
           sensors={deviceSensors} />
-      </div>}
+      </div>)}
     </div>
   )
 }
-
-{/* <div className={`generic-card generic-card--${type} ${className ? className : ''}`}>
-      {type === 'default' && renderDeviceSignalIcon()}
-      <div className='card-infos'>
-        <CardLabel Icon={icon} label={label} />
-      </div>
-      <div className={`card-data card-data--${type}`}>
-        {CustomData && <CustomData />}
-        {children}
-      </div>
-    </div> */}
