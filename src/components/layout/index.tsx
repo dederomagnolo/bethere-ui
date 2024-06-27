@@ -12,6 +12,9 @@ import { getAuthenticatedStatus, getToken } from 'redux/user/selectors'
 
 import { Menu } from '../menu'
 
+// import { BiUserCircle as UserIcon } from 'react-icons/bi'
+// import { VscMegaphone as NotificationIcon } from "react-icons/vsc"
+
 import './styles.scss'
 import 'react-toastify/dist/ReactToastify.css'
 
@@ -75,6 +78,12 @@ export const Layout: React.FunctionComponent = () => {
   return (
     <div className='app-layout'>
       {authenticated && <Menu />}
+      {/* <div className='user-toolbar'>
+        <div className='user-toolbar__icon-container'>
+          <NotificationIcon />
+          <UserIcon />
+        </div>
+      </div> */}
       <Routes>
         {routes}
       </Routes>

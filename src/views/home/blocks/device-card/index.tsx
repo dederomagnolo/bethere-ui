@@ -7,21 +7,23 @@ import {
 
 import './styles.scss'
 import { Sensors } from '../sensors'
-import { Loading } from 'components'
-import { Device } from 'types/interfaces'
+import { AppCard, Loading } from 'components'
+import { Actuator, Device } from 'types/interfaces'
+import { WateringCardData } from '../watering-card-data'
 
 interface DeviceCardProps {
   device: Device
   realTimeData: any
-  loading: Boolean
+  loading: boolean
 }
 
 export const DeviceCard = ({ device, realTimeData, loading }: DeviceCardProps) => {
   const isDeviceConnected = !_.isEmpty(realTimeData)
-  const deviceSensors = _.get(device, 'sensors')
+  const deviceSensors = device.sensors
   const measures = _.get(realTimeData, 'measures')
   const lastSeen = device.lastSeen || ''
   const lastSeenFormated = moment(lastSeen).isValid() ? moment(lastSeen).format("DD/MM/YY, HH:mm"): 'Sem registro'
+  const deviceActuators = device.actuators
 
   const {
     deviceName
@@ -40,6 +42,21 @@ export const DeviceCard = ({ device, realTimeData, loading }: DeviceCardProps) =
     )
   }
 
+  const mappedDeviceActuators = _.map(deviceActuators, (actuator: Actuator) => {
+    const isEnabled = actuator.status // TODO: change to enabled
+    return (
+      (isEnabled
+        ? <AppCard key={actuator._id}>
+            <WateringCardData
+              connectionLoading={loading}
+              deviceRealTimeData={realTimeData || {}}
+              device={device}
+              wsStatus={1} />
+          </AppCard> 
+        : null)
+    )
+  })
+
   return (
     <div className='device-card'>
       <div className='card-infos'>
@@ -54,6 +71,9 @@ export const DeviceCard = ({ device, realTimeData, loading }: DeviceCardProps) =
           deviceStatus={isDeviceConnected}
           measures={measures}
           sensors={deviceSensors} />
+        <div className='actuators'>
+          {mappedDeviceActuators}
+        </div>
       </div>)}
     </div>
   )

@@ -23,10 +23,12 @@ export interface Sensor {
 }
 
 export interface Actuator {
+	_id: string
   name: string
 	boardNumber: number
 	createdAt: string
 	status: boolean
+	enabled: boolean
 }
 
 export interface Settings {

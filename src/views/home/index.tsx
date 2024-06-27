@@ -23,7 +23,6 @@ import { AppCard } from 'components/app-card'
 import { clearUserState } from 'redux/user/actions'
 
 import { LoadingIcon } from './blocks/loading-icon'
-import { Devices } from './blocks/devices'
 import { DeviceCard } from './blocks/device-card'
 
 import '../styles.scss'
@@ -72,20 +71,17 @@ export const Home = () => {
     reconnectInterval: 3000,
     queryParams: {
       uiClient: token
-    }},
-  )
+    }
+  })
 
   useEffect(() => {
     const receivedData = lastMessage && lastMessage.data
     const parsedData = JSON.parse(receivedData)
 
     console.log({ parsedData })
-  
-    setTimeout(() => {
-      handleDeviceNonResponding()
-    }, 10000)
 
     if (parsedData) {
+      setLoading(false)
       setDevicesRealTimeData(parsedData)
     }
   }, [lastMessage])
@@ -127,39 +123,8 @@ export const Home = () => {
   const mappedDeviceCards =
     _.map(userDevices, (device) => {
       const realTimeData = devicesRealTimeData[device._id] || {}
-      return <DeviceCard loading={loading} device={device} realTimeData={realTimeData} />
+      return <DeviceCard key={device._id} loading={loading} device={device} realTimeData={realTimeData} />
     })
-  
-  const devicesWithActuators = _.map(devicesRealTimeData, (realTimeData, id) => { 
-    // need to think about this structure to avoid something different than string
-    if (typeof realTimeData === 'string') return null
-    
-    const device =
-      _.find(userDevices, (deviceFromCollection) => deviceFromCollection._id === id)
-    
-    const actuators = _.get(device, 'actuators', [])
-
-    return {
-      actuators,
-      realTimeData,
-      device
-    }
-  })
-
-  let mappedAutomationCards = [] as any
-  _.forEach(_.compact(devicesWithActuators), (item) => {
-    const actuators = item?.actuators ?? []
-
-    mappedAutomationCards = _.map(actuators, (data) => (
-      <AppCard key={data._id}>
-        <WateringCardData
-          connectionLoading={loading}
-          deviceRealTimeData={item?.realTimeData || {}}
-          device={item?.device}
-          wsStatus={1} />
-      </AppCard>
-    ))
-  })
   
   return(
     <div className='page-content home-view'>
@@ -169,7 +134,6 @@ export const Home = () => {
         {mappedDeviceCards}
       </div>
       <div className='dashboard'>
-        {mappedAutomationCards}
       </div>
     </div>
   )

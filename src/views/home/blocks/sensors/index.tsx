@@ -25,7 +25,7 @@ export const Sensors = ({ sensors, measures = [], loading, deviceStatus }: any) 
     )
   }
 
-  const MeasureCardContent = ({ sensorModel, measuresBySensor, sensorId, enabled }: any ) => {
+  const MeasureCardContent = ({ sensorModel, measuresBySensor, sensorId }: any ) => {
     const MeasuresBySensor = () => {
       const humidity = _.get(measuresBySensor, 'humidity') 
       const temperature = _.get(measuresBySensor, 'temperature')
@@ -77,12 +77,15 @@ export const Sensors = ({ sensors, measures = [], loading, deviceStatus }: any) 
       return null
     }
 
-    return enabled && deviceStatus && measuresBySensor 
+    return deviceStatus && measuresBySensor 
       ? <MeasuresBySensor />
       : <UnavailableConnection />
   }
 
   const mappedSensorCards = _.map(sensors, (sensor) => {
+    const isEnabled = sensor.enabled
+    if (!isEnabled) return null
+  
     const serialKey = _.get(sensor, 'serialKey', '')
     const sensorModel = _.get(sensor, 'model')
     const sensorId = _.get(sensor, '_id')
@@ -93,14 +96,12 @@ export const Sensors = ({ sensors, measures = [], loading, deviceStatus }: any) 
 
     const errorValue = SENSORS[sensor.model].errorValue
 
-    const sensorMeasuresWithErrorsMapped = _.map(broadcastedMeasures, (broadcastedValue, key) =>
-    ({ [key]: broadcastedValue, error: broadcastedValue === errorValue }) )
-
     const cardStructureByModel = CARDS[sensorModel]
 
     return (
       <GenericCard
         {...cardStructureByModel}
+        key={sensorId}
         type={sensorModel}
         CustomData={() => (
           <MeasureCardContent
