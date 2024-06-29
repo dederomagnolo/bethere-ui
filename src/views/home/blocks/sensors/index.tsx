@@ -14,10 +14,21 @@ import { CARDS } from '../../utils/constants'
 import { UnavailableConnection } from '../unavailable-connection'
 
 import './styles.scss'
+import { Sensor } from 'types/interfaces'
 
-export const Sensors = ({ sensors, measures = [], loading, deviceStatus }: any) => {
+type SensorsProps = {
+  sensors: Sensor[],
+  measures: any,
+  deviceStatus: boolean
+}
+
+export const Sensors = ({
+  sensors,
+  measures = [],
+  deviceStatus
+}: SensorsProps) => {
   const renderMeasure = (data: number | string, unit: string) => {
-    return loading ? <LoadingIcon /> : (
+    return !deviceStatus ? <LoadingIcon /> : (
       <div className='measure-data'>
         <span>{data}</span>
         <span className='unit'>{unit}</span>

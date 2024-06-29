@@ -4,8 +4,6 @@ import useWebSocket from 'react-use-websocket'
 import { useNavigate } from 'react-router'
 import _ from 'lodash'
 
-import { WateringCardData } from './blocks/watering-card-data'
-
 import { getToken } from 'redux/user/selectors'
 import { getUserDevices } from 'redux/device/selectors'
 
@@ -16,17 +14,27 @@ import {
 
 import { WsReadyState } from 'global/consts'
 
-import { checkToken } from 'services/fetch'
-
-import { AppCard } from 'components/app-card'
-
-import { clearUserState } from 'redux/user/actions'
-
 import { LoadingIcon } from './blocks/loading-icon'
 import { DeviceCard } from './blocks/device-card'
 
+import { getStatusFromLocalStation } from 'services/local-station'
+import { useFetch } from 'hooks/useFetch'
+
 import '../styles.scss'
 import './styles.scss'
+
+type SensorBroadcastedMeasure = {
+  [key: string]: {
+    temperature?: string,
+    moisture?: string,
+    humidity?: string
+  }
+}
+
+type DeviceRealTimeData = { 
+  wateringStatus: { nextTimeSlot: string }, 
+  measures: SensorBroadcastedMeasure[] 
+}
 
 export const Home = () => {
   const userDevices = useSelector(getUserDevices)
@@ -37,17 +45,21 @@ export const Home = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState({ type: '' })
 
-  const [devicesRealTimeData, setDevicesRealTimeData] = useState({} as any)
+  const [devicesRealTimeData, setDevicesRealTimeData] = useState<DeviceRealTimeData[]>([])
+  const [devicesWaitingForUpdate, setDevicesWaitingForUpdate] = useState<string[]>([])
 
-  const handleDeviceNonResponding = () => {
-    setLoading(false)
-    setError({ type: 'device'})
-  }
+  const {
+    data,
+    loading: loadingOnGetStatus
+  } = useFetch(async () => {
+    setLoading(true)
+    await getStatusFromLocalStation({ token })
+  }, [])
 
   const {
     lastMessage,
     readyState
-    } = useWebSocket(process.env.REACT_APP_WS_HOST || '', {
+  } = useWebSocket(process.env.REACT_APP_WS_HOST || '', {
     onMessage: (event) => {},
     onOpen: (event) => {
       console.log(`Connection opened`)
@@ -55,13 +67,13 @@ export const Home = () => {
     },
     onError: async (err: any) => {
       setError({ type: 'websocket'})
-      const res = await checkToken(token)
-      console.log({res})
+      // const res = await checkToken(token)
+      // console.log({res})
 
-      if (res && res instanceof Error) {
-        navigate('/login')
-        dispatch(clearUserState())
-      }
+      // if (res && res instanceof Error) {
+      //   navigate('/login')
+      //   dispatch(clearUserState())
+      // }
     },
     onReconnectStop: () => setError({ type: 'websocket'}),
     shouldReconnect: (closeEvent) => {
@@ -75,16 +87,23 @@ export const Home = () => {
   })
 
   useEffect(() => {
-    const receivedData = lastMessage && lastMessage.data
-    const parsedData = JSON.parse(receivedData)
+    setDevicesRealTimeData(data)
+  }, [data])
 
-    console.log({ parsedData })
 
-    if (parsedData) {
-      setLoading(false)
-      setDevicesRealTimeData(parsedData)
+  useEffect(() => {
+    if (!loadingOnGetStatus) {
+      const receivedData = lastMessage && lastMessage.data
+      const parsedData = JSON.parse(receivedData)
+  
+      console.log({ parsedData })
+  
+      if (parsedData as DeviceRealTimeData[]) {
+        setLoading(false)
+        setDevicesRealTimeData(parsedData)
+      }
     }
-  }, [lastMessage])
+  }, [loadingOnGetStatus, lastMessage])
 
   const renderWebsocketConnectionStatus = () => {
     const containerClass = 'server-connection-status'
@@ -122,8 +141,17 @@ export const Home = () => {
 
   const mappedDeviceCards =
     _.map(userDevices, (device) => {
-      const realTimeData = devicesRealTimeData[device._id] || {}
-      return <DeviceCard key={device._id} loading={loading} device={device} realTimeData={realTimeData} />
+      const deviceId = device._id
+      const realTimeData = devicesRealTimeData[deviceId] || {}
+      const isDeviceWaitingUpdate = devicesWaitingForUpdate.includes(deviceId)
+      return (
+        <DeviceCard
+          // isDeviceWaitingUpdate={isDeviceWaitingUpdate}
+          key={device._id}
+          loading={loading}
+          device={device}
+          realTimeData={realTimeData} />
+      )
     })
   
   return(

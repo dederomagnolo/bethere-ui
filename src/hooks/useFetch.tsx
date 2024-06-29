@@ -7,7 +7,7 @@ import { setGlobalError } from 'redux/global/actions'
 export const useFetch = (fetchService: Function, dependencies: any[] = []) => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const [data, setData] = useState({})
+  const [data, setData] = useState({}) as any
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
 

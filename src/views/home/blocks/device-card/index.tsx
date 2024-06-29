@@ -17,7 +17,11 @@ interface DeviceCardProps {
   loading: boolean
 }
 
-export const DeviceCard = ({ device, realTimeData, loading }: DeviceCardProps) => {
+export const DeviceCard = ({
+  device,
+  realTimeData,
+  loading
+}: DeviceCardProps) => {
   const isDeviceConnected = !_.isEmpty(realTimeData)
   const deviceSensors = device.sensors
   const measures = _.get(realTimeData, 'measures')

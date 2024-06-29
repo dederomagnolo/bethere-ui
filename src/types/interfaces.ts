@@ -20,6 +20,7 @@ export interface Sensor {
   name: string
   model: string // should crate ENUM
   serialKey: string
+	enabled: boolean
 }
 
 export interface Actuator {
@@ -51,6 +52,7 @@ export interface Settings {
 }
 
 export interface Device {
+	_id: string
   deviceSerialKey: string
 	createdAt: string
 	userId: string
