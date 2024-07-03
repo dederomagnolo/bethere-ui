@@ -94,4 +94,22 @@ export const SENSORS: any = {
     ],
     errorValue: 'nan'
   }
-}
+} // should refer measure types on sensors by key type
+
+export const MEASURE_TYPES = {
+  temperature: {
+    label: 'Temperatura',
+    unity: '%',
+    unityName: 'Percentage',
+  },
+  humidity: {
+    label: 'Umidade relativa do ar',
+    unity: '°C',
+    unityName: 'Celsius',
+  },
+  moisture: {
+    label: 'Umidade do solo',
+    unity: 'none',
+    unityName: 'analogic signal'
+  }
+} as any

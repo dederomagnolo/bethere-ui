@@ -20,13 +20,15 @@ export const Checkbox: React.FC<CheckboxProps> = ({
   radio,
   value,
   name,
-  checked
+  checked,
+  disabled
 }) => {
   const [internalChecked, setInternalChecked] = useState(initialState)
 
   return (
     <label className={`app-checkbox ${className}`}>
       <input
+      disabled={disabled}
       name={name}
       value={value}
       id='app-checkbox'

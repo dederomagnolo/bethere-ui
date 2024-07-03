@@ -103,26 +103,6 @@ export const setDefaultDevice = async ({ deviceId, token }) => {
   }
 }
 
-export const getMeasuresHistory = async ({
-  token,
-  deviceId,
-  dayToRetrieveHistory
-}) => {
-  const apiCall = async () => callApi({
-    method: 'POST',
-    service: '/measures/history',
-    payload: {
-      deviceId,
-      dayToRetrieveHistory
-    },
-    token
-  })
-
-  return tryToCallService({
-    apiCall
-  })
-}
-
 export const editSettingsAndSendCommand = async ({
   token,
   settingsPayload

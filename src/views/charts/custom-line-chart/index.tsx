@@ -20,6 +20,7 @@ const unityByType = {
   moisture: '%'
 } as any
 
+const strokes = ["#82ca9d", "#8884d8", "#8884d8"] as any
 
 export const CustomLineChart = ({
   dataToPlot,
@@ -28,6 +29,7 @@ export const CustomLineChart = ({
   measureType,
   sensors
 }: any) => {
+
   const ticks = generateTicks({
     date: dateToAjdustTicks,
     valueToIncrement: 30,
@@ -46,7 +48,21 @@ export const CustomLineChart = ({
     // }
 
     const initialYDomain = _.get(dataToPlot, `[0].${lineDataKeys[0]}`) - 2
-    const finalYDomain = _.get(dataToPlot, `[${dataToPlot.length - 1}].${lineDataKeys[0]}`) + 2 
+    const finalYDomain = _.get(dataToPlot, `[${dataToPlot.length - 1}].${lineDataKeys[0]}`) + 2
+
+    if (measureType === 'temperature') {
+      return {
+        initialYDomain: 5,
+        finalYDomain: 40
+      }
+    }
+ 
+    if (measureType === 'humidity') {
+      return {
+        initialYDomain: 0,
+        finalYDomain: 100
+      }
+    }
 
     return {
       initialYDomain,
@@ -55,6 +71,7 @@ export const CustomLineChart = ({
   }
 
   const initialTimeDomainPoint =  (moment(_.get(dataToPlot, '[0].x')).subtract(10, 'minutes')).valueOf()
+
   const finalTimeDomainPoint =
     (moment(_.get(dataToPlot, `[${dataToPlot.length - 1}].x`)).add(10, 'minutes')).valueOf()
 
@@ -72,11 +89,11 @@ export const CustomLineChart = ({
         width={730}
         height={250}
         data={dataToPlot}
-        margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+        margin={{ top: 5, right: 30, left: 15, bottom: 5 }}>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis
           ticks={adjustedTicks}
-          dataKey='x'
+          dataKey='x' // time
           scale='time'
           type='number'
           domain={[initialTimeDomainPoint, finalTimeDomainPoint]}
@@ -95,14 +112,16 @@ export const CustomLineChart = ({
           }}
           type='number'
           scale='linear'
-          domain={[initialYDomain, finalYDomain]} />
+          domain={[initialYDomain, finalYDomain]}
+          />
         <Tooltip 
           labelFormatter={(test) =>  moment(test).format('HH:mm')}/>
         <Legend formatter={(value: any) => {
-            return sensors[value]}
-          } />
-        {lineDataKeys[0] && <Line type='monotone' dataKey={lineDataKeys[0]} stroke="#8884d8" />}
-        {lineDataKeys[1] && <Line type='monotone' dataKey={lineDataKeys[1]} stroke="#82ca9d" />}
+          const sensorInfo = _.find(sensors, (sensorInfo) => value === sensorInfo.serialKey)
+          return sensorInfo.name || value
+        }} />
+        <Legend />
+        {_.map(lineDataKeys, (key, index) => <Line type='monotone' dataKey={key} stroke={strokes[index]} key={key} />)}
       </LineChart>
     </ResponsiveContainer>
   )

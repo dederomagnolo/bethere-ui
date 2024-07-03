@@ -67,13 +67,6 @@ export const Home = () => {
     },
     onError: async (err: any) => {
       setError({ type: 'websocket'})
-      // const res = await checkToken(token)
-      // console.log({res})
-
-      // if (res && res instanceof Error) {
-      //   navigate('/login')
-      //   dispatch(clearUserState())
-      // }
     },
     onReconnectStop: () => setError({ type: 'websocket'}),
     shouldReconnect: (closeEvent) => {

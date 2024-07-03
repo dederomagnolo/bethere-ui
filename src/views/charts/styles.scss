@@ -1,6 +1,25 @@
 .charts {
   &__chart-container {
     display: flex;
+    flex-direction: column;
     margin: 20px 0 20px;
+
+    h2 {
+      margin: 0;
+      text-align: center;
+    }
+  }
+
+  &__filters-container {
+    margin-top: 30px;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 20px;
+    width: 100%;
+    justify-content: center;
+
+    h4 {
+      margin: 0;
+    }
   }
 }
