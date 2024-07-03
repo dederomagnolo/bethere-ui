@@ -4,7 +4,7 @@ import { PuffLoader } from 'react-spinners'
 import _ from 'lodash'
 import moment from 'moment'
 
-import { Button, Checkbox, CustomDatePicker, Loading } from 'components'
+import { Button, CustomDatePicker, Loading } from 'components'
 
 import { useFetch } from 'hooks/useFetch'
 
@@ -12,86 +12,15 @@ import { getUserSensors } from 'redux/device/selectors'
 import { getToken } from 'redux/user/selectors'
 
 import { getAllUserMeasures } from 'services/measures'
-import { CustomLineChart } from './custom-line-chart'
 
 import * as XLSX from 'xlsx'
 import { saveAs } from 'file-saver'
 
 import './styles.scss'
 import { MEASURE_TYPES } from 'global/consts'
+import { ChartWithFilters } from './chart-with-filters'
 
-// console.log({tick})
-// const outMax = 100
-// const outMin = 0
-// const inMax = 270
-// const inMin = 556
-
-// const normalizedTick = 
-//   ((Number(tick) - inMin) * (outMax - outMin)) / (inMax - inMin) + outMin
-
-const getNormalizedValue = (value: number) => {
-  const outMax = 100
-  const outMin = 0
-  const inMax = 270
-  const inMin = 700 // linear coeficient
-  const angularCoeficient = (outMax - outMin) / (inMax - inMin)
-
-  const normalizedTick = angularCoeficient * value + 556
-
-  const percentual = normalizedTick * 100 / 700
-  return Number(percentual.toFixed(2))
-}
-
-const buildDataToPlot = (measuresCollectionByType: any, filters: Filter = {}) => {
-  let availableToPlot = {}
-
-  _.forEach(measuresCollectionByType, (collection, type: number) => {
-    const collectionFilters = filters[type]
-    const batch = [] as any
-    const dataKeys = [] as string[]
-
-    _.forEach(collection, (measure: any) => { // get data to plot from collection
-      const measureType = measure.type
-      const value = measure.value
-      const origin = measure.origin
-
-      const shouldIncludeMeasure = measureType !== 'moisture' && value !== 998
-
-      if (shouldIncludeMeasure) {
-        if (!dataKeys.includes(origin)) {
-          dataKeys.push(origin)
-        }
-
-        const hasFiltersToApply = collectionFilters && collectionFilters.length
-        const shouldFilterMeasure = hasFiltersToApply && collectionFilters.includes(origin)
-
-        const xTick = (moment(measure.createdAt)).valueOf()
-        const point = {
-          x: xTick,
-          [origin]: measureType === 'moisture' ? getNormalizedValue(value) : value,
-        }
-
-        if (!shouldFilterMeasure) {
-          batch.push(point)
-        }
-      } 
-    })
-
-    availableToPlot = {
-      ...availableToPlot,
-      [type]: {
-        data: batch,
-        dataKeys: dataKeys
-      }
-    }
-  })
-
-  return availableToPlot
-}
-
-type Filter = {
-  [key: string]: string[]
-}
+import { Filter, buildDataToPlot } from './utils/build-data-to-plot'
 
 export const Charts = () => {
   const token = useSelector(getToken)
@@ -112,7 +41,7 @@ export const Charts = () => {
     name: sensor.name
   }))
 
-  const updateMeasures = async (dayToRetrieveHistory: any) => { // by user
+  const updateMeasures = async (dayToRetrieveHistory: any) => {
     try {
       setLoading(true)
       const measuresHistory = await getAllUserMeasures({
@@ -149,79 +78,19 @@ export const Charts = () => {
     setFilters({})
   }
 
-  const renderCharts = _.map(measuresCollectionsToPlot, (collectionToPlot: any, type: number) => {
-    const dataToPlot = collectionToPlot.data
-    const sensorsOnCollection = collectionToPlot.dataKeys
-    const filtersOnCollection = filters[type]
-
+  const mappedCharts = _.map(measuresCollectionsToPlot, (collectionToPlot: any, type: number) => {
     if (loading) {
       return <Loading key={type} Component={PuffLoader} />
     }
 
-    const applyFilterOnCharts = (serialKey: string, e: any) => {
-      const checked = e.target.checked
-      const alreadyApplied = filtersOnCollection && filtersOnCollection.length && filtersOnCollection.includes(serialKey)
-
-      if (!alreadyApplied && !checked) {
-        const updatedFilters = {
-          ...filters,
-          [type]: filtersOnCollection && filtersOnCollection.length ? filtersOnCollection.push(serialKey) : [serialKey]
-        }
-        setFilters(updatedFilters)
-      }
-
-      if (checked) {
-        const updatedFilters = {
-          ...filters,
-          [type]: _.filter(filtersOnCollection, (filter) => filter !== serialKey)
-        }
-        setFilters(updatedFilters)
-      }
-    }
-
-    const mappedSensorFilterOptions = _.map(sensorNames, (sensor) => {
-      const serialKey = sensor.serialKey
-      const sensorName = sensor.name || serialKey
-      
-      const onCollection = sensorsOnCollection && sensorsOnCollection.includes(serialKey)
-      const isFiltered = filtersOnCollection && filtersOnCollection.includes(serialKey)
-      
-      let shouldDisableActiveForFiltering = false
-
-      if (sensorsOnCollection && filtersOnCollection) {
-        shouldDisableActiveForFiltering = sensorsOnCollection.length - filtersOnCollection.length === 1
-      }
-
-      return onCollection 
-        ? <Checkbox
-            disabled={shouldDisableActiveForFiltering && !isFiltered}
-            checked={!isFiltered}
-            key={sensorName}
-            onChange={(e) => applyFilterOnCharts(serialKey, e)} //
-            label={sensorName} /> 
-        : null
-    })
-
-    const shouldRenderChart = !_.isEmpty(collectionToPlot)
-    
-    const labelForType = MEASURE_TYPES[type].label
-
     return (
-      <div className='charts__chart-container' key={type}>
-        <h2>{labelForType}</h2>
-        <div className='charts__filters-container'>
-          <h4>Mostrar:</h4>
-          {mappedSensorFilterOptions}
-        </div>
-        {shouldRenderChart ? (
-          <CustomLineChart
-            sensors={sensorNames}
-            key={type}
-            measureType={type}
-            dataToPlot={dataToPlot}
-            lineDataKeys={sensorsOnCollection}
-            dateToAjdustTicks={selectedDate} />) : null}
-      </div>
+      <ChartWithFilters
+        setFilters={setFilters}
+        filters={filters}
+        collectionToPlot={collectionToPlot}
+        measureType={type}
+        sensorsInfoFromAccount={sensorNames}
+        selectedDate={selectedDate} />
     )
   })
 
@@ -259,7 +128,7 @@ export const Charts = () => {
         <CustomDatePicker value={selectedDate} onChange={handleDateChange} />
         {!_.isEmpty(data) && <Button className='export-button' onClick={() => exportData(data)}>Exportar</Button>}
       </div>
-      {_.isEmpty(data) ? <div className='charts-view__not-found'>Sem registros nessa data.</div> : renderCharts }
+      {_.isEmpty(data) ? <div className='charts-view__not-found'>Sem registros nessa data.</div> : mappedCharts }
     </div>
   )
 }

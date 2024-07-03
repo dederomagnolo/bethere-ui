@@ -12,8 +12,9 @@ import {
 
 import _ from 'lodash'
 import moment from 'moment'
-import { generateTicks } from 'global/functions'
-import { MEASURE_TYPES } from 'global/consts';
+import { MEASURE_TYPES } from 'global/consts'
+
+import { generateTicks } from '../utils'
 
 const strokes = ["#82ca9d", "#8884d8", "#8884d8"] as any
 
