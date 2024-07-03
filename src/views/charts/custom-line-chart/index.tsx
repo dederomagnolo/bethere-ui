@@ -13,12 +13,7 @@ import {
 import _ from 'lodash'
 import moment from 'moment'
 import { generateTicks } from 'global/functions'
-
-const unityByType = {
-  temperature: '°C',
-  humidity: '%',
-  moisture: '%'
-} as any
+import { MEASURE_TYPES } from 'global/consts';
 
 const strokes = ["#82ca9d", "#8884d8", "#8884d8"] as any
 
@@ -101,7 +96,7 @@ export const CustomLineChart = ({
         />
         <YAxis
           tickFormatter={(tick) => {
-            const unit = unityByType[measureType]
+            const unit = MEASURE_TYPES[measureType].unity
             // if (measureType === 'moisture') {
             //   console.log({tick})
 

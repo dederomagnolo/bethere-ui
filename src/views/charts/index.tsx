@@ -226,25 +226,40 @@ export const Charts = () => {
   })
 
   const exportData = (data: any) => {
-    const fileNameToSave = moment(selectedDate).format('dd/mm/yyyy')
-    console.log({ data })
-    const worksheet = XLSX.utils.json_to_sheet([{ temperature: '234', date: '2024-06-29T21:34:27.783Z' }, { temperature: '123', date: '2024-06-29T21:34:27.783Z' }])
+    const fileNameToSave = moment(selectedDate).format('DD-MM-YYYY')
     const workbook = XLSX.utils.book_new()
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Sensor1")
-  
-    // Buffer to store the generated Excel file
+
+    _.forEach(data, (collectionByMeasureType, type) => {
+      const typeLabel = MEASURE_TYPES[type].label
+      const groupedBySensor = _.groupBy(collectionByMeasureType, 'origin')
+      
+      _.forEach(groupedBySensor, (collectionBySensor, key) => {
+        const filteredDataToExport = _.map(collectionBySensor, (measure) => {
+          return {
+            Tipo: typeLabel,
+            Valor: measure.value,
+            Data: measure.createdAt
+          }
+        })
+        const worksheet = XLSX.utils.json_to_sheet(filteredDataToExport)
+        XLSX.utils.book_append_sheet(workbook, worksheet, `${typeLabel}-${key}`)
+      })
+    })
+
     const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' })
     const blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8' })
 
-    saveAs(blob, `${fileNameToSave}.xlsx`)
+    saveAs(blob, `Medições-BeThere-${fileNameToSave}.xlsx`)
   }
 
   return(
     <div className='charts-view'>
       <h2>Gráficos</h2>
-      <CustomDatePicker value={selectedDate} onChange={handleDateChange} />
-      {renderCharts}
-      {/* {renderCharts()} */}
+      <div className='charts-view__actions'>
+        <CustomDatePicker value={selectedDate} onChange={handleDateChange} />
+        {!_.isEmpty(data) && <Button className='export-button' onClick={() => exportData(data)}>Exportar</Button>}
+      </div>
+      {_.isEmpty(data) ? <div className='charts-view__not-found'>Sem registros nessa data.</div> : renderCharts }
     </div>
   )
 }

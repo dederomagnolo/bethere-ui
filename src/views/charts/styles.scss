@@ -23,3 +23,19 @@
     }
   }
 }
+
+.charts-view {
+  &__actions {
+    display: flex;
+    gap: 18px;
+    align-items: flex-end;
+
+    .export-button {
+      height: 38px;
+    }
+  }
+
+  &__not-found {
+    margin-top: 40px;
+  }
+}
