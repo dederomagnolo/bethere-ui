@@ -10,45 +10,19 @@ import {
   Tooltip,
   ResponsiveContainer,
   Legend
-} from 'recharts';
+} from 'recharts'
 
-const data = [
-  { x: 'MP1', y: '2023-04-17T05:53:47.154Z' },
-  { x: 'MP1', y: '2023-04-17T12:19:47.154Z' },
-  { x: 'MP0', y: '2023-04-17T13:12:47.112Z' },
-  { x: 'MP0', y: '2023-04-17T19:35:47.132Z' },
-  { x: 'MP0', y: '2023-04-17T23:47:01.024Z' },
-];
+import { NEW_COMMANDS } from 'global/consts'
 
-const formattedData = data.map(row => ({
-  x: row.x,
-  y: (moment(row.y)).valueOf()
-}))
+import './styles.scss'
 
-const colors = { 
+const colors = {
   MP0: '#B1027C',
   MP1: '#0292B1',
-  WR_ON: '#07BB19',
-  WR_OFF: '#FF424D'
-} as any
-
-const fullCommandName = {
-  MP0: {
-    color: '#B1027C',
-    name: 'Desligada'
-  },
-  MP1: {
-    color: '#0292B1',
-    name: 'Ligada'
-  },
-  WR_ON: {
-    color: '#07BB19',
-    name: 'Ligada'
-  },
-  WR_OFF: {
-    color:'#FF424D',
-    name: 'Desligado'
-  }
+  AW1: '#07BB19',
+  AW0: '#FF424D',
+  RESET: '#3437eb',
+  SETTINGS: '#eba534'
 } as any
 
 export const CustomScatterChart = ({ dataToPlot }: any) => {
@@ -59,6 +33,7 @@ export const CustomScatterChart = ({ dataToPlot }: any) => {
   for (let i = 0; i < 3; i++) {
     tickTimeStrings.push(startDate.add(6, 'hours').format())
   }
+
   const tickNumericValues = tickTimeStrings.map(timeString => moment(timeString).valueOf());
 
   const startDateToQuery = moment(startDate).utc().format()
@@ -75,6 +50,27 @@ export const CustomScatterChart = ({ dataToPlot }: any) => {
     }
   )}
 
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      const timeData = payload[0].value
+      const commandData = payload[1].value
+
+      const commandInfo = _.find(Object.values(NEW_COMMANDS), (command) => command.CODE === commandData)
+
+      const formattedTime = typeof(timeData) === 'string' ? timeData : moment(timeData).format('HH:mm')
+
+      const friendlyCommand = `${commandInfo?.CATEGORY.LABEL_PT} ${commandInfo?.STATE}` 
+      return (
+        <div className='custom-tooltip'>
+          <p className='custom-tooltip__label'>{`Tempo : ${formattedTime}`}</p>
+          <p className='custom-tooltip__label'>{`Comando : ${friendlyCommand}`}</p>
+        </div>
+      )
+    }
+
+    return <div></div>
+  }
+
   return (
     <ResponsiveContainer width="100%" height={400}>
       <ScatterChart
@@ -88,6 +84,11 @@ export const CustomScatterChart = ({ dataToPlot }: any) => {
       >
         <CartesianGrid />
         <YAxis
+          tick={{ fontSize: 8 }}
+          tickFormatter={(t) => {
+            const commandInfo = _.find(Object.values(NEW_COMMANDS), (command) => command.CODE === t)
+            return commandInfo?.STATE || commandInfo?.CATEGORY.LABEL_PT || ''
+          }}
           allowDuplicatedCategory={false}
           type='category'
           dataKey='x'
@@ -102,13 +103,14 @@ export const CustomScatterChart = ({ dataToPlot }: any) => {
           domain={[tickNumericValues[0], tickNumericValues[3]]}
         />
         <Tooltip
-          formatter={(value, name, props) => {
-            return typeof(value) === 'string' ? value : moment(value).format('HH:mm')
-          }}
-          cursor={{ strokeDasharray: "3 3" }} />
-        <Legend />
+          content={<CustomTooltip />} />
+        <Legend
+          formatter={(t) => {
+            const commandInfo = _.find(Object.values(NEW_COMMANDS), (command) => command.CODE === t)
+            return `${commandInfo?.CATEGORY.LABEL_PT} ${commandInfo?.STATE}`
+          }} />
         {generateScatterComponents()}
       </ScatterChart>
     </ResponsiveContainer>
-  );
+  )
 }

@@ -2,6 +2,10 @@
   display: flex;
   align-items: center;
 
+  &--disabled {
+    color: rgb(124, 124, 124);
+  }
+
   input[type='checkbox'] {
     margin-left: 0;
     accent-color: #4e9eac;

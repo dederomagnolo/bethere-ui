@@ -59,7 +59,7 @@ export const Settings = () => {
         }
       })
 
-      if(!res.error) {
+      if (!res.error) {
         dispatch(setUserDevices(res))
         setSelectedDevice(_.find(res, (device) => device._id === deviceId ))
       }

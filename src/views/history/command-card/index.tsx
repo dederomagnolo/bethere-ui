@@ -2,7 +2,7 @@ import _ from 'lodash'
 import moment from 'moment'
 
 import { CommandType } from '../types'
-import { MAPPED_COMMANDS } from 'global/consts'
+import { NEW_COMMANDS } from 'global/consts'
 
 import './styles.scss'
 
@@ -14,41 +14,8 @@ export const CommandCard: React.FC<CommandCardProps> = ({ command }) => {
   const {
     commandName,
     createdAt,
-    categoryName
+    changedValue
   } = command
-
-  const getCommandTranslatedInfos = ({
-    commandName, categoryName 
-  }: { commandName: string, categoryName: string }) => {
-    if(!commandName || !categoryName) return {}
-    
-    const category = _.find(MAPPED_COMMANDS, (command) => 
-      command.categoryName === categoryName || command.categoryNameTranslated === categoryName)
-
-    if(!category) return {}
-
-    const commandInfo = 
-      _.find(category.options, (option) => option.command === commandName)
-    
-    const commandStatus = _.get(commandInfo, 'status')
-    const commandLabel = commandStatus === 'SET'
-      ? _.get(category, 'commandNameTranslated')
-      : category.categoryNameTranslated
-      
-    return {
-      commandStatus,
-      categoryNameTranslated: commandLabel
-    }
-  }
-
-  const commandToRender = getCommandTranslatedInfos({ commandName, categoryName })
-
-  if (_.isEmpty(commandToRender)) return null
-
-  const {
-    categoryNameTranslated,
-    commandStatus
-  } = commandToRender
 
   const commandStatusType: any = {
     'ON': 'on',
@@ -56,15 +23,49 @@ export const CommandCard: React.FC<CommandCardProps> = ({ command }) => {
     'SET': 'misc'
   }
 
-  const statusClassName = `command-card__info--${commandStatus ? commandStatusType[commandStatus] : 'misc'}`
+  const COMMAND_INFOS = Object.values(NEW_COMMANDS)
+
+  const commandInfoFromCollection = _.find(COMMAND_INFOS, (command) => commandName === command.CODE) || {} as any // maybe type here when it is finished on be
+
+  if (_.isEmpty(commandInfoFromCollection)) return null
+
+  const { CATEGORY: { LABEL_PT }, STATE } = commandInfoFromCollection
+
+  const statusClassName = `command-card__info--${STATE ? commandStatusType[STATE] : 'misc'}`
+
+  console.log({ changedValue})
+  if (changedValue?.length) {
+
+  }
+
+  const mappedCommandHistory = _.map(changedValue, ({ from, to, paramName }) => {
+    const FRIENDLY_LABELS = {
+      'automation.interval': '',
+      'automation.intervalInHours': '',
+      'automation.startTime': '',
+      'automation.endTime': '',
+    }
+
+    return (
+      <div className='command-history__container'>
+        <span>Parâmetro alterado: {paramName} </span>
+        <span>De: {from} </span>
+        <span>Para: {to} </span>
+      </div>
+    )
+  })
 
   return (
     <div className='command-card'>
       <div className='command-card__time'>{moment(createdAt).format('HH:mm')}</div>
-      <div className='command-card__info'>
-        <span>{categoryNameTranslated}</span>
-        {/* <span>{commandName}</span> */}
-        <span className={statusClassName}>{commandStatus}</span>
+      <div className='command-card__command'>
+        <div className='command-card__info'>
+          <span>{LABEL_PT}</span>
+          <span className={statusClassName}>{STATE}</span>
+        </div>
+        {/* {changedValue?.length ? <div className='command-card__history'>
+          {mappedCommandHistory}
+        </div> : null} */}
       </div>
     </div>
   )

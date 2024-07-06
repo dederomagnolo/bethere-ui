@@ -9,7 +9,7 @@ import {
   TbGraph as ChartOnIcon
 } from 'react-icons/tb'
 
-import { getDefaultDeviceId } from 'redux/device/selectors'
+import { getDefaultDeviceData } from 'redux/device/selectors'
 import { getToken } from 'redux/user/selectors'
 import { fetchCommandHistory } from 'services/fetch'
 
@@ -33,11 +33,12 @@ const defaultOptionIndex = commandOptions.length - 1
 
 export const History = () => {
   const token = useSelector(getToken)
-  const defaultDeviceId = useSelector(getDefaultDeviceId)
+  const defaultDevice = useSelector(getDefaultDeviceData)
 
   const todaysStartDate = moment().startOf('day')
   const startDateToQuery = moment(todaysStartDate).utc().format()
 
+  const [selectedDevice, setSelectedDevice] = useState(defaultDevice)
   const [hideChart, setHideChart] = useState(true)
   const [selectedDate, setSelectedDate] = useState(startDateToQuery)
   const [filter, setFilter] = useState(commandOptions[defaultOptionIndex])
@@ -48,9 +49,9 @@ export const History = () => {
     loading
   } = useFetch(async () => await fetchCommandHistory({
     dayToRetrieveHistory: selectedDate,
-    deviceId: defaultDeviceId,
+    deviceId: selectedDevice._id,
     token
-  }), [selectedDate])
+  }), [selectedDate, selectedDevice])
 
   const handleDateChange = async (date: any) => {
     const formattedDate = moment(date).utc().format()
@@ -117,7 +118,7 @@ export const History = () => {
 
   return (
     <div className='history'>
-      <DeviceSelector />
+      <DeviceSelector onChange={setSelectedDevice}/>
       <div className='history__page-content'>
         <div className='history__selections'>
           <div className='history__date-container'>

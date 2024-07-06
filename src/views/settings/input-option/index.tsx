@@ -9,7 +9,9 @@ export const InputOption = ({
   inputMode,
   className,
   value,
-  onChange, 
+  onChange,
+  onCancel,
+  onEdit, 
   name, 
   title,
   onSave,
@@ -18,7 +20,13 @@ export const InputOption = ({
   type,
   error,
   disabled = false
-} : InputProps & { title: string, onSave?: MouseEventHandler, showEditAndSave?: boolean }) => {
+} : InputProps & { 
+  title: string,
+  onSave?: MouseEventHandler
+  onEdit?: MouseEventHandler
+  onCancel?: MouseEventHandler
+  showEditAndSave?: boolean 
+}) => {
   const [editMode, setEditMode] = useState(false)
   const [editedValue, setEditedValue] = useState(value)
 
@@ -26,7 +34,8 @@ export const InputOption = ({
     setEditedValue(value)
   }, [value])
 
-  const handleOnCancel = () => {
+  const handleOnCancel = (e: any) => {
+    onCancel && onCancel(e)
     setEditedValue(initialValue)
   }
 
@@ -47,6 +56,7 @@ export const InputOption = ({
         value={editedValue} />
       {showEditAndSave
         ? <EditIconWithTooltip
+            onEdit={onEdit}
             onCancel={handleOnCancel}
             onSave={onSave}
             uniqueId={name ? name : 'input-option'}

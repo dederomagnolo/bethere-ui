@@ -18,7 +18,6 @@ import './styles.scss'
 import {
   FaLeaf as Leaf,
 } from 'react-icons/fa'
-import { UnavailableConnection } from '../unavailable-connection'
 
 interface CardLabelProps {
   label: string
@@ -78,7 +77,6 @@ export const WateringCardData = ({
   })
 
   const {
-    defaultDeviceStatus,
     lastCommandReceived,
     wateringStatus = {}
 } = deviceRealTimeData
@@ -152,7 +150,7 @@ const [autoModeEnabled, setAutoModeEnabled] = useState(autoWateringModeEnabled)
       autoRelayEnabled
     } = updatedWateringStatus
   
-    let operationLabel = 'Offline' 
+    let operationLabel = 'Indisponível' 
     let pulsingCircleType = 'offline'
 
     if (connectionLoading) {
@@ -168,7 +166,7 @@ const [autoModeEnabled, setAutoModeEnabled] = useState(autoWateringModeEnabled)
         operationLabel = 'Irrigação manual ligada'
       }
 
-      if(autoRelayEnabled) {
+      if (autoRelayEnabled) {
         pulsingCircleType = 'progress'
         operationLabel = 'Irrigação automática ligada'
       }
@@ -208,10 +206,6 @@ const [autoModeEnabled, setAutoModeEnabled] = useState(autoWateringModeEnabled)
     const remainingTime = autoWateringEstimatedToEndAt.diff(pastTime)
 
     return `Termina em: ${moment(remainingTime).format('mm')} minutos` 
-  }
-
-  if (!isDeviceConnected) {
-    return <UnavailableConnection />
   }
   
   return (

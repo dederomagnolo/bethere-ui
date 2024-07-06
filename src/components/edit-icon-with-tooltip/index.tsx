@@ -44,6 +44,12 @@ export const EditIconWithTooltip = ({
     setEditMode(true)
   }
 
+  const handleCancel = (event: any) => {
+    setEditMode(false)
+    onCancel && onCancel(event)
+    onToggle && onToggle()
+  }
+
   const Icon = ({ id }: { id: string }) => editMode
     ? <div className='app-tooltip__icon-container'>
         <Tooltip id='app-tooltip' anchorSelect={`#app-tooltip-cancel-${id}`}>
@@ -51,11 +57,7 @@ export const EditIconWithTooltip = ({
         </Tooltip>
         <div className='app-tooltip__icon-container__group'>
           <SaveIcon id={id} onClick={handleSave} />
-          <CancelIcon id={`app-tooltip-cancel-${id}`} onClick={() => {
-              setEditMode(false)
-              onCancel && onCancel()
-              onToggle && onToggle()
-            }}
+          <CancelIcon id={`app-tooltip-cancel-${id}`} onClick={handleCancel}
           />
         </div>
       </div>

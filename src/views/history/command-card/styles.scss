@@ -7,11 +7,26 @@
   width: 300px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 3px 5px rgba(0, 0, 0, 0.1);
 
+  &__command {
+    display: flex;
+    flex-direction: column;
+  }
+
   &__time {
+    display: flex;
+    align-items: center;
     padding-right: 15px;
   }
+
+  &__history {
+    border-top: solid 1px #c8c8c8;
+    padding-top: 10px;
+    margin-top: 14px;
+
+    font-size: 12px;
+  }
   
-  &__info {
+  &__command {
     display: flex;
     width: 100%;
     border-left: solid 1px #c8c8c8;

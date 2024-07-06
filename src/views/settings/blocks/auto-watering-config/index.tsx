@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { getTimeOptions } from '../../functions'
 
 import {
+  Checkbox,
   CustomSelect,
   EditIconWithTooltip
 } from 'components'
@@ -18,13 +19,23 @@ const getCurrentTimeOption = (timeValue: number) => {
   return _.find(timeOptions, (option) => option.value === timeValue)
 }
 
+const minutesToHours = (valueInMinutes: number) => {
+  const hours = valueInMinutes / 60
+  return hours < 1 ? 1 : hours
+}
+
+const hoursToMinutes = (valueInHours: number) => {
+  return valueInHours * 60
+}
+
 export const AutoWateringConfig = ({
   automationSettings = {},
-  saveChanges,
-  deviceId
+  saveChanges
 }: any) => {
   const [editStartTime, setEditStartTime] = useState(false)
   const [editEndTime, setEditEndTime] = useState(false)
+
+  const [editAutomationInterval, setAutomationIntervalEdition] = useState(false)
 
   const {
     startTime,
@@ -56,32 +67,15 @@ export const AutoWateringConfig = ({
     return saveChanges({ automation: editedAutomationSettings })
   }
 
-  // const saveIntervalInHours = async () => {
-  //   const { startTime, endTime, interval, duration } = settings
+  const handleChangeIntervalInOurs = (e: any) => {
+    const checked = e.target.checked
 
-  //   const automation = {
-  //     startTime, endTime, interval, duration, intervalInHours: !intervalInHours
-  //   }
+    const currentInterval = editedAutomationSettings.interval
+    const normalizedIntervalToHours = checked ? minutesToHours(currentInterval) : currentInterval
 
-  //   const deviceId = defaultDevice._id
-  //   const settingsId = defaultDeviceSettings._id
-  //   const res = await editSettingsAndSendCommand({
-  //     token,
-  //     settingsPayload: {
-  //       settingsId,
-  //       deviceId,
-  //       automation,
-  //       ..._.omit(settings, 'startTime, endTime, interval, duration, intervalInHours')
-  //     }
-  //   })
-
-  //   const updatedDevices = await fetchUserDevices({
-  //     token
-  //   })
-
-  //   dispatch(setUserDevices(updatedDevices))
-  // }
-
+    const updatedEditedSettings = { ...editedAutomationSettings, intervalInHours: checked, interval: normalizedIntervalToHours }
+    setEditedAutomationSettings(updatedEditedSettings)
+  }
   const setEndTimeOptionsBasedOnStartTime = () => {
     const editedStartTime = editedAutomationSettings.startTime
     const possibleTimeOptions =_.filter(timeOptions, (option) => option.value > editedStartTime)
@@ -144,19 +138,29 @@ export const AutoWateringConfig = ({
       </div>
       <div className='interval-option'>
         <InputOption
-          onSave={saveAutomationChanges}
+          initialValue={interval}
+          onEdit={() => setAutomationIntervalEdition(true)}
+          onSave={() => {
+            saveAutomationChanges()
+            setAutomationIntervalEdition(false)
+          }}
+          onCancel={() => setEditedAutomationSettings({ ...editedAutomationSettings, interval, intervalInHours })}
           name='interval'
-          title={`Intervalo (${intervalInHours ? 'hrs' : 'min'})`}
+          title={`Intervalo (${editedAutomationSettings.intervalInHours ? 'hrs' : 'min'})`}
           onChange={handleChangeSettings}
-          value={editedAutomationSettings.interval}
+          value={
+            editedAutomationSettings.intervalInHours 
+              ? minutesToHours(editedAutomationSettings.interval) 
+              : editedAutomationSettings.interval}
         />
-        {/* <Checkbox
-          inititalState={intervalInHours}
-          className='interval-option__checkbox'
-          label='Utilizar intervalo de  tempo em horas'
-          onChange={saveIntervalInHours}
-        /> */}
       </div>
+      <Checkbox
+        disabled={!editAutomationInterval}
+        checked={editedAutomationSettings.intervalInHours}
+        className='interval-option__checkbox'
+        label='Utilizar intervalo de  tempo em horas'
+        onChange={handleChangeIntervalInOurs}
+      />
       <div className='description'>O intervalo é o tempo entre um ciclo de irrigação e outro.</div>
       <InputOption
         onSave={saveAutomationChanges}

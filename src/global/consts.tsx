@@ -8,6 +8,57 @@ export const WsReadyState = {
   CLOSED: 3,
 }
 
+export const COMMAND_CATEGORIES = {
+  MANUAL_WATERING: {
+    NAME: 'Manual Watering',
+    LABEL_PT: 'Irrigação Manual',
+  },
+  AUTO_WATERING: {
+    NAME: 'Auto Watering',
+    LABEL_PT: 'Irrigação Automática'
+  },
+  RESET_DEVICE: {
+    NAME: 'Reset',
+    LABEL_PT: 'Reinicialização'
+  },
+  SETTINGS: {
+    NAME: 'Settings',
+    LABEL_PT: 'Configuração'
+  }
+}
+
+export const NEW_COMMANDS = {
+  MANUAL_WATERING_ON: {
+    CATEGORY: COMMAND_CATEGORIES.MANUAL_WATERING,
+    CODE: 'MP1',
+    STATE: 'ON'
+  },
+  MANUAL_WATERING_OFF: {
+    CATEGORY: COMMAND_CATEGORIES.MANUAL_WATERING,
+    CODE: 'MP0',
+    STATE: 'OFF'
+  },
+  AUTO_WATERING_ON: {
+    CATEGORY: COMMAND_CATEGORIES.AUTO_WATERING,
+    CODE: 'AW1',
+    STATE: 'ON'
+  },
+  AUTO_WATERING_OFF: {
+    CATEGORY: COMMAND_CATEGORIES.AUTO_WATERING,
+    CODE: 'AW0',
+    STATE: 'OFF'
+  },
+  RESET_DEVICE: {
+    CATEGORY: COMMAND_CATEGORIES.RESET_DEVICE,
+    CODE: 'RESET',
+    STATE: ''
+  },
+  SETTINGS: {
+    CATEGORY: COMMAND_CATEGORIES.SETTINGS,
+    CODE: 'SETTINGS',
+    STATE: ''
+  }
+}
 
 export const COMMANDS: any = {
   MANUAL_WATERING: {

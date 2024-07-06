@@ -13,7 +13,7 @@ interface SendCommandToServerArgs {
   deviceId: string
 }
 
-const findCategoryForCommand = (commandName: string) => {
+const findCategoryForCommand = (commandName: string) => { // TODO: migrar para BE
   let commandCategory
   _.forEach(MAPPED_COMMANDS, (category, index) => {
     const categoryOptions = _.get(category, 'options')
@@ -32,7 +32,7 @@ export const sendCommandToServer = async ({
   commandPayload,
   deviceId
 }: SendCommandToServerArgs) => {
-  const categoryName = findCategoryForCommand(commandName)
+  const categoryName = findCategoryForCommand(commandName) //TODO: migrar para BE
 
   const apiCall = async () => callApi({
     method: 'POST',

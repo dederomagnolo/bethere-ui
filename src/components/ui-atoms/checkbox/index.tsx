@@ -26,7 +26,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({
   const [internalChecked, setInternalChecked] = useState(initialState)
 
   return (
-    <label className={`app-checkbox ${className}`}>
+    <label className={`app-checkbox ${className} ${disabled ? 'app-checkbox--disabled' : ''}`}>
       <input
       disabled={disabled}
       name={name}
@@ -42,6 +42,5 @@ export const Checkbox: React.FC<CheckboxProps> = ({
       <span className='app-checkbox__checkmark' />
       {label}
     </label>
-    
   )
 }
