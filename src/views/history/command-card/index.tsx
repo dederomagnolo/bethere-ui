@@ -10,47 +10,83 @@ interface CommandCardProps {
   command: CommandType
 }
 
+const PARAM_UNITIES = {
+  settingsName: 'name',
+  broadcastWateringStatusInterval: 'minutes', // confirm
+  localMeasureInterval: 'minutes', //confirm
+  remoteMeasureInterval: 'minutes',
+  wateringTimer: 'minutes',
+  automation: {
+    enabled: 'bool',
+    duration: 'minutes',
+    interval: 'minutes',
+    intervalInHours: 'bool',
+    startTime: 'hours',
+    endTime: 'hours',
+  }
+}
+
+const friendlyUnities = {
+  minutes: 'mins',
+  hours: 'h' 
+} as any
+
 export const CommandCard: React.FC<CommandCardProps> = ({ command }) => {
+  const commandCode = command.commandCode || command.commandName // TODO: remove commandName when migration is done
+  
   const {
-    commandName,
     createdAt,
-    changedValue
+    changedValues
   } = command
 
   const commandStatusType: any = {
     'ON': 'on',
-    'OFF': 'off',
-    'SET': 'misc'
+    'OFF': 'off'
   }
 
   const COMMAND_INFOS = Object.values(NEW_COMMANDS)
 
-  const commandInfoFromCollection = _.find(COMMAND_INFOS, (command) => commandName === command.CODE) || {} as any // maybe type here when it is finished on be
+  const commandInfoFromCollection =
+    _.find(COMMAND_INFOS, (command) => commandCode === command.CODE) || {} as any // maybe type here when it is finished on be
 
   if (_.isEmpty(commandInfoFromCollection)) return null
 
   const { CATEGORY: { LABEL_PT }, STATE } = commandInfoFromCollection
 
-  const statusClassName = `command-card__info--${STATE ? commandStatusType[STATE] : 'misc'}`
+  const statusClassName = `command-card__info--${STATE ? commandStatusType[STATE] : ''}`
 
-  console.log({ changedValue})
-  if (changedValue?.length) {
+  const mappedCommandHistory = _.map(changedValues, ({ from, to, paramLabel, paramPath }) => {
+    const unity = _.get(PARAM_UNITIES, paramPath)
 
-  }
-
-  const mappedCommandHistory = _.map(changedValue, ({ from, to, paramName }) => {
-    const FRIENDLY_LABELS = {
-      'automation.interval': '',
-      'automation.intervalInHours': '',
-      'automation.startTime': '',
-      'automation.endTime': '',
+    let normalizedFromTo = { from, to }
+    
+    if (unity === 'bool') { // think different, please
+      normalizedFromTo = {
+        from: from === 'true' ? 'Ligado' : 'Desligado',
+        to: to === 'true' ? 'Ligado' : 'Desligado'
+      }
     }
+
+    const showUnity = unity === 'minutes' || unity === 'hours'
 
     return (
       <div className='command-history__container'>
-        <span>Parâmetro alterado: {paramName} </span>
-        <span>De: {from} </span>
-        <span>Para: {to} </span>
+        <div className='command-history__param'>
+          <span className='command-history__title'>Parâmetro alterado: </span>
+          <span>{paramLabel}</span>
+        </div>
+        <div className='command-history__from-to'>
+          <div>
+            <span className='command-history__title'>De: </span>
+            <span>{normalizedFromTo.from}</span>
+            {showUnity && <span className='command-history__unity'> {friendlyUnities[unity]}</span>}
+          </div>
+          <div>
+            <span className='command-history__title'>Para: </span>
+            <span>{normalizedFromTo.to}</span>
+            {showUnity && <span className='command-history__unity'> {friendlyUnities[unity]}</span>}
+          </div>
+        </div>
       </div>
     )
   })
@@ -63,9 +99,9 @@ export const CommandCard: React.FC<CommandCardProps> = ({ command }) => {
           <span>{LABEL_PT}</span>
           <span className={statusClassName}>{STATE}</span>
         </div>
-        {/* {changedValue?.length ? <div className='command-card__history'>
+        {changedValues?.length ? <div className='command-card__history'>
           {mappedCommandHistory}
-        </div> : null} */}
+        </div> : null}
       </div>
     </div>
   )

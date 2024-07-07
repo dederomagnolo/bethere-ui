@@ -2,7 +2,6 @@ import { toast } from "react-toastify"
 
 import callApi from './callApi'
 import { editSettings } from './settings'
-import { sendCommandToServer } from './commands'
 
 export const tryToCallService = async({
   apiCall

@@ -1,13 +1,15 @@
 export type CommandFromTo = {
-  paramName: string
+  paramPath: string
+  paramLabel: string
   from: string | number | boolean
   to: string | number | boolean
 }
 
 export interface CommandType {
   _id: string
-  commandName: string
+  commandCode: string
   createdAt: string
   categoryName: string
-  changedValue?: CommandFromTo[]
+  changedValues?: CommandFromTo[]
+  commandName?: string // REMOVE WHEN MIGRATION IS DONE
 }

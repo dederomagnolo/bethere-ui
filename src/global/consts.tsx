@@ -24,36 +24,46 @@ export const COMMAND_CATEGORIES = {
   SETTINGS: {
     NAME: 'Settings',
     LABEL_PT: 'Configuração'
+  },
+  SYSTEM: {
+    NAME: 'System',
+    LABEL_PT: 'Sistema'
   }
 }
 
 export const NEW_COMMANDS = {
   MANUAL_WATERING_ON: {
+    LABEL: 'Irrigação manual ligada',
     CATEGORY: COMMAND_CATEGORIES.MANUAL_WATERING,
     CODE: 'MP1',
     STATE: 'ON'
   },
   MANUAL_WATERING_OFF: {
+    LABEL: 'Irrigação manual desligada',
     CATEGORY: COMMAND_CATEGORIES.MANUAL_WATERING,
     CODE: 'MP0',
     STATE: 'OFF'
   },
   AUTO_WATERING_ON: {
+    LABEL: 'Irrigação automática ligada',
     CATEGORY: COMMAND_CATEGORIES.AUTO_WATERING,
     CODE: 'AW1',
     STATE: 'ON'
   },
   AUTO_WATERING_OFF: {
+    LABEL: 'Irrigação automática desligada',
     CATEGORY: COMMAND_CATEGORIES.AUTO_WATERING,
     CODE: 'AW0',
     STATE: 'OFF'
   },
   RESET_DEVICE: {
-    CATEGORY: COMMAND_CATEGORIES.RESET_DEVICE,
+    LABEL: 'Reinicialização',
+    CATEGORY: COMMAND_CATEGORIES.SYSTEM,
     CODE: 'RESET',
     STATE: ''
   },
   SETTINGS: {
+    LABEL: 'Configuração',
     CATEGORY: COMMAND_CATEGORIES.SETTINGS,
     CODE: 'SETTINGS',
     STATE: ''

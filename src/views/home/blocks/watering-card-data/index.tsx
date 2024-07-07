@@ -6,7 +6,7 @@ import { useSelector,  useDispatch } from 'react-redux'
 import { Toggle, Loading } from 'components'
 import { PulsingCircle } from 'components/ui-atoms/pulsing-circle'
 
-import { COMMANDS, WsReadyState } from 'global/consts'
+import { NEW_COMMANDS, WsReadyState } from 'global/consts'
 
 import callApi from 'services/callApi'
 import { editSettingsAndSendCommand } from 'services/fetch'
@@ -62,11 +62,12 @@ export const WateringCardData = ({
   const token = useSelector(getToken)
   const userId = useSelector(getUserId)
   const dispatch = useDispatch()
+
   const isDeviceConnected = !_.isEmpty(deviceRealTimeData)
 
   // first, static info from device received
   const deviceId = _.get(device, '_id')
-  const deviceSettings = _.get(device, 'settings[0]')
+  const deviceSettings = _.get(device, 'settings[0]') // TODO: when introduce many settings, remove it
   const automationSettings = _.get(deviceSettings, 'automation')
   const autoWateringModeEnabled = _.get(automationSettings, 'enabled')
 
@@ -99,19 +100,19 @@ const [autoModeEnabled, setAutoModeEnabled] = useState(autoWateringModeEnabled)
 
   const handleSendCommand = async () => {
     if(wsStatus === WsReadyState.OPEN && isDeviceConnected) {
-      const { ON, OFF } = COMMANDS.MANUAL_WATERING.OPTIONS
-      const shouldEnableWatering = !wateringEnabled && lastCommandReceived !== ON
-      const commandToSend = shouldEnableWatering ? ON : OFF
+      const shouldEnableWatering = !wateringEnabled && lastCommandReceived !== NEW_COMMANDS.MANUAL_WATERING_ON.CODE
+      const commandToSend = shouldEnableWatering
+        ? NEW_COMMANDS.MANUAL_WATERING_ON.CODE
+        : NEW_COMMANDS.MANUAL_WATERING_OFF.CODE
 
       const commandPayload = {
-        categoryName: COMMANDS.MANUAL_WATERING.CATEGORY_NAME,
-        commandName: commandToSend,
+        commandCode: commandToSend,
         changedFrom: "App",
         userId,
         deviceId
       }
     
-      const res = await callApi({
+      const res = await callApi({ // TODO: add this to services
         token,
         method: 'POST',
         service: '/local-station/command',
@@ -184,7 +185,7 @@ const [autoModeEnabled, setAutoModeEnabled] = useState(autoWateringModeEnabled)
   const renderAutoWateringInfoLabel = () => {
     if (!autoModeEnabled) return ''
 
-    if (!autoRelayEnabled) {
+    if (autoModeEnabled && !autoRelayEnabled) {
       const currentTime = moment()
 
       const isSameDay = moment(nextTimeSlot).isSame(currentTime, 'day')
@@ -206,6 +207,18 @@ const [autoModeEnabled, setAutoModeEnabled] = useState(autoWateringModeEnabled)
     const remainingTime = autoWateringEstimatedToEndAt.diff(pastTime)
 
     return `Termina em: ${moment(remainingTime).format('mm')} minutos` 
+  }
+
+  const renderManualWateringInfoLabel = () => {
+    if (!wateringEnabled) return '' // TODO: adicionar loading enquanto nao tiver o status pois mostra 0 minutos
+
+    const wateringTimer = _.get(automationSettings, 'wateringTimer')
+    const autoWateringEstimatedToEndAt = moment().clone().add(wateringTimer, 'minutes')
+    const pastTime = moment(autoWateringEstimatedToEndAt).clone().subtract(wateringElapsedTime, 'milliseconds')
+
+    const remainingTime = autoWateringEstimatedToEndAt.diff(pastTime)
+
+    return `Termina em: ${moment(wateringElapsedTime ? remainingTime : wateringTimer).format('mm')} minutos` 
   }
   
   return (
@@ -233,7 +246,9 @@ const [autoModeEnabled, setAutoModeEnabled] = useState(autoWateringModeEnabled)
               onChange={handleSendCommand}
             />
         </div>
-        {wateringEnabled ? <span className='option__status-label'>Tempo restante:</span> : null}
+        {wateringEnabled
+          ? <span className='option__status-label'>{renderManualWateringInfoLabel()}</span> 
+          : null}
       </div>
       <div className='watering-card__bottom-label'>
         <CardLabel Icon={Leaf} label='Irrigação' />

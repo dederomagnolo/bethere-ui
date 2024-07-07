@@ -39,7 +39,7 @@ export const CustomScatterChart = ({ dataToPlot }: any) => {
   const startDateToQuery = moment(startDate).utc().format()
 
   const formattedCommandHistory = _.map(dataToPlot, (command) => ({
-    x: command.commandName,
+    x: command.commandCode || command.commandName, // TODO: remove commandName when migration is done
     y: (moment(command.createdAt)).valueOf()
   }))
 

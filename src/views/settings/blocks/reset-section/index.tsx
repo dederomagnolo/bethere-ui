@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useSelector } from 'react-redux'
 
 import { Button, Loading } from 'components'
@@ -6,7 +7,6 @@ import { sendCommandToServer } from 'services/commands'
 import { getToken } from 'redux/user/selectors'
 
 import './styles.scss'
-import { useState } from 'react'
 
 export const ResetSection = ({ deviceId } : any) => {
   const token = useSelector(getToken)
@@ -18,7 +18,7 @@ export const ResetSection = ({ deviceId } : any) => {
     try {
       const res = await sendCommandToServer({
         token,
-        commandName: 'RESET',
+        commandCode: 'RESET',
         deviceId
       })
   

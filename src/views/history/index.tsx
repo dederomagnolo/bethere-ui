@@ -80,8 +80,8 @@ export const History = () => {
   const renderHistoryData = () => {
     const historyForDate = _.get(data, 'historyForDate', []) 
     const filteredByInvalidCommands = _.filter(historyForDate, (command: any) => {
-      const commandName = _.get(command, 'commandName')
-      const invalidCommand = _.find(commandsToFilter, (commandToFilter) => commandName.includes(commandToFilter))
+      const commandCode = _.get(command, 'commandCode') || _.get(command, 'commandName') // TODO: remove someday after migration
+      const invalidCommand = _.find(commandsToFilter, (commandToFilter) => commandCode.includes(commandToFilter))
       return !invalidCommand
     } )
     const historyFilteredByCategoryName =

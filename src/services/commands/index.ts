@@ -6,42 +6,26 @@ import { tryToCallService } from 'services/fetch'
 
 interface SendCommandToServerArgs {
   token: string,
-  commandName: string,
+  commandCode: string,
   commandPayload?: {
     settingsId?: string
   },
   deviceId: string
 }
 
-const findCategoryForCommand = (commandName: string) => { // TODO: migrar para BE
-  let commandCategory
-  _.forEach(MAPPED_COMMANDS, (category, index) => {
-    const categoryOptions = _.get(category, 'options')
-    const isCommandOnCategoryOptions = _.find(categoryOptions, (option) => option.command === commandName)
-    if (isCommandOnCategoryOptions) {
-      commandCategory = MAPPED_COMMANDS[index].categoryName
-    }
-    return
-  })
-  return commandCategory
-}
-
 export const sendCommandToServer = async ({
   token,
-  commandName,
+  commandCode,
   commandPayload,
   deviceId
 }: SendCommandToServerArgs) => {
-  const categoryName = findCategoryForCommand(commandName) //TODO: migrar para BE
-
   const apiCall = async () => callApi({
     method: 'POST',
     service: '/local-station/command',
     token,
     payload: {
-      commandName,
+      commandCode,
       commandPayload,
-      categoryName,
       deviceId,
       changedFrom: 'APP'
     },
