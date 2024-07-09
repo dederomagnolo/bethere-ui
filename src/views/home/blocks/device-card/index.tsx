@@ -15,14 +15,19 @@ interface DeviceCardProps {
   device: Device
   realTimeData: any
   loading: boolean
+  isDeviceWaitingUpdate: boolean
+  userConnectionTimedOut: boolean
 }
 
 export const DeviceCard = ({
   device,
   realTimeData,
-  loading
+  loading,
+  isDeviceWaitingUpdate,
+  userConnectionTimedOut
 }: DeviceCardProps) => {
-  const isDeviceConnected = !_.isEmpty(realTimeData)
+  const isDeviceConnected = !_.isEmpty(realTimeData) && !userConnectionTimedOut
+
   const deviceSensors = device.sensors
   const measures = _.get(realTimeData, 'measures')
   const lastSeen = device.lastSeen || ''
@@ -40,7 +45,7 @@ export const DeviceCard = ({
       <div className={`card-infos__status card-infos__status--${isDeviceConnected ? 'online' : 'offline'}`}>
         <div>{isDeviceConnected ? 'Online' : 'Offline'}</div>
         {!isDeviceConnected 
-          ? <div className='card-infos__last-seen'>Última conexão: {lastSeenFormated}</div> 
+          ? userConnectionTimedOut ? null : <div className='card-infos__last-seen'>Última conexão: {lastSeenFormated}</div>
           : null}
       </div>
     )
@@ -52,6 +57,7 @@ export const DeviceCard = ({
       (isEnabled
         ? <AppCard key={actuator._id}>
             <WateringCardData
+              isDeviceConnected={isDeviceConnected}
               connectionLoading={loading}
               deviceRealTimeData={realTimeData || {}}
               device={device}
@@ -72,7 +78,8 @@ export const DeviceCard = ({
       </div>
       {loading ? null : (<div className='device-components'>
         <Sensors
-          deviceStatus={isDeviceConnected}
+          isDeviceWaitingUpdate={isDeviceWaitingUpdate}
+          isDeviceConnected={isDeviceConnected}
           measures={measures}
           sensors={deviceSensors} />
         <div className='actuators'>

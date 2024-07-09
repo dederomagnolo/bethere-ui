@@ -17,18 +17,20 @@ import './styles.scss'
 import { Sensor } from 'types/interfaces'
 
 type SensorsProps = {
-  sensors: Sensor[],
-  measures: any,
-  deviceStatus: boolean
+  sensors: Sensor[]
+  measures: any
+  isDeviceConnected: boolean
+  isDeviceWaitingUpdate: boolean
 }
 
 export const Sensors = ({
   sensors,
   measures = [],
-  deviceStatus
+  isDeviceConnected,
+  isDeviceWaitingUpdate
 }: SensorsProps) => {
   const renderMeasure = (data: number | string, unit: string) => {
-    return !deviceStatus ? <LoadingIcon /> : (
+    return isDeviceWaitingUpdate ? <LoadingIcon /> : (
       <div className='measure-data'>
         <span>{data}</span>
         <span className='unit'>{unit}</span>
@@ -88,7 +90,7 @@ export const Sensors = ({
       return null
     }
 
-    return deviceStatus && measuresBySensor 
+    return isDeviceConnected
       ? <MeasuresBySensor />
       : <UnavailableConnection />
   }

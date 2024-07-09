@@ -34,6 +34,7 @@ interface WateringCardDataProps {
     wateringStatus: any
   }
   connectionLoading: boolean
+  isDeviceConnected: boolean
 }
 
 const renderIcon = (BaseIcon: any) => <BaseIcon className='card-label-icon' size={20} />
@@ -57,13 +58,12 @@ export const WateringCardData = ({
   wsStatus,
   device,
   deviceRealTimeData,
-  connectionLoading
+  connectionLoading,
+  isDeviceConnected
 } : WateringCardDataProps) => {
   const token = useSelector(getToken)
   const userId = useSelector(getUserId)
   const dispatch = useDispatch()
-
-  const isDeviceConnected = !_.isEmpty(deviceRealTimeData)
 
   // first, static info from device received
   const deviceId = _.get(device, '_id')
