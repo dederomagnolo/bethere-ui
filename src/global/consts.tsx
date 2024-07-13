@@ -160,13 +160,13 @@ export const SENSORS: any = {
 export const MEASURE_TYPES = {
   temperature: {
     label: 'Temperatura',
-    unity: '%',
-    unityName: 'Percentage',
+    unity: '°C',
+    unityName: 'Celsius',
   },
   humidity: {
     label: 'Umidade relativa do ar',
-    unity: '°C',
-    unityName: 'Celsius',
+    unity: '%',
+    unityName: 'Percentage',
   },
   moisture: {
     label: 'Umidade do solo',
