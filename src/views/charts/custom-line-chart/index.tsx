@@ -7,14 +7,17 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  Legend
+  Legend,
+  ReferenceLine,
+  Brush
 } from 'recharts';
 
 import _ from 'lodash'
 import moment from 'moment'
-import { MEASURE_TYPES } from 'global/consts'
+import { MEASURE_TYPES, NEW_COMMANDS } from 'global/consts'
 
 import { generateTicks } from '../utils'
+import { useState } from 'react';
 
 const strokes = ["#82ca9d", "#8884d8", "#8884d8"] as any
 
@@ -23,7 +26,8 @@ export const CustomLineChart = ({
   lineDataKeys = ['nop', 'nop'],
   dateToAjdustTicks,
   measureType,
-  sensors
+  sensors,
+  secondBatch
 }: any) => {
 
   const ticks = generateTicks({
@@ -66,18 +70,52 @@ export const CustomLineChart = ({
     }
   }
 
-  const initialTimeDomainPoint =  (moment(_.get(dataToPlot, '[0].x')).subtract(10, 'minutes')).valueOf()
-
-  const finalTimeDomainPoint =
-    (moment(_.get(dataToPlot, `[${dataToPlot.length - 1}].x`)).add(10, 'minutes')).valueOf()
+  const [xDomain, setXDomain] = useState({
+    initial: (moment(_.get(dataToPlot, '[0].x')).subtract(10, 'minutes')).valueOf(),
+    final: (moment(_.get(dataToPlot, `[${dataToPlot.length - 1}].x`)).add(10, 'minutes')).valueOf()
+  })   
 
   const adjustedTicks = _.compact(_.map(ticks, (tick) => 
-    tick > initialTimeDomainPoint && tick < finalTimeDomainPoint ? tick : null))
+    tick > xDomain.initial && tick < xDomain.final ? tick : null))
   
   const {
     initialYDomain,
     finalYDomain
   } = getYDomainByUnitType()
+
+  const handleAxisAdjustment = ({ startIndex, endIndex }: any) => {
+    const updatedDomain = {
+      initial: (moment(_.get(dataToPlot, `[${startIndex}].x`)).subtract(10, 'minutes')).valueOf(),
+      final: (moment(_.get(dataToPlot, `[${endIndex}].x`)).add(10, 'minutes')).valueOf()
+    }
+
+    return setXDomain(updatedDomain)
+  }
+
+  const renderReferenceLines = () => {
+
+    return _.map(secondBatch, (p) => {
+      const commandCode = p.c
+
+      const isOnCommand =
+        commandCode === NEW_COMMANDS.AUTO_WATERING_ON.CODE ||
+        commandCode === NEW_COMMANDS.MANUAL_WATERING_ON.CODE
+
+      const labels = {
+        [NEW_COMMANDS.AUTO_WATERING_ON.CODE]: 'Auto ON',
+        [NEW_COMMANDS.AUTO_WATERING_OFF.CODE]: 'Auto OFF',
+        [NEW_COMMANDS.MANUAL_WATERING_ON.CODE]: 'Manual ON',
+        [NEW_COMMANDS.MANUAL_WATERING_OFF.CODE]: 'Manual OFF'
+      }
+
+      return (
+        <ReferenceLine
+          x={p.x} strokeDasharray="3 3"
+          stroke={isOnCommand ? 'green' : 'red'}
+          label={labels[commandCode]} />)
+    })
+    
+  }
 
   return (
     <ResponsiveContainer width="100%" height={400}>
@@ -90,34 +128,32 @@ export const CustomLineChart = ({
         <XAxis
           ticks={adjustedTicks}
           dataKey='x' // time
-          scale='time'
+          scale='linear'
           type='number'
-          domain={[initialTimeDomainPoint, finalTimeDomainPoint]}
+          domain={[xDomain.initial, xDomain.final]}
           tickFormatter={(t) => moment(t).format('HH:mm')}
         />
         <YAxis
           tickFormatter={(tick) => {
             const unit = MEASURE_TYPES[measureType].unity
-            // if (measureType === 'moisture') {
-            //   console.log({tick})
-
-            //   return `${normalizedTick}${unit}`
-            // }
-
             return `${tick}${unit}`
           }}
           type='number'
           scale='linear'
-          domain={[initialYDomain, finalYDomain]}
-          />
+          domain={[initialYDomain, finalYDomain]} />
         <Tooltip 
           labelFormatter={(test) =>  moment(test).format('HH:mm')}/>
-        <Legend formatter={(value: any) => {
+        <Legend
+          wrapperStyle={{ top: -8  }}
+          verticalAlign="top"
+          formatter={(value: any) => {
           const sensorInfo = _.find(sensors, (sensorInfo) => value === sensorInfo.serialKey)
           return sensorInfo.name || value
         }} />
-        <Legend />
-        {_.map(lineDataKeys, (key, index) => <Line type='monotone' dataKey={key} stroke={strokes[index]} key={key} />)}
+        {/* {renderReferenceLines()} */}
+        {_.map(lineDataKeys, (key, index) =>
+          <Line type='monotone' dataKey={key} stroke={strokes[index]} key={key} />)}
+        <Brush height={30} onChange={handleAxisAdjustment} />
       </LineChart>
     </ResponsiveContainer>
   )

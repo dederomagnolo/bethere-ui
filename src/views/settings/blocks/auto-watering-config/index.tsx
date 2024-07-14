@@ -76,6 +76,7 @@ export const AutoWateringConfig = ({
     const updatedEditedSettings = { ...editedAutomationSettings, intervalInHours: checked, interval: normalizedIntervalToHours }
     setEditedAutomationSettings(updatedEditedSettings)
   }
+
   const setEndTimeOptionsBasedOnStartTime = () => {
     const editedStartTime = editedAutomationSettings.startTime
     const possibleTimeOptions =_.filter(timeOptions, (option) => option.value > editedStartTime)

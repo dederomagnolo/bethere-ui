@@ -1,8 +1,7 @@
-import { Loading, Checkbox } from "components"
-import { MEASURE_TYPES } from "global/consts"
-import _ from "lodash"
-import { PuffLoader } from "react-spinners"
-import { CustomLineChart } from "../custom-line-chart"
+import { Checkbox } from 'components'
+import { MEASURE_TYPES } from 'global/consts'
+import _ from 'lodash'
+import { CustomLineChart } from '../custom-line-chart'
 
 export const ChartWithFilters = ({
   setFilters,
@@ -10,7 +9,8 @@ export const ChartWithFilters = ({
   collectionToPlot,
   measureType,
   sensorsInfoFromAccount,
-  selectedDate
+  selectedDate,
+  secondBatch
 }: any) => {
   const shouldRenderChart = !_.isEmpty(collectionToPlot)
   const labelForType = MEASURE_TYPES[measureType].label
@@ -70,6 +70,7 @@ export const ChartWithFilters = ({
       </div>
       {shouldRenderChart ? (
         <CustomLineChart
+          secondBatch={secondBatch}
           sensors={sensorsInfoFromAccount}
           key={measureType}
           measureType={measureType}

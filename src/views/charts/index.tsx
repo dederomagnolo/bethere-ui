@@ -17,10 +17,11 @@ import * as XLSX from 'xlsx'
 import { saveAs } from 'file-saver'
 
 import './styles.scss'
-import { MEASURE_TYPES } from 'global/consts'
+import { COMMAND_CATEGORIES, MEASURE_TYPES, NEW_COMMANDS } from 'global/consts'
 import { ChartWithFilters } from './chart-with-filters'
 
 import { Filter, buildDataToPlot } from './utils/build-data-to-plot'
+import { fetchAllUserCommands } from 'services/commands/fetch-all-user-commands'
 
 export const Charts = () => {
   const token = useSelector(getToken)
@@ -30,6 +31,7 @@ export const Charts = () => {
   const startDateToQuery = moment(todaysStartDate).utc().format()
 
   const [data, setData] = useState({})
+  const [commandData, setCommandData] = useState([]) as any // REMOVE IT AFTER TESTS
   const [filters, setFilters] = useState<Filter>({})
 
   const [measuresCollectionsToPlot, setMeasuresCollectionsToPlot] = useState({})
@@ -48,6 +50,28 @@ export const Charts = () => {
         dayToRetrieveHistory,
         token
       })
+
+      const commandsHistory = await fetchAllUserCommands({
+        dayToRetrieveHistory: dayToRetrieveHistory,
+        token
+      })
+
+
+      // move it to a function
+      const filteredCommands =
+        _.filter(commandsHistory, (command) =>
+          !(command.commandCode || command.commandName).includes('SET_AW_TIMER') && 
+          (command.categoryName === COMMAND_CATEGORIES.MANUAL_WATERING.NAME
+          || command.categoryName === COMMAND_CATEGORIES.AUTO_WATERING.NAME)
+        )
+
+      const formattedCommandHistory = _.map(filteredCommands, (command) => ({
+        c: command.commandCode || command.commandName, // TODO: remove commandName when migration is done
+        x: (moment(command.createdAt)).valueOf()
+      }))
+
+      setCommandData(formattedCommandHistory)
+      console.log({ formattedCommandHistory })
 
       const allMeasures = _.get(measuresHistory, 'historyByAllDevices')
       setData(allMeasures)
@@ -85,6 +109,7 @@ export const Charts = () => {
 
     return (
       <ChartWithFilters
+        secondBatch={commandData}
         setFilters={setFilters}
         filters={filters}
         collectionToPlot={collectionToPlot}

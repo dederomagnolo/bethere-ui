@@ -1,8 +1,6 @@
 import _ from 'lodash'
-import { MAPPED_COMMANDS } from 'global/consts'
 import callApi from 'services/callApi'
 import { tryToCallService } from 'services/fetch'
-
 
 interface SendCommandToServerArgs {
   token: string,
