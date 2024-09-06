@@ -1,16 +1,22 @@
 import _ from 'lodash'
-import { useState } from 'react'
-import { getTimeOptions } from '../../functions'
+import { useEffect, useState } from 'react'
+import { getSensorParamsSelectOptions, getTimeOptions, sensorSelectOptions } from '../../functions'
 
 import {
   Checkbox,
   CustomSelect,
-  EditIconWithTooltip
+  EditIconWithTooltip,
+  Toggle
 } from 'components'
 import { InputOption } from 'views/settings/input-option'
 
 type OptionType = {
   value: Number | String
+}
+
+type SelectOptions = {
+  label: string
+  value: any
 }
 
 const timeOptions = getTimeOptions()
@@ -30,12 +36,17 @@ const hoursToMinutes = (valueInHours: number) => {
 
 export const AutoWateringConfig = ({
   automationSettings = {},
-  saveChanges
+  saveChanges,
+  sensors
 }: any) => {
   const [editStartTime, setEditStartTime] = useState(false)
   const [editEndTime, setEditEndTime] = useState(false)
 
   const [editAutomationInterval, setAutomationIntervalEdition] = useState(false)
+  const [selectedSensor, setSelectedSensor] = useState(sensors[0])
+  const [paramOptions, setSensorParamOptions] = useState(
+    getSensorParamsSelectOptions(selectedSensor.model)
+  )
 
   const {
     startTime,
@@ -54,6 +65,21 @@ export const AutoWateringConfig = ({
     intervalInHours,
     continuous
   })
+  const [triggerParams, setTriggerParams] = useState({
+    operator: 0
+  })
+
+  useEffect(() => {
+    const updatedParamOptions = getSensorParamsSelectOptions(selectedSensor.model)
+    setSensorParamOptions(updatedParamOptions)
+  }, [selectedSensor])
+
+  const sensorOptions = sensorSelectOptions(sensors)
+
+  const handleSelectedSensorChange = ({ value: selectedSensorId }: SelectOptions) => {
+    const sensorById = _.find(sensors, (sensor) => sensor._id === selectedSensorId)
+    setSelectedSensor(sensorById)
+  }
 
   const handleChangeSettings = (e: React.ChangeEvent<HTMLInputElement> & OptionType, name?: string) => {
     if (name) {
@@ -118,23 +144,27 @@ export const AutoWateringConfig = ({
               value={getCurrentTimeOption(editedAutomationSettings.endTime)}
               defaultValue={getCurrentTimeOption(editedAutomationSettings.endTime)} />
           </div>
-          <EditIconWithTooltip
+        </div>
+        <div className='description'>
+          O período de atividade é o intervalo do dia em que a estação local irá fazer o ciclo de automação.
+        </div>
+        <div className='interval-option'>
+          <InputOption
+            initialValue={interval}
+            onEdit={() => setAutomationIntervalEdition(true)}
             onSave={() => {
-              setEditStartTime(false)
-              setEditEndTime(false)
               saveAutomationChanges()
+              setAutomationIntervalEdition(false)
             }}
-            uniqueId='timeField'
-            onCancel={() => {
-              setEditStartTime(false)
-              setEditEndTime(false)
-              setEditedAutomationSettings({ 
-                ...editedAutomationSettings,
-                startTime: automationSettings.startTime,
-                endTime: automationSettings.endTime
-              })
-            }}
-            onEdit={() => setEditStartTime(true)} />
+            onCancel={() => setEditedAutomationSettings({ ...editedAutomationSettings, interval, intervalInHours })}
+            name='interval'
+            title={`Intervalo (${editedAutomationSettings.intervalInHours ? 'hrs' : 'min'})`}
+            onChange={handleChangeSettings}
+            value={
+              editedAutomationSettings.intervalInHours 
+                ? minutesToHours(editedAutomationSettings.interval) 
+                : editedAutomationSettings.interval}
+          />
         </div>
       </div>
       <Checkbox
@@ -149,39 +179,52 @@ export const AutoWateringConfig = ({
       </div>
       <div className='interval-option'>
         <InputOption
-          initialValue={interval}
-          onEdit={() => setAutomationIntervalEdition(true)}
-          onSave={() => {
-            saveAutomationChanges()
-            setAutomationIntervalEdition(false)
-          }}
-          onCancel={() => setEditedAutomationSettings({ ...editedAutomationSettings, interval, intervalInHours })}
-          name='interval'
-          title={`Intervalo (${editedAutomationSettings.intervalInHours ? 'hrs' : 'min'})`}
+          onSave={saveAutomationChanges}
+          name='duration'
+          title='Tempo de irrigação (min)'
           onChange={handleChangeSettings}
-          value={
-            editedAutomationSettings.intervalInHours 
-              ? minutesToHours(editedAutomationSettings.interval) 
-              : editedAutomationSettings.interval}
+          value={editedAutomationSettings.duration}
         />
+        <div className='description'>
+          O tempo de irrigação corresponde ao tempo em que a irrigação permanece ligada quando é dado o tempo de intervalo.
+        </div>
       </div>
-      <Checkbox
-        disabled={!editAutomationInterval}
-        checked={editedAutomationSettings.intervalInHours}
-        className='interval-option__checkbox'
-        label='Utilizar intervalo de  tempo em horas'
-        onChange={handleChangeIntervalInOurs}
-      />
-      <div className='description'>O intervalo é o tempo entre um ciclo de irrigação e outro.</div>
-      <InputOption
-        onSave={saveAutomationChanges}
-        name='duration'
-        title='Tempo de irrigação (min)'
-        onChange={handleChangeSettings}
-        value={editedAutomationSettings.duration}
-      />
-      <div className='description'>
-        O tempo de irrigação corresponde ao tempo em que a irrigação permanece ligada quando é dado o tempo de intervalo.
+      <div className='switch-option'>
+        Acionamento por sensor
+        <Toggle checked={true} onChange={() => {}} />
+      </div>
+      <div className='options options--auto-watering trigger'>
+        <div className='title'>Sensor</div>
+        <CustomSelect
+          name='selectedSensor'
+          options={sensorOptions}
+          onChange={handleSelectedSensorChange} />
+        <div className='title'>Parâmetros disponíveis</div>
+        <CustomSelect
+          name='paramType'
+          onChange={() => {}}
+          options={paramOptions} />
+        <div className='trigger-options'>
+          <div className='title'>Limite de acionamento:</div>
+          <div className='trigger-options__operators'>
+            <Checkbox
+              radio
+              name='less-than'
+              checked={triggerParams.operator === 0}
+              initialState={triggerParams.operator === 0}
+              label='Menor que'
+              onChange={() => setTriggerParams({...triggerParams, operator: 0})} />
+            <Checkbox
+              radio
+              checked={triggerParams.operator === 1}
+              name='greater-than'
+              initialState={triggerParams.operator === 1}
+              label='Maior que'
+              onChange={() => setTriggerParams({...triggerParams, operator: 1})} />
+          </div>
+          <InputOption onChange={() => {}} />
+
+        </div>
       </div>
     </div>
   )
