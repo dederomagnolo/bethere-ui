@@ -81,6 +81,7 @@ export const Settings = () => {
       title: 'Irrigação automática',
       component: () => (
         <AutoWateringConfig
+          sensors={selectedDevice.sensors}
           deviceId={selectedDevice._id}
           saveChanges={saveChanges}
           automationSettings={selectedDeviceSettings.automation}
