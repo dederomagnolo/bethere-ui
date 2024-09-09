@@ -16,6 +16,7 @@ type OptionType = {
 const timeOptions = getTimeOptions()
 
 const getCurrentTimeOption = (timeValue: number) => {
+  console.log(timeValue)
   return _.find(timeOptions, (option) => option.value === timeValue)
 }
 
@@ -42,7 +43,8 @@ export const AutoWateringConfig = ({
     endTime,
     interval,
     duration,
-    intervalInHours
+    intervalInHours,
+    continuous
   } = automationSettings
 
   const [editedAutomationSettings, setEditedAutomationSettings] = useState({
@@ -50,7 +52,8 @@ export const AutoWateringConfig = ({
     endTime,
     interval,
     duration,
-    intervalInHours
+    intervalInHours,
+    continuous
   })
 
   const handleChangeSettings = (e: React.ChangeEvent<HTMLInputElement> & OptionType, name?: string) => {
@@ -77,14 +80,15 @@ export const AutoWateringConfig = ({
     setEditedAutomationSettings(updatedEditedSettings)
   }
 
+  const handleChangeContinuous = (e: any) => {
+    const checked = e.target.checked
+
+    setEditedAutomationSettings({ ...editedAutomationSettings, continuous: checked})
+  }
+
   const setEndTimeOptionsBasedOnStartTime = () => {
     const editedStartTime = editedAutomationSettings.startTime
     const possibleTimeOptions =_.filter(timeOptions, (option) => option.value > editedStartTime)
-
-    possibleTimeOptions && possibleTimeOptions.push({
-      value: 24,
-      label: '00h00',
-    })
 
     return possibleTimeOptions
   }
@@ -97,7 +101,7 @@ export const AutoWateringConfig = ({
           <div className='cycle-period__time-select-container'>
             de
             <CustomSelect
-              isDisabled={!editStartTime}
+              isDisabled={!editStartTime || editedAutomationSettings.continuous}
               onChange={(option: any) => {
                 setEditEndTime(true)
                 handleChangeSettings(option, 'startTime')
@@ -109,7 +113,7 @@ export const AutoWateringConfig = ({
           <div className='cycle-period__time-select-container'>
             até
             <CustomSelect
-              isDisabled={!editEndTime}
+              isDisabled={!editEndTime || editedAutomationSettings.continuous}
               onChange={(option: any) => handleChangeSettings(option, 'endTime')}
               options={setEndTimeOptionsBasedOnStartTime()}
               value={getCurrentTimeOption(editedAutomationSettings.endTime)}
@@ -134,6 +138,13 @@ export const AutoWateringConfig = ({
             onEdit={() => setEditStartTime(true)} />
         </div>
       </div>
+      <Checkbox
+        disabled={!editStartTime}
+        checked={editedAutomationSettings.continuous}
+        className='interval-option__checkbox'
+        label='Modo contínuo: Operar 24h'
+        onChange={handleChangeContinuous}
+      />
       <div className='description'>
         O período de atividade é o intervalo do dia em que a estação local irá fazer o ciclo de automação.
       </div>
