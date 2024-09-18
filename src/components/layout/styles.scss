@@ -1,8 +1,25 @@
+@import 'styles/breakpoints.scss';
+
+.page-container {
+  background-color: white;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 10px 10px 80px 10px;
+  height: 100%;
+
+  @include md {
+    padding: 30px 42px 0 50px;
+    min-height: 100vh;
+    border-radius: 14px 0 0 14px;
+    z-index: 1;
+  }
+}
+
 .app-layout {
   display: flex;
   width: 100%;
   height: 100%;
-  flex-direction: column;
+  background-color: #0DA1BC;
 }
 
 .user-toolbar {
