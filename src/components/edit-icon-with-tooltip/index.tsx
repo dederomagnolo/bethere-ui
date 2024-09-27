@@ -19,7 +19,7 @@ export interface EditWithTooltipProps {
   onToggle?: Function
   onCancel?: Function
   uniqueId: string
-  saveMode?: boolean
+  shouldToggleToShowSave?: boolean
 }
 
 export const EditIconWithTooltip = ({
@@ -28,29 +28,29 @@ export const EditIconWithTooltip = ({
   onCancel,
   onToggle,
   uniqueId,
-  saveMode
+  shouldToggleToShowSave = true
 } : EditWithTooltipProps ) => {
-  const [editMode, setEditMode] = useState(saveMode)
+  const [editing, setEditing] = useState(false)
 
   const handleSave = (event: any) => {
     onSave && onSave(event)
     onToggle && onToggle()
-    setEditMode(false)
+    setEditing(false)
   }
 
   const handleEdit = (event: any) => {
     onEdit && onEdit(event)
     onToggle && onToggle()
-    setEditMode(true)
+    shouldToggleToShowSave && setEditing(true)
   }
 
   const handleCancel = (event: any) => {
-    setEditMode(false)
+    setEditing(false)
     onCancel && onCancel(event)
     onToggle && onToggle()
   }
 
-  const Icon = ({ id }: { id: string }) => editMode
+  const Icon = ({ id }: { id: string }) => editing
     ? <div className='app-tooltip__icon-container'>
         <Tooltip id='app-tooltip' anchorSelect={`#app-tooltip-cancel-${id}`}>
           Cancelar
@@ -68,7 +68,7 @@ export const EditIconWithTooltip = ({
   return (
     <div key={id}>
       <Tooltip id='app-tooltip' anchorSelect={`#${id}`}>
-        {editMode ? 'Salvar alteração' : 'Editar'}
+        {editing ? 'Salvar alteração' : 'Editar'}
       </Tooltip>
       <Icon id={id} />
     </div>

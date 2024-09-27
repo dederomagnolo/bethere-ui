@@ -1,0 +1,29 @@
+.program-container {
+  background-color: rgb(242 242 242);
+  outline: solid rgb(230, 230, 230) 1px;
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+  gap: 10px;
+  border-radius: 5px;
+  max-width: 400px;
+
+  &__name {
+    font-size: 14px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  &__cycle {
+    display: flex;
+    font-size: 12px;
+    gap: 5px;
+  }
+
+  &__params {
+    gap: 50px;
+    font-size: 12px;
+    display: flex;
+    flex-wrap: wrap;
+  }
+}

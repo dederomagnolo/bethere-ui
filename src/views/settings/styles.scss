@@ -47,12 +47,6 @@
       margin-left: 8px;
       padding: 10px 0 10px;
 
-      .switch-option {
-        display: flex;
-        gap: 10px;
-        align-items: center;
-      }
-
       &--single  {
         display: flex;
         flex-direction: column;
@@ -66,11 +60,6 @@
         display: flex;
         flex-direction: column;
         gap: 5px;
-        border: 1px #d0d0d05e solid;
-        border-radius: 12px;
-        padding-left: 12px;
-        margin-top: 10px;
-        margin-bottom: 10px;
 
         .description {
           margin-bottom: 10px;
@@ -107,29 +96,6 @@
 
           .react-select-container {
             width: 100px;
-          }
-        }
-
-        &.trigger {
-          .single-option {
-            .react-select-container {
-              width: 230px;
-            }
-          }
-
-          .trigger-options {
-            display: flex;
-            gap: 12px;
-
-            .input-option {
-              margin-top: 0;
-            }
-
-            &__operators {
-              display: flex;
-              flex-direction: column;
-              gap: 10px;
-            }
           }
         }
 

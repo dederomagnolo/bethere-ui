@@ -1,0 +1,58 @@
+.tab-nav {
+  padding-top: 12px;
+  padding-bottom: 12px;
+
+  &__list {
+    display: flex;
+    gap: 20px;
+    list-style: none;
+    padding: 0;
+  }
+
+  &__item {
+    display: inline-block;
+    transition: all .2s;
+    position: relative;
+    border: none;
+    color: rgb(156, 156, 156);
+
+    &.active {
+      color: rgb(0, 0, 0);
+
+      &::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 22px;
+        background: black;
+        width: 0;
+        height: 1px;
+        width: 100%;
+      }
+    }
+
+    &:hover {
+      color: rgb(0, 0, 0);
+
+      &::before {
+        width: 100%;
+      }
+    }
+
+    &:active, &:focus, &:hover {
+      outline: 0;
+    }
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 22px;
+      background: black;
+      width: 0;
+      height: 1px;
+      -webkit-transition: all .4s cubic-bezier(.35, 1, .33, 1);
+      transition: all .4s cubic-bezier(.35, 1, .33, 1);
+    }
+  }
+}

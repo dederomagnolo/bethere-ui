@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import useWebSocket from 'react-use-websocket'
 import { useNavigate } from 'react-router'
 import _ from 'lodash'
-import moment, { Moment } from 'moment'
 
 import { getToken } from 'redux/user/selectors'
 import { getUserDevices } from 'redux/device/selectors'

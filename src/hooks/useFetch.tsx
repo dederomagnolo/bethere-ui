@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { setGlobalError } from 'redux/global/actions'
+import { getToken } from 'redux/user/selectors'
 
 export const useFetch = (fetchService: Function, dependencies: any[] = []) => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  const token = useSelector(getToken)
   const [data, setData] = useState({}) as any
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)

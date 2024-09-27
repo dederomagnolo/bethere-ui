@@ -38,6 +38,7 @@
   .device-cards {
     display: flex;
     gap: 12px;
+    flex-wrap: wrap;
   }
 
   .server-connection-status {
