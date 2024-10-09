@@ -41,7 +41,7 @@ export const InputOption = ({
 
   return (
     <div className='input-option' key={name}>
-      {title && <div className='title'>{title}</div>}
+      {title && <div className='input-title'>{title}</div>}
       <Input
         onBlur={onBlur}
         error={error}

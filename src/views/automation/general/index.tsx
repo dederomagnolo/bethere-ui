@@ -28,11 +28,10 @@ export const General = ({
         const program = _.find(programs, (program) => program._id === automationId)
         const device = _.find(userDevices, (item: Device) => item._id === actuator.deviceId)
         const sensors = device?.sensors || []
-
-        console.log({ program })
         
         return (
           <Card
+            key={actuator._id}
             shouldAllowTriggerAutomation={sensors?.length > 0}
             automation={program}
             actuatorNumber={actuator.boardNumber}

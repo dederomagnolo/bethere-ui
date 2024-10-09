@@ -15,6 +15,7 @@
     position: relative;
     border: none;
     color: rgb(156, 156, 156);
+    font-size: 18px;
 
     &.active {
       color: rgb(0, 0, 0);
@@ -23,7 +24,7 @@
         content: '';
         position: absolute;
         left: 0;
-        top: 22px;
+        top: 24px;
         background: black;
         width: 0;
         height: 1px;
@@ -47,7 +48,7 @@
       content: '';
       position: absolute;
       left: 0;
-      top: 22px;
+      top: 24px;
       background: black;
       width: 0;
       height: 1px;

@@ -1,0 +1,53 @@
+.devices-view {
+  .devices-list {
+    display: flex;
+    gap: 20px;
+  }
+
+  .device-container {
+    border-radius: 12px;
+    gap: 15px;
+    background-color: #fcfcfc;
+    border: #55555518 solid 1px;
+    width: auto;
+    padding: 18px;
+    max-width: 400px;
+
+    &__title-container {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    &__infos {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      border-top: rgba(107, 107, 107, 0.1) solid 1px;
+      padding-top: 20px;
+      margin-top: 20px;
+      width: 100%;
+    }
+
+    &__sensors {
+      display: flex;
+      gap: 10px;
+      width: 100%;
+    }
+
+    &__sensor-list {
+      display: flex;
+      width: 100%;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    &__sensor-info {
+      display: flex;
+      width: 100%;
+    }
+
+    &__sensor-name {
+      width: 30%;
+    }
+  }
+}

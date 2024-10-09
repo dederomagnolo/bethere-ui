@@ -18,7 +18,7 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   placeholder?: string
   name?: string
   className?: string
-  value?: string
+  value?: string | number
   autoFocus?: boolean
   disabled?: boolean
   type?: string

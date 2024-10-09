@@ -30,20 +30,30 @@ export const AutomationView = () => {
     setPrograms(automationRoutines)
   }, [])
 
+  const renderAutomationView = () => {
+    switch(tabOption) {
+      case 0:
+        return (
+          <General
+            userDevices={userDevices}
+            programs={programs}/>
+        )
+      case 1:
+        return <AutomationPrograms programs={programs} />
+      default:
+        return null
+    }
+  }
+
   return (
     <View title='Automação' className='automation-view'>
       <TabNav
         onNavChange={(selectedTab: number) => setTabOption(selectedTab)}
         menuLinks={['Visão geral', 'Programas']} />
-      {tabOption === 0 ? (
-        <General
-          userDevices={userDevices}
-          programs={programs}/>
-      ) : null}
-
-      {tabOption === 1 ? (
-        <AutomationPrograms programs={programs} />
-      ) : null}
+      
+      <div className='automation-view__content'>
+        {renderAutomationView()}
+      </div>
     </View>
   )
 }

@@ -1,0 +1,59 @@
+@import '../../../styles/breakpoints.scss';
+
+.timer-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    &__description {
+      margin-bottom: 10px;
+      font-size: 12px;
+    }
+
+    &__content {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      margin-bottom: 4px;
+      
+      @include md {
+        margin-bottom: 0;
+      }
+    }
+
+    &__checkbox {
+      margin-left: 20px;
+      font-size: 12px;
+    }
+
+    &__time-input {
+      width: 50px;
+    }
+
+    .time-select-container {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .react-select-container {
+      width: 100px;
+    }
+  }
+
+  .input-title, .field__title {
+    font-weight: bold;
+    margin-right: 10px;
+  }
+
+  .interval-option {
+    display: flex;
+    gap: 60px;
+    align-items: center;
+  }
+}

@@ -38,15 +38,15 @@ export const Card = ({
           </div>
           {automation ? <ProgramCard program={automation} /> : null}
         </div>
-        <div className='card__automation-block'>
+        {/* <div className='card__automation-block'>
           <div className='card__toggle-container'>
             Acionamento por sensor
             <Toggle
-              disabled={!shouldAllowTriggerAutomation}
+              disabled={true}
               checked={timerToggle}
               onChange={() => {}} />
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   )

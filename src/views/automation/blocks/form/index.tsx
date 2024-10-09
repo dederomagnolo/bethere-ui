@@ -1,65 +1,78 @@
-import { Checkbox, Modal } from 'components'
+import { Button, Checkbox, Input, Modal } from 'components'
 import { Automation } from 'types/interfaces'
-import { InputOption } from 'views/settings/input-option'
 
 import './styles.scss'
 import { useState } from 'react'
+import { TimerFields } from 'views/automation/timer-fields'
+import { createAutomationProgram } from 'services/automation'
+import { useSelector } from 'react-redux'
+import { getToken } from 'redux/user/selectors'
 
 interface Props {
   program: Automation | undefined
+  onCancel: () => void
 }
 
 export const Form = ({
-  program
+  program,
+  onCancel
 }: Props) => {
-  const [fields, setFields] = useState({
+  const token = useSelector(getToken)
+  const initialState = {
     name: program?.name,
-    type: program?.type
-  })
+    type: 0,
+    timer: program?.timer
+  }
 
-  const renderTriggerFields = () => {
-    if (!program) return
+  const [fields, setFields] = useState(initialState)
 
-    return (
-      <div>
-        
-      </div>
-    )
+  const setTimerFields = (editedTimerObj: Automation['timer']) => {
+    setFields({ ...fields, timer: { ...fields.timer, ...editedTimerObj } })
   }
 
   const renderTimerFields = () => {
     return (
-      <div className='program-form__timer-fields'>
-        <div>Período de Atividade</div>
-        <div>
-          <div>Operação contínua</div>
-          <div>
-            <input
-              name='startTime'
-              id='startTime'
-              type='time' />
-          </div>
-        </div>
-      </div>
+      <TimerFields
+        setTimerFields={setTimerFields}
+        timerSettings={fields.timer} />
     )
   }
 
-  const handleChangeFormField = () => {
-    return 
+  const handleChangeFormField = (e: React.ChangeEvent<HTMLInputElement> ) => {
+    const name = e.target.name
+
+    if (name === 'trigger') {
+      return setFields({ ...fields, type: 1 })
+    }
+
+    if (name === 'timer') {
+      return setFields({ ...fields, type: 0 })
+    }
+
+    return setFields({ ...fields, [name]: e.target.value })
+  }
+
+  const handleSaveOrEditProgram = async () => {
+    return await createAutomationProgram({
+      token,
+      ...fields
+    })
   }
 
   return (
-    <div className='program-container'>
-      <div className='alert-configs__modal-title'>
+    <div className='program-form'>
+      <div className='program-form__title'>
         {program ? 'Editar programa' : 'Novo programa'}
       </div>
-      <div className='program-form'>
-        <InputOption
-          name='program-name'
-          className=''
-          showEditAndSave={false}
-          onChange={() => handleChangeFormField()}
-          title='Nome do programa (opcional)' />
+      <div className='program-form__container'>
+        <div className='program-form__field'>
+          <div>Nome do programa (opcional)</div>
+          <Input
+            value={fields.name}
+            name='name'
+            className='program-form__name-input'
+            onChange={handleChangeFormField} />
+        </div>
         <div className='program-form__field'>
           <div>Tipo de programa</div>
           <div className='program-form__types'>
@@ -67,20 +80,19 @@ export const Form = ({
               radio
               checked={true}
               name='timer'
-              initialState={true}
               label='Timer'
-              onChange={() => handleChangeFormField()} />
-            <Checkbox
-              radio
-              checked={true}
-              name='timer'
-              initialState={true}
-              label='Acionamento por sensor'
-              onChange={() => handleChangeFormField()} />
-            </div>
+              onChange={handleChangeFormField} />
           </div>
         </div>
         {renderTimerFields()}
+      </div>
+      <div className='program-form__actions'>
+        <Button variant='cancel' onClick={() => {
+          setFields(initialState)
+          onCancel()
+        }}>Cancelar</Button>
+        <Button onClick={handleSaveOrEditProgram}>Salvar</Button>
+      </div>
     </div>
   )
 }
