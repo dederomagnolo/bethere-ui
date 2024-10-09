@@ -19,8 +19,8 @@ export const ProgramCard = ({ program, cardOnClick }: Props) => {
   const { startTime, endTime, interval, duration, intervalInHours } = timer
 
   return (
-    <div className='program-container' onClick={cardOnClick} >
-      <div className='program-container__name'>
+    <div className='program-card' onClick={cardOnClick} >
+      <div className='program-card__name'>
         Programa: {name || 'Sem nome'}
         {cardOnClick
           ? null
@@ -28,12 +28,12 @@ export const ProgramCard = ({ program, cardOnClick }: Props) => {
               uniqueId='automation-edit'
               shouldToggleToShowSave={false} />}
       </div>
-      <div className='program-container__cycle'>
+      <div className='program-card__cycle'>
         <div>Início: {startTime}h </div>
         🞄
         <div>Fim: {endTime}h </div>
       </div>
-      <div className='program-container__params'>
+      <div className='program-card__params'>
         <div>Intervalo: {interval} {intervalInHours ? 'horas' : 'minutos'} </div>
         <div>Duração: {duration} minutos</div>
       </div>

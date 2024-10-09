@@ -13,33 +13,45 @@ interface Props {
 export const AutomationPrograms = ({
   programs = []
 }: Props) => {
-  const [openModal, setOpenModal] = useState(false)
+  const [showForm, setShowForm] = useState(false)
   const [clickedProgram, setClickedProgram] = useState<Automation | undefined>(undefined)
 
   console.log({ programs })
 
-  return (
-    <div className='programs'>
-      <Button onClick={() => {
+  const renderNewProgramButton = () => {
+    if (showForm) return null
+
+    return (
+      <Button
+        className=''
+        onClick={() => {
         setClickedProgram(undefined)
-        setOpenModal(true)
+        setShowForm(true)
       }}>
         Novo Programa
       </Button>
+    )
+  }
 
-      <div className='programs-list'>
+  return (
+    <div className='programs'>
+      {!showForm ? <div className='programs-list'>
         {programs.map((program: Automation) => {
           return (
             <ProgramCard
+              key={program._id}
               cardOnClick={() => {
                 setClickedProgram(program)
-                setOpenModal(true)
+                setShowForm(true)
               }}
               program={program} />
           )
         })}
-      </div>
-      <Form program={clickedProgram} />
+      </div> : null}
+      {showForm &&
+        <Form onCancel={() => { setShowForm(false) }} program={clickedProgram} />}
+      
+      {renderNewProgramButton()}
     </div>
   )
 }
