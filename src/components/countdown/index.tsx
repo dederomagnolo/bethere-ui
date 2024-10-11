@@ -1,11 +1,10 @@
+import { Loading } from 'components/ui-atoms'
 import { useEffect, useState } from 'react'
 
 const millisToMinutesAndSeconds = (millis : number | undefined) => {
   if (!millis) return { minutes: 0, seconds: `00`}
   const minutes = Math.floor((millis % 36e5) / 6e4)
   const seconds = Math.floor((millis % 6e4) / 1000)
-
-  console.log({ minutes, seconds, conta: (millis % 36e5) / 6e4 })
 
   return ({
     minutes,
@@ -15,18 +14,19 @@ const millisToMinutesAndSeconds = (millis : number | undefined) => {
 
 export const Countdown = ({ initialState }: { initialState: number | undefined }) => {
   const [countdown, setCountdown] = useState(initialState) // in ms
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    console.log( 'caiu aqui' )
-
+    
     if (initialState !== undefined) {
-      console.log('começou')
       const timerInterval = setInterval(() => {
         setCountdown((prevTime: any) => {
-          console.log({ prevTime })
           if (prevTime === undefined || Number.isNaN(prevTime)) {
             setCountdown(initialState)
+            return initialState
           }
+
+          setLoading(false)
 
           if (prevTime === 0) {
             clearInterval(timerInterval)
@@ -37,7 +37,6 @@ export const Countdown = ({ initialState }: { initialState: number | undefined }
         })
       }, 1000)
       return () => {
-        console.log('limpou')
         clearInterval(timerInterval)
       }
     }
@@ -49,6 +48,6 @@ export const Countdown = ({ initialState }: { initialState: number | undefined }
   } = millisToMinutesAndSeconds(countdown)
 
   return (
-    <div>{minutes}:{seconds}</div>
+    loading ? <Loading size={10}/> : <div>{minutes}:{seconds}</div>
   )
 }

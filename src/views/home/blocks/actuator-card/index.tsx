@@ -87,8 +87,6 @@ export const ActuatorCard = ({
     }
   }, [lastActivated])
 
-  console.log({ dynamicCountdownInMs })
-
   const actuatorLastActivatedAt = actuator.lastActivated
   const formattedLastActivated = moment(actuatorLastActivatedAt).isValid()
     ? moment(actuatorLastActivatedAt).format("DD/MM/YY, HH:mm")

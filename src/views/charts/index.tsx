@@ -71,7 +71,6 @@ export const Charts = () => {
       }))
 
       setCommandData(formattedCommandHistory)
-      console.log({ formattedCommandHistory })
 
       const allMeasures = _.get(measuresHistory, 'historyByAllDevices')
       setData(allMeasures)

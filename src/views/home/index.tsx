@@ -103,7 +103,7 @@ export const Home = () => {
       const receivedData = lastMessage && lastMessage.data
       const parsedData = JSON.parse(receivedData)
 
-      console.log({ parsedData })
+      // console.log({ parsedData })
   
       _.forEach(parsedData, (deviceRealTimeData, deviceId) => {
         const hasMeasuresData = deviceRealTimeData.measures

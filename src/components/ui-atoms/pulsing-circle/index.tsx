@@ -7,7 +7,7 @@ import './styles.scss'
 
 export const PulsingCircle = ({ type = 'online'} : any) => {
   if (type === 'offline') {
-    return <OfflineIcon />
+    return <OfflineIcon className={`pulsing-circle__icon--offline-gray`} />
   }
 
   return (

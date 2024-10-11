@@ -135,7 +135,6 @@ export const editSettingsAndSendCommand = async ({
           return 'Dados salvos com sucesso!'
       }},
       error: ({ data }) => {
-        console.log(data)
         return 'Ocorreu um erro'
       } 
     }
