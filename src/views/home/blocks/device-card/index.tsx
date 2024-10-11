@@ -8,12 +8,13 @@ import {
 import './styles.scss'
 import { Sensors } from '../sensors'
 import { AppCard, Loading } from 'components'
-import { Actuator, Device } from 'types/interfaces'
+import { Actuator, ActuatorRealTimeData, Device, DeviceRealTimeData } from 'types/interfaces'
 import { WateringCardData } from '../watering-card-data'
+import { ActuatorCard } from '../actuator-card'
 
 interface DeviceCardProps {
   device: Device
-  realTimeData: any
+  realTimeData: DeviceRealTimeData
   loading: boolean
   isDeviceWaitingUpdate: boolean
   userConnectionTimedOut: boolean
@@ -52,18 +53,22 @@ export const DeviceCard = ({
   }
 
   const mappedDeviceActuators = _.map(deviceActuators, (actuator: Actuator) => {
-    const isEnabled = actuator.status // TODO: change to enabled
+    const isEnabled = actuator.enabled // TODO: change to enabled
+    const boardNumber = actuator.boardNumber
+    const actuatorRealTimeData = realTimeData.actuators?.find((data: any) => boardNumber === data.boardNumber)
+
     return (
       (isEnabled
-        ? <AppCard key={actuator._id}>
-            <WateringCardData
-              isDeviceConnected={isDeviceConnected}
-              connectionLoading={loading}
-              deviceRealTimeData={realTimeData || {}}
-              device={device}
-              wsStatus={1} />
-          </AppCard> 
-        : null)
+        ? (
+          <ActuatorCard
+            key={actuator.name || actuator.boardNumber}
+            userId={device.userId}
+            isDeviceConnected={isDeviceConnected}
+            connectionLoading={loading}
+            actuatorRealTimeData={actuatorRealTimeData || {} as ActuatorRealTimeData}
+            deviceSettings={device.settings?.[0]} // will be changed to automation linked with actuator
+            actuator={actuator} />
+          ) : null)
     )
   })
 

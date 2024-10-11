@@ -1,0 +1,107 @@
+.actuator-card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  .header {
+    display: flex;
+    border-bottom: rgba(107, 107, 107, 0.1) solid 1px;
+    padding-top: 8px;
+    padding-bottom: 20px;
+    justify-content: space-between;
+    align-items: center;
+
+    .title {
+      display: flex;
+      svg {
+        margin-left: 12px;
+        color: #a3da5ad5;
+      }
+    }
+
+    .connection-status {
+      display: flex;
+      font-size: 12px;
+      gap: 8px;
+
+      .pulsing-circle__icon--offline-gray {
+        font-size: 14px;
+      }
+    }
+  }
+
+  .content {
+    padding-top: 20px;
+    padding-bottom: 15px;
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+
+    .status {
+      display: flex;
+      justify-content: space-between;
+
+      .left-block, .right-block {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .right-block {
+        &--auto-off {
+          display: flex;
+          height: 100%;
+          justify-content: flex-end;
+        }
+      }
+
+      .interrupt-button {
+        font-size: 11px;
+        padding: 6px;
+      }
+
+      .remaining-time {
+        display: flex;
+      }
+
+      &__current {
+        height: 26px;
+        font-size: 14px;
+
+        &--on {
+          color: #0C9C7A;
+        }
+    
+        &--off {
+          color:#b11b00; 
+        }
+      }
+
+      &__mini-label {
+        font-size: 10px;
+      }
+    }
+
+    .watering {
+      display: flex;
+      gap: 20px;
+      flex-direction: column;
+      margin-top: 20px;
+      
+      &__manual {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding-top: 20px;
+        border-top: rgba(107, 107, 107, 0.1) solid 1px;
+      }
+
+      .control {
+        align-items: center;
+        font-size: 14px;
+        display: flex;
+        gap: 20px;
+      }
+    }
+  }
+}

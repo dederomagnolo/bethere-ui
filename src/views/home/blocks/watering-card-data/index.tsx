@@ -18,6 +18,8 @@ import './styles.scss'
 import {
   FaLeaf as Leaf,
 } from 'react-icons/fa'
+import { RemainingTimeLabel } from '../remaining-time-label'
+import { DeviceRealTimeData } from 'types/interfaces'
 
 interface CardLabelProps {
   label: string
@@ -27,12 +29,7 @@ interface CardLabelProps {
 interface WateringCardDataProps {
   wsStatus: number
   device: any
-  deviceRealTimeData: {
-    defaultDeviceStatus: boolean
-    measures: any
-    lastCommandReceived: string,
-    wateringStatus: any
-  }
+  deviceRealTimeData: DeviceRealTimeData
   connectionLoading: boolean
   isDeviceConnected: boolean
 }
@@ -74,12 +71,15 @@ export const WateringCardData = ({
   const [updatedWateringStatus, setUpdatedWateringStatus] = useState({
     manualRelayEnabled: false,
     autoRelayEnabled: false,
-    dynamicAutoRemainingTime: 0
+    dynamicAutoRemainingTime: 0,
+    elapsedTime: 0,
+    nextTimeSlot: '',
+    wateringElapsedTime: 0
   })
 
   const {
     lastCommandReceived,
-    wateringStatus = {}
+    wateringStatus = {} as DeviceRealTimeData['wateringStatus']
 } = deviceRealTimeData
 
 const {
@@ -88,7 +88,7 @@ const {
   manualRelayEnabled,
   dynamicAutoRemainingTime,
   nextTimeSlot
-} = wateringStatus
+} = wateringStatus as DeviceRealTimeData['wateringStatus']
 
 const [wateringEnabled, setWateringEnabled] = useState(manualRelayEnabled)
 const [autoModeEnabled, setAutoModeEnabled] = useState(autoWateringModeEnabled)
@@ -99,7 +99,7 @@ const [autoModeEnabled, setAutoModeEnabled] = useState(autoWateringModeEnabled)
   }, [dynamicAutoRemainingTime, autoRelayEnabled, manualRelayEnabled, nextTimeSlot])
 
   const handleSendCommand = async () => {
-    if(wsStatus === WsReadyState.OPEN && isDeviceConnected) {
+    if (wsStatus === WsReadyState.OPEN && isDeviceConnected) {
       const shouldEnableWatering = !wateringEnabled && lastCommandReceived !== NEW_COMMANDS.MANUAL_WATERING_ON.CODE
       const commandToSend = shouldEnableWatering
         ? NEW_COMMANDS.MANUAL_WATERING_ON.CODE
@@ -154,15 +154,13 @@ const [autoModeEnabled, setAutoModeEnabled] = useState(autoWateringModeEnabled)
     let operationLabel = 'Indisponível' 
     let pulsingCircleType = 'offline'
 
-    if (connectionLoading) {
-      return <Loading />
-    }
-
+    if (connectionLoading) return <Loading />
+    
     if (isDeviceConnected) {
       pulsingCircleType = 'online'
       operationLabel = 'Disponível'
       
-      if (manualRelayEnabled) {
+      if (wateringEnabled) {
         pulsingCircleType = 'progress'
         operationLabel = 'Irrigação manual ligada'
       }
@@ -208,18 +206,6 @@ const [autoModeEnabled, setAutoModeEnabled] = useState(autoWateringModeEnabled)
 
     return `Termina em: ${moment(remainingTime).format('mm')} minutos` 
   }
-
-  const renderManualWateringInfoLabel = () => {
-    if (!wateringEnabled) return '' // TODO: adicionar loading enquanto nao tiver o status pois mostra 0 minutos
-
-    const wateringTimer = _.get(automationSettings, 'wateringTimer')
-    const autoWateringEstimatedToEndAt = moment().clone().add(wateringTimer, 'minutes')
-    const pastTime = moment(autoWateringEstimatedToEndAt).clone().subtract(wateringElapsedTime, 'milliseconds')
-
-    const remainingTime = autoWateringEstimatedToEndAt.diff(pastTime)
-
-    return `Termina em: ${moment(wateringElapsedTime ? remainingTime : wateringTimer).format('mm')} minutos` 
-  }
   
   return (
     <div className='watering-card'>
@@ -247,7 +233,10 @@ const [autoModeEnabled, setAutoModeEnabled] = useState(autoWateringModeEnabled)
             />
         </div>
         {wateringEnabled
-          ? <span className='option__status-label'>{renderManualWateringInfoLabel()}</span> 
+          ? <RemainingTimeLabel
+              wateringElapsedTime={wateringElapsedTime}
+              deviceSettings={deviceSettings}
+              wateringEnabled={wateringEnabled} />
           : null}
       </div>
       <div className='watering-card__bottom-label'>

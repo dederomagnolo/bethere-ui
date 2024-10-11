@@ -3,7 +3,7 @@ import './styles.scss'
 
 interface ButtonProps extends React.HTMLProps<HTMLButtonElement> {
   children: any,
-  variant?: string
+  variant?: 'primary' | 'cancel'
 }
 
 export const Button: React.FC<ButtonProps> = ({

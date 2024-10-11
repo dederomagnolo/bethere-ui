@@ -29,6 +29,7 @@ import { useFetch } from 'hooks/useFetch'
 
 import '../styles.scss'
 import './styles.scss'
+import { DeviceRealTimeData } from 'types/interfaces'
 
 type SensorBroadcastedMeasure = {
   [key: string]: {
@@ -36,11 +37,6 @@ type SensorBroadcastedMeasure = {
     moisture?: string,
     humidity?: string
   }
-}
-
-type DeviceRealTimeData = { 
-  wateringStatus: { nextTimeSlot: string }, 
-  measures: SensorBroadcastedMeasure[] 
 }
 
 export const Home = () => {
@@ -106,6 +102,8 @@ export const Home = () => {
     if (!loadingOnGetStatus) {
       const receivedData = lastMessage && lastMessage.data
       const parsedData = JSON.parse(receivedData)
+
+      console.log({ parsedData })
   
       _.forEach(parsedData, (deviceRealTimeData, deviceId) => {
         const hasMeasuresData = deviceRealTimeData.measures
@@ -175,7 +173,7 @@ export const Home = () => {
   const mappedDeviceCards =
     _.map(userDevices, (device) => {
       const deviceId = device._id
-      const realTimeData = devicesRealTimeData[deviceId] || {}
+      const realTimeData = devicesRealTimeData[deviceId] || {} as DeviceRealTimeData
       const isDeviceWaitingUpdate = devicesWaitingForUpdate.includes(deviceId)
       return (
         <DeviceCard

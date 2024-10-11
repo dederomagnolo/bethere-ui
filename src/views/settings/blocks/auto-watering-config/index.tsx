@@ -16,7 +16,6 @@ type OptionType = {
 const timeOptions = getTimeOptions()
 
 const getCurrentTimeOption = (timeValue: number) => {
-  console.log(timeValue)
   return _.find(timeOptions, (option) => option.value === timeValue)
 }
 
