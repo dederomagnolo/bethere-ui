@@ -8,7 +8,7 @@ import './styles.scss'
 interface CheckboxProps extends InputHTMLAttributes<HTMLInputElement> {
   onChange: ChangeEventHandler
   initialState?: boolean
-  label: String
+  label?: String
   radio?: boolean
 }
 
@@ -37,7 +37,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({
       checked={checked !== undefined ? checked : internalChecked}
       onChange={(e) => {
         onChange && onChange(e)
-        setInternalChecked(!internalChecked)
+        // setInternalChecked(!internalChecked)
       }} />
       <span className='app-checkbox__checkmark' />
       {label}

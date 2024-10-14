@@ -1,0 +1,130 @@
+.alert-configs {
+  display: flex;
+  flex-direction: column;
+  margin-top: 22px;
+
+  &__button {
+    width: 110px;
+  }
+
+  &__loading {
+    margin-bottom: 20px;
+  }
+
+  &__modal-title {
+    font-size: 16px;
+    font-weight: bold;
+  }
+  
+  .alert-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    margin-top: 16px;
+  
+    .react-select-container {
+      width: 300px;
+    }
+
+    .limit-options {
+      &__container {
+        display: flex;
+        width: 100%;
+        gap: 16px;
+      }
+    }
+
+    &__button-components {
+      margin-top: 20px;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      &__main {
+        gap: 10px;
+        display: flex;
+      }
+    }
+
+    .param-value-input {
+      width: 80px;
+    }
+
+    .name-input {
+      width: 300px;
+    }
+
+    .input-option {
+      .title {
+        margin-bottom: 8px;
+      }
+    }
+  }
+}
+
+.alerts-list {
+  margin-bottom: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  h4 {
+    margin: 0
+  }
+
+  &__grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 12px;
+  }
+
+  .alert {
+    width: 240px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 12px;
+    padding: 6px;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 3px 5px rgba(0, 0, 0, 0.1);
+    flex-direction: column;
+
+    &:hover {
+      transition: all 300ms ease;
+      background-color: rgba(132, 141, 173, 0.116);
+    }
+
+    &.selected {
+      background-color: rgba(132, 141, 173, 0.116);
+    }
+    
+    &__sensor-name {
+      font-weight: 700;
+    }
+
+    &__params {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+  }
+}
+
+.ReactModal__Overlay {
+  z-index: 1;
+}
+
+.ReactModal__Content {
+  height: auto;
+
+  &--after-open {
+    inset: unset !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%);
+  }
+}

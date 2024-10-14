@@ -3,9 +3,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import useWebSocket from 'react-use-websocket'
 import { useNavigate } from 'react-router'
 import _ from 'lodash'
-import moment, { Moment } from 'moment'
 
-import { getToken } from 'redux/user/selectors'
+import { getToken, getUSerInfo } from 'redux/user/selectors'
 import { getUserDevices } from 'redux/device/selectors'
 
 import {
@@ -16,8 +15,6 @@ import {
 import {
   RxUpdate as UpdateIcon
 } from 'react-icons/rx'
-
-import { MdOutlineUpdate as Clock } from 'react-icons/md'
 
 import { WsReadyState } from 'global/consts'
 
@@ -30,6 +27,7 @@ import { useFetch } from 'hooks/useFetch'
 import '../styles.scss'
 import './styles.scss'
 import { DeviceRealTimeData } from 'types/interfaces'
+import { View } from 'components/app-view'
 
 type SensorBroadcastedMeasure = {
   [key: string]: {
@@ -40,8 +38,10 @@ type SensorBroadcastedMeasure = {
 }
 
 export const Home = () => {
+  const userInfo = useSelector(getUSerInfo)
   const userDevices = useSelector(getUserDevices)
-  const token = useSelector(getToken)
+  const { token, firstName } = userInfo
+
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
@@ -102,8 +102,6 @@ export const Home = () => {
     if (!loadingOnGetStatus) {
       const receivedData = lastMessage && lastMessage.data
       const parsedData = JSON.parse(receivedData)
-
-      // console.log({ parsedData })
   
       _.forEach(parsedData, (deviceRealTimeData, deviceId) => {
         const hasMeasuresData = deviceRealTimeData.measures
@@ -187,7 +185,7 @@ export const Home = () => {
     })
   
   return(
-    <div className='page-content home-view'>
+    <View className='page-content home-view' title={firstName ? `Olá, ${firstName}` : 'Olá!'}>
       {renderWebsocketConnectionStatus()}
       <h2>Dispositivos</h2>
       <div className='device-cards'>
@@ -195,6 +193,6 @@ export const Home = () => {
       </div>
       <div className='dashboard'>
       </div>
-    </div>
+    </View>
   )
 }
