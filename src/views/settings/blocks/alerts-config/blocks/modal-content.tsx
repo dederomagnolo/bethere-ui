@@ -4,7 +4,6 @@ import _, { set } from 'lodash'
 
 import { Checkbox, CustomSelect } from 'components'
 
-import { SENSORS } from 'global/consts'
 import { createAlert, deleteAlert, editAlert } from 'services/alerts'
 
 import { InputOption } from 'views/settings/input-option'

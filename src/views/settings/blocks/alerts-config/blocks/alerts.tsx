@@ -27,6 +27,8 @@ export const Alerts = ({
     const operatorLabel = getOperatorLabel(operator)
 
     const alertSensor = _.find(sensors, (sensor) => sensor._id === sensorId)
+
+    if (!alertSensor) return null 
     const model = alertSensor?.model
     const sensorName = alertSensor?.name || model
 
@@ -35,7 +37,8 @@ export const Alerts = ({
 
     const paramTypeInfos =
       _.find(sensorParamsAvailable, (param) => param.type === paramType)
-    const unity = paramTypeInfos.unity
+    
+    const unity = paramTypeInfos?.unity
     const translatedParamType = paramTypeInfos.translatedTypeName || ''
 
     return (

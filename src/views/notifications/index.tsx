@@ -102,7 +102,7 @@ export const NotificationsView = () => {
 
   const renderActions = () => {
     if (loading) return null
-    if (!notifications || notificationsToRender.length === 0) return null
+    if (!notificationsToRender || notificationsToRender.length === 0) return null
 
     if (selectingMode) {
       return (
@@ -134,7 +134,7 @@ export const NotificationsView = () => {
 
   const renderNotificationsList = () => {
     if (loading) return <Loading Component={PuffLoader} /> 
-    if (!notifications || notificationsToRender.length === 0)
+    if (!notificationsToRender || notificationsToRender.length === 0)
       return <div>Você não possui notificações.</div>
 
     return (
