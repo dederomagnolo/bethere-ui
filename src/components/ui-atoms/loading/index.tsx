@@ -1,4 +1,5 @@
 import { TbCircleDotted as ConnectingIcon } from  'react-icons/tb'
+
 import './styles.scss'
 
 export const Loading = ({ Component, size, className }: any) => {

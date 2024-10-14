@@ -1,6 +1,6 @@
 export type FetchAlertsProps = { 
   token: string,
-  deviceId?: string
+  deviceId: string
 }
 
 export type CreateAlertProps = FetchAlertsProps & {

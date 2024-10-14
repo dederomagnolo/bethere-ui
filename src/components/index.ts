@@ -5,7 +5,6 @@ export { DeviceSelector } from './device-selector'
 export { EditIconWithTooltip } from './edit-icon-with-tooltip'
 export { Modal } from './modal'
 export { AppCard } from './app-card'
-export { TabNav } from './tab-nav'
 
 export { 
   Button,

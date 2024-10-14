@@ -12,12 +12,28 @@ import { getToken } from 'redux/user/selectors'
 import { Alert, Sensor } from 'types/interfaces'
 import { allowOnlyNumbers } from 'lib/validations'
 import { Actions } from './actions'
-import { getSensorParamsSelectOptions, sensorSelectOptions } from 'views/settings/functions'
 
 type SelectOptions = {
   label: string
   value: any
 }
+
+const getSensorParamsSelectOptions = (model: string) => {
+  const sensorInfoByModel = SENSORS[model] || {}
+
+  const modelTypesAvailable = _.get(sensorInfoByModel, 'params')
+  const sensorParamOptions = _.map(modelTypesAvailable, (param) => ({
+    value: param.type,
+    label: param.translatedTypeName
+  }))
+
+  return sensorParamOptions
+}
+
+const sensorSelectOptions = (sensors: Sensor[]) => _.map(sensors, (sensor) => ({
+  value: sensor._id,
+  label: sensor.name || sensor.serialKey
+}))
 
 const getDefaultValues = ({ 
   alertToEdit,
