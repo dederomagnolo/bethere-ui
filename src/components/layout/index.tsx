@@ -6,14 +6,24 @@ import { useSelector } from 'react-redux'
 import { ToastContainer } from 'react-toastify'
 
 
-import { Charts, Login, Home, Settings, History } from 'views'
+import {
+  Charts,
+  Login,
+  Home,
+  Settings,
+  History,
+  NewSettingsView,
+  DevicesView,
+  AccountView,
+  BroadcastingView,
+  AutomationView,
+  AlertsView,
+  NotificationsView
+} from 'views'
 
 import { getAuthenticatedStatus, getToken } from 'redux/user/selectors'
 
 import { Menu } from '../menu'
-
-// import { BiUserCircle as UserIcon } from 'react-icons/bi'
-// import { VscMegaphone as NotificationIcon } from "react-icons/vsc"
 
 import './styles.scss'
 import 'react-toastify/dist/ReactToastify.css'
@@ -23,27 +33,48 @@ moment.tz.setDefault('America/Sao_Paulo')
 const routesList = [
   {
     path: 'login',
-    Component: Login
+    Component: Login,
+    public: true
   },
   {
     path: '',
-    Component: (Home),
-    auth: true
+    Component: (Home)
   },
   {
     path: 'configuracoes',
-    Component: Settings,
-    auth: true
+    Component: Settings
+  },
+  {
+    path: 'configuracoes/dispositivos',
+    Component: DevicesView
+  },
+  {
+    path: 'configuracoes/automacao',
+    Component: AutomationView
+  },
+  {
+    path: 'configuracoes/medicoes',
+    Component: BroadcastingView
+  },
+  {
+    path: 'configuracoes/alertas',
+    Component: AlertsView
+  },
+  {
+    path: 'configuracoes/minha-conta',
+    Component: AccountView
   },
   {
     path: 'historico',
-    Component: History,
-    auth: true
+    Component: History
   },
   {
     path: 'graficos',
-    Component: Charts,
-    auth: true
+    Component: Charts
+  },
+  {
+    path: 'notificacoes',
+    Component: NotificationsView
   }
 ]
 
@@ -54,11 +85,11 @@ export const Layout: React.FunctionComponent = () => {
 
   const PageContainer = (Component: any) => {
     const isLoginRoute = location.pathname === '/login'
-    if(isLoginRoute && token && authenticated) {
+    if (isLoginRoute && token && authenticated) {
       return <Navigate to='/' replace={true} />
     }
 
-    if(!authenticated) {
+    if (!authenticated) {
       return isLoginRoute ? <Component /> : <Navigate to='/login' replace={true} />
     }
     
@@ -78,12 +109,6 @@ export const Layout: React.FunctionComponent = () => {
   return (
     <div className='app-layout'>
       {authenticated && <Menu />}
-      {/* <div className='user-toolbar'>
-        <div className='user-toolbar__icon-container'>
-          <NotificationIcon />
-          <UserIcon />
-        </div>
-      </div> */}
       <Routes>
         {routes}
       </Routes>

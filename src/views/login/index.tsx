@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch,  useSelector } from 'react-redux'
-import { resetGlobalState } from 'react-use-websocket';
+import { resetGlobalState } from 'react-use-websocket'
 import _ from 'lodash'
 
 import {
@@ -69,7 +69,7 @@ export const Login = () => {
         const token = _.get(res, 'token')
         const userId = _.get(res, 'user._id')
         
-        dispatch(setUserInfo({ token, userId, authenticated: true }))
+        dispatch(setUserInfo({ token, userId, authenticated: true, firstName: res.user.firstName }))
 
         const devices = _.get(res, 'user.devices')
         dispatch(setUserDevices(devices))

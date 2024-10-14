@@ -1,26 +1,24 @@
+@import 'styles/breakpoints.scss';
+
+.page-container {
+  background-color: white;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 10px 10px 80px 10px;
+  height: 100%;
+
+  @include md {
+    padding: 30px 42px 0 50px;
+    min-height: 100vh;
+    border-radius: 14px 0 0 14px;
+    z-index: 1;
+    margin-left: 110px;
+  }
+}
+
 .app-layout {
   display: flex;
   width: 100%;
   height: 100%;
-  flex-direction: column;
-}
-
-.user-toolbar {
-  display: flex;
-  width: 100%;
-  justify-content: flex-end;
-
-  &__icon-container {
-    display: flex;
-    gap: 14px;
-    padding-top: 22px;
-    padding-right: 22px;
-    padding-bottom: 14px;
-    color: rgb(128, 128, 128);
-
-    svg {
-      width: 25px;
-      height: 25px;
-    }
-  }
+  background-color: #0DA1BC;
 }

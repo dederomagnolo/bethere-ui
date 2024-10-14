@@ -16,7 +16,7 @@ export interface Alert {
 
 export interface Sensor {
   _id: string
-  deviceId: string
+  linkedWith: string
   name: string
   model: string // should crate ENUM
   serialKey: string
@@ -31,6 +31,7 @@ export interface Actuator {
 	createdAt: string
 	status: boolean // should be removed
 	enabled: boolean
+	automationId?: string
 }
 
 export interface Settings {
@@ -103,5 +104,47 @@ export type DeviceRealTimeData = {
     nextTimeSlot: string
     wateringElapsedTime: number
   }
+}
+
+export interface Automation {
+	_id: string
+	type: number
+	name?: string
+	timer: {
+		startTime: number
+		endTime: number
+		continuous?: boolean
+		interval: number
+		duration: number
+		intervalInHours?: boolean
+		enabled: boolean
+	},
+	trigger: {
+		startTime: number
+		endTime: number
+		continuous?: boolean,
+		operator: number // add enum
+		paramType: number // add enum
+		duration: number
+		setPoint: number,
+		sensorId: string,
+		intervalBetweenCycles: string,
+		enabled: boolean
+	}
+}
+
+export interface Notification {
+	_id: string
+	createdAt: string
+	deviceId: string
+	isRead: boolean
+	type: string
+	userId: string
+	sentByEmail: boolean
+	generatedBy: string
+	content: {
+		title?: string
+		message: string
+	}
 }
 
