@@ -1,7 +1,8 @@
 type UserInfoProps = { 
-  token: String
-  userId: String
-  authenticated: Boolean
+  token: string
+  userId: string
+  authenticated: boolean
+  firstName: string
 }
 
 export const setUserInfo = (payload: UserInfoProps) => {

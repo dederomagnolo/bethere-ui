@@ -5,7 +5,7 @@ import './styles.scss'
 import { useState } from 'react'
 import { TimerFields } from 'views/automation/timer-fields'
 import { createAutomationProgram } from 'services/automation'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { getToken } from 'redux/user/selectors'
 
 interface Props {
@@ -17,6 +17,7 @@ export const Form = ({
   program,
   onCancel
 }: Props) => {
+  const dispatch = useDispatch()
   const token = useSelector(getToken)
   const initialState = {
     name: program?.name,
@@ -25,6 +26,7 @@ export const Form = ({
   }
 
   const [fields, setFields] = useState(initialState)
+  const [loading, setLoading] = useState(false)
 
   const setTimerFields = (editedTimerObj: Automation['timer']) => {
     setFields({ ...fields, timer: { ...fields.timer, ...editedTimerObj } })
@@ -53,10 +55,21 @@ export const Form = ({
   }
 
   const handleSaveOrEditProgram = async () => {
-    return await createAutomationProgram({
-      token,
-      ...fields
-    })
+    try {
+      setLoading(true)
+
+      const res = await createAutomationProgram({
+        token,
+        ...fields
+      })
+
+      if (res) {
+        setLoading(false)
+        // dispatch()
+      }
+    } catch (err) {
+      console.error(err)
+    }
   }
 
   return (

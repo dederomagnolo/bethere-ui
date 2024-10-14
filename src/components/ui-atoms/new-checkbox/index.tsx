@@ -6,22 +6,22 @@ import { useState,
 import './styles.scss'
 
 interface CheckboxProps extends InputHTMLAttributes<HTMLInputElement> {
-  onChange: ChangeEventHandler
+  onChange?: ChangeEventHandler
   initialState?: boolean
   label?: String
   radio?: boolean
+  onToggle: ({ checked }: { checked: boolean }) => void 
 }
 
-export const Checkbox: React.FC<CheckboxProps> = ({
+export const NewCheckbox: React.FC<CheckboxProps> = ({
   initialState,
-  onChange,
   label,
   className,
   radio,
   value,
   name,
-  checked,
-  disabled
+  disabled,
+  onToggle
 }) => {
   const [internalChecked, setInternalChecked] = useState(initialState)
 
@@ -34,10 +34,11 @@ export const Checkbox: React.FC<CheckboxProps> = ({
       id='app-checkbox'
       className='app-checkbox__input'
       type={radio ? 'radio' : 'checkbox'}
-      checked={checked !== undefined ? checked : internalChecked}
+      checked={internalChecked}
       onChange={(e) => {
-        onChange && onChange(e)
-        // setInternalChecked(!internalChecked)
+        const checked = e.target.checked
+        setInternalChecked(checked)
+        onToggle && onToggle({ checked })
       }} />
       <span className='app-checkbox__checkmark' />
       {label}
