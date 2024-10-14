@@ -11,7 +11,8 @@ const initialState = {
   token: '123',
   authenticated: false,
   username: '',
-  userId: ''
+  userId: '',
+  firstName: ''
 }
 
 export const UserReducer = (

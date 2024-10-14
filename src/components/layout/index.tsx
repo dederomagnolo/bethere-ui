@@ -17,15 +17,13 @@ import {
   AccountView,
   BroadcastingView,
   AutomationView,
-  AlertsView
+  AlertsView,
+  NotificationsView
 } from 'views'
 
 import { getAuthenticatedStatus, getToken } from 'redux/user/selectors'
 
 import { Menu } from '../menu'
-
-// import { BiUserCircle as UserIcon } from 'react-icons/bi'
-// import { VscMegaphone as NotificationIcon } from "react-icons/vsc"
 
 import './styles.scss'
 import 'react-toastify/dist/ReactToastify.css'
@@ -44,7 +42,7 @@ const routesList = [
   },
   {
     path: 'configuracoes',
-    Component: NewSettingsView
+    Component: Settings
   },
   {
     path: 'configuracoes/dispositivos',
@@ -73,6 +71,10 @@ const routesList = [
   {
     path: 'graficos',
     Component: Charts
+  },
+  {
+    path: 'notificacoes',
+    Component: NotificationsView
   }
 ]
 
@@ -107,12 +109,6 @@ export const Layout: React.FunctionComponent = () => {
   return (
     <div className='app-layout'>
       {authenticated && <Menu />}
-      {/* <div className='user-toolbar'>
-        <div className='user-toolbar__icon-container'>
-          <NotificationIcon />
-          <UserIcon />
-        </div>
-      </div> */}
       <Routes>
         {routes}
       </Routes>

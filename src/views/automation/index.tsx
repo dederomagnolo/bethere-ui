@@ -8,7 +8,7 @@ import { getToken } from 'redux/user/selectors'
 import { fetchAutomationRoutines } from 'services/automation'
 import { Card } from './blocks/card'
 
-import { Actuator, Automation } from 'types/interfaces'
+import { Automation } from 'types/interfaces'
 import './styles.scss'
 import { Button, TabNav } from 'components'
 import { General } from './general'
@@ -22,6 +22,7 @@ export const AutomationView = () => {
   const [tabOption, setTabOption] = useState(0)
 
   const [programs, setPrograms] = useState<Automation[]>([])
+
   const { loading } = useFetch(async () => {
     const response = await fetchAutomationRoutines({
       token

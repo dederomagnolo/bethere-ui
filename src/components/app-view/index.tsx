@@ -1,3 +1,4 @@
+import { NotificationButton } from 'components/notification-button'
 import './styles.scss'
 
 export const View = ({
@@ -7,7 +8,10 @@ export const View = ({
 }: any) => {
   return (
     <div className={`app-view ${className}`}>
-      <h2 className='app-view__title'>{title}</h2>
+      <div className='app-view__header'>
+        <h2 className='app-view__title'>{title}</h2>
+        <NotificationButton />
+      </div>
       <div className='app-view__content'>
         {children}
       </div>

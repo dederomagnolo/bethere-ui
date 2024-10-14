@@ -16,7 +16,7 @@ export interface Alert {
 
 export interface Sensor {
   _id: string
-  deviceId: string
+  linkedWith: string
   name: string
   model: string // should crate ENUM
   serialKey: string
@@ -130,6 +130,21 @@ export interface Automation {
 		sensorId: string,
 		intervalBetweenCycles: string,
 		enabled: boolean
+	}
+}
+
+export interface Notification {
+	_id: string
+	createdAt: string
+	deviceId: string
+	isRead: boolean
+	type: string
+	userId: string
+	sentByEmail: boolean
+	generatedBy: string
+	content: {
+		title?: string
+		message: string
 	}
 }
 
