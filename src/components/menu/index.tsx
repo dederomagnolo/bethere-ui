@@ -153,7 +153,7 @@ export const Menu: React.FunctionComponent<MenuProps> = () => {
   
   return (
     <div className={menuContainerClassname}>
-      {/* {renderExpandMenuButton()} */}
+      {renderExpandMenuButton()}
       <div className='logo-container'>
         <img
           className={logoClassname}

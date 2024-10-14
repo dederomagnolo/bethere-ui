@@ -108,7 +108,6 @@ export const Charts = () => {
 
     return (
       <ChartWithFilters
-        key={type}
         secondBatch={commandData}
         setFilters={setFilters}
         filters={filters}

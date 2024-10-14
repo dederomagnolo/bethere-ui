@@ -21,7 +21,7 @@ export const InputOption = ({
   error,
   disabled = false
 } : InputProps & { 
-  title?: string,
+  title: string,
   onSave?: MouseEventHandler
   onEdit?: MouseEventHandler
   onCancel?: MouseEventHandler
@@ -41,7 +41,7 @@ export const InputOption = ({
 
   return (
     <div className='input-option' key={name}>
-      {title && <div className='input-title'>{title}</div>}
+      <div className='title'>{title}</div>
       <Input
         onBlur={onBlur}
         error={error}

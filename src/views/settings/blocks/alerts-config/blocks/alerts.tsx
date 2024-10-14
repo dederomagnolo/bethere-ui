@@ -2,13 +2,21 @@ import _ from 'lodash'
 import { SENSORS } from 'global/consts'
 
 import { Alert, Sensor, Operators } from 'types/interfaces'
-import { getOperatorLabel } from 'views/settings/functions'
+
 
 type AlertsListProps = {
   alerts: Alert[],
   sensors: Sensor[]
   handleAlertClick: Function
   selectedAlert: Alert
+}
+
+const getOperatorLabel = (operator: Operators | undefined) => {
+  if (operator === Operators.GREATER_THAN) {
+    return 'maior que'
+  }
+
+  return 'menor que'
 }
 
 export const Alerts = ({
