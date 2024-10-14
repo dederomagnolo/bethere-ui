@@ -66,7 +66,7 @@ export const Alerts = ({
 
   return (
     <div className='alerts-list'>
-      <h4>Meus Alertas ({alerts.length})</h4>
+      <h4>Meus Alertas ({_.compact(mappedAlerts).length})</h4>
       <div className='alerts-list__grid'>
         {mappedAlerts}
       </div>
