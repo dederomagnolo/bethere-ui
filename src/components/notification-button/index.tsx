@@ -1,17 +1,18 @@
 import { useRef, useState } from 'react'
+import moment from 'moment'
+import { NavLink } from 'react-router-dom'
 import _ from 'lodash'
 import {
   MdCircleNotifications as BellIcon
 } from 'react-icons/md'
 import { Tooltip } from 'react-tooltip'
 
-import './styles.scss'
 import { useFetch } from 'hooks/useFetch'
 import { fetchUserNotifications } from 'services/notifications'
 import { Notification } from 'types/interfaces'
 import { useOutsideHandler } from 'hooks/useOutsideClickHandler'
-import moment from 'moment'
-import { NavLink } from 'react-router-dom'
+
+import './styles.scss'
 
 export const NotificationButton = () => {
   const containerRef = useRef(null)
@@ -47,7 +48,7 @@ export const NotificationButton = () => {
           className='notifications-button__container'
           ref={containerRef}>
           <h2>Notificações</h2>
-          {_.isEmpty(notifications) ? null :
+          {_.isEmpty(notifications) ? <div>Você não possui notificações.</div> :
             (<ul className='notifications-list'>
               {_.map(notifications, (item: Notification) => {
                 const { 
@@ -67,7 +68,9 @@ export const NotificationButton = () => {
                 )
               })}
             </ul>)}
-          <NavLink to='/notificacoes'>Ver mais</NavLink>
+          <NavLink
+            className='navigation-link'
+            to='/notificacoes'>Ver mais</NavLink>
         </div>) : null}
     </div>
   )

@@ -32,6 +32,16 @@
     min-width: 300px;
     padding: 10px;
 
+    .navigation-link {
+      color: #84969c;
+      text-decoration: none;
+      margin-top: 25px;
+
+      &:hover {
+        color: #074357;
+      }
+    }
+
     .notifications-list {
       padding: 0;
       display: flex;

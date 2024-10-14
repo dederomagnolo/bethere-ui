@@ -29,7 +29,7 @@ export const NotificationsView = () => {
   const [notificationsToDelete, setNotificationsToDelete] = useState<string[]>([])
   const [readingLoading, setReadingLoading] = useState<string[]>([])
   const [notificationsToRender, setNotificationsToRender] = useState<Notification[]>([])
-  
+
   const {
     loading,
     data: {
@@ -102,6 +102,7 @@ export const NotificationsView = () => {
 
   const renderActions = () => {
     if (loading) return null
+    if (!notifications || notificationsToRender.length === 0) return null
 
     if (selectingMode) {
       return (
@@ -131,48 +132,55 @@ export const NotificationsView = () => {
     )
   }
 
+  const renderNotificationsList = () => {
+    if (loading) return <Loading Component={PuffLoader} /> 
+    if (!notifications || notificationsToRender.length === 0)
+      return <div>Você não possui notificações.</div>
+
+    return (
+      <ul className='notifications'>
+        {_.map(notificationsToRender, (item: Notification) => {
+          const { content: { title = '', message = ''} } = item
+          const isRead = item.isRead
+          return (
+            <li
+              onMouseLeave={
+                () => isRead ? null : handleReadNotificationOnHover(item._id)
+              }
+              key={item._id}
+              className='notifications__item '>
+              <div className='notification-content'>
+                {selectingMode ? <NewCheckbox
+                  initialState={false}
+                  onToggle={({ checked }) => handleSelectToDelete({
+                    checked,
+                    notificationIdToDelete: item._id
+                  })} /> : null}
+                <div className='notification-content__info'>
+                  <div className='notification-content__date'>
+                    {moment(item.createdAt).format('DD/MM/YY[,] h:mm a')}
+                  </div>
+                  <div>
+                    <h4>{title}</h4>
+                    <div>{message}</div>
+                  </div>
+                </div>
+              </div>
+              {isRead ? null : <div className='notification-indicator' />}
+            </li>
+          )
+        })}
+      </ul>
+    )
+  }
+
   return (
     <View title='Notificações' className='notifications-view'>
       {pages ? <Paginator
         forcePage={selectedPage - 1}
         numberOfPages={pages}
         onChange={handleChangePage} /> : null}
-      {loading 
-        ? <Loading Component={PuffLoader} /> 
-        : (
-        <ul className='notifications'>
-          {_.map(notificationsToRender, (item: Notification) => {
-            const { content: { title = '', message = ''} } = item
-            const isRead = item.isRead
-            return (
-              <li
-                onMouseLeave={
-                  () => isRead ? null : handleReadNotificationOnHover(item._id)
-                }
-                key={item._id}
-                className='notifications__item '>
-                <div className='notification-content'>
-                  {selectingMode ? <NewCheckbox
-                    initialState={false}
-                    onToggle={({ checked }) => handleSelectToDelete({
-                      checked,
-                      notificationIdToDelete: item._id
-                    })} /> : null}
-                  <div className='notification-content__info'>
-                    <div className='notification-content__date'>
-                      {moment(item.createdAt).format('DD/MM/YY[,] h:mm a')}
-                    </div>
-                    <div>
-                      <h4>{title}</h4>
-                      <div>{message}</div>
-                    </div>
-                  </div>
-                </div>
-                {isRead ? null : <div className='notification-indicator' />}
-              </li>
-            )
-          })}
-        </ul>)}
+      {renderNotificationsList()}
       {renderActions()}
     </View>
   )
