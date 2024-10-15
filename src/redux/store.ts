@@ -14,11 +14,13 @@ import storage from 'redux-persist/lib/storage'
 import { GlobalReducer } from './global/reducer'
 import { UserReducer } from './user/reducer'
 import { DeviceReducer } from './device/reducer'
+import { NotificationsReducer } from './notifications/reducer'
 
 export const reducers = combineReducers({
   user: UserReducer,
   devices: DeviceReducer,
-  global: GlobalReducer
+  global: GlobalReducer,
+  notifications: NotificationsReducer
 }) as Reducer<unknown, Action<any>>
 
 const persistConfig = {

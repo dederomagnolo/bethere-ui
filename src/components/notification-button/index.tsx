@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import moment from 'moment'
 import { NavLink } from 'react-router-dom'
 import _ from 'lodash'
@@ -13,15 +13,26 @@ import { Notification } from 'types/interfaces'
 import { useOutsideHandler } from 'hooks/useOutsideClickHandler'
 
 import './styles.scss'
+import { useDispatch, useSelector } from 'react-redux'
+import { setNotifications } from 'redux/notifications/actions'
+import { getNotifications } from 'redux/notifications/selectors'
 
 export const NotificationButton = () => {
   const containerRef = useRef(null)
+  const dispatch = useDispatch()
+  const notificationsFromStore = useSelector(getNotifications)
   const [showContainer, setShowContainer] = useState(false)
   const { 
     data: {
       data: notifications
     }
-  } = useFetch((args: any) => fetchUserNotifications({ ...args, limit: 3 }), [])
+  } = useFetch(async (args: any) => {
+    return await fetchUserNotifications({ ...args, page: 1 })
+  }, [])
+
+  useEffect(() => {
+    dispatch(setNotifications(notifications))
+  }, [notifications])
 
   useOutsideHandler(containerRef, () => setShowContainer(false));
 
@@ -50,8 +61,9 @@ export const NotificationButton = () => {
           <h2>Notificações</h2>
           {_.isEmpty(notifications) ? <div>Você não possui notificações.</div> :
             (<ul className='notifications-list'>
-              {_.map(notifications, (item: Notification) => {
+              {_.map(notificationsFromStore.slice(1,4), (item: Notification) => {
                 const { 
+                  isRead,
                   content: { 
                     title = '',
                     message = ''
@@ -61,9 +73,16 @@ export const NotificationButton = () => {
                   <li
                     key={item._id}
                     className='notifications-list__item'>
-                    <div>{moment(item.createdAt).format('DD/MM/YY[,] h:mm a')}</div>
-                    <h4>{title}</h4>
-                    <div>{message}</div>
+                    <div className='notification-content__info'>
+                      <div className='notification-content__date'>
+                        {moment(item.createdAt).format('DD/MM/YY[,] h:mm a')}
+                      </div>
+                      <div>
+                        <h4>{title}</h4>
+                        <div>{message}</div>
+                      </div>
+                    </div>
+                    {isRead ? null : <div className='notification-indicator' />}
                   </li>
                 )
               })}

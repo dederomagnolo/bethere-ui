@@ -2,6 +2,13 @@
   z-index: 1;
   position: relative;
 
+  .notification-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: red;
+  }
+
   &__icon {
     position: relative;
     svg {
@@ -12,10 +19,6 @@
       position: absolute;
       bottom: 20%;
       right: 0;
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      background-color: red;
     }
   }
 
@@ -49,6 +52,8 @@
       list-style: none;
 
       &__item {
+        align-items: center;
+        display: flex;
         padding-top: 15px;
         padding-bottom: 15px;
         border-top: solid 1px #dcdcdc;
@@ -61,6 +66,25 @@
         h4 {
           margin-top: 0;
           margin-bottom: 4px;
+        }
+
+        .notification-content {
+          display: flex;
+          align-items: center;
+          gap: 30px;
+
+          &__info {
+            width: 95%;
+          }
+  
+          &__mini-label {
+            font-size: 10px;
+          }
+  
+          &__date {
+            color: rgb(131, 131, 131);
+            margin-bottom: 15px;
+          }
         }
       }
     }

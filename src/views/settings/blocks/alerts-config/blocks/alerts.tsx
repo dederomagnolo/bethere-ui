@@ -37,7 +37,7 @@ export const Alerts = ({
     const sensorParamsAvailable = _.get(sensorInfo, 'params')
     
     const paramTypeInfos =
-    _.find(sensorParamsAvailable, (param) => param.type === getParamTypeFromNumber(paramType))
+      _.find(sensorParamsAvailable, (param) => param.type === getParamTypeFromNumber(paramType))
     
     const unity = paramTypeInfos?.unity
     const translatedParamType = paramTypeInfos?.translatedTypeName || ''
