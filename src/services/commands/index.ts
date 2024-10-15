@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import callApi from 'services/callApi'
 import { tryToCallService } from 'services/fetch'
 

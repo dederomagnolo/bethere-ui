@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import useWebSocket from 'react-use-websocket'
-import { useNavigate } from 'react-router'
 import _ from 'lodash'
 
-import { getToken, getUSerInfo } from 'redux/user/selectors'
+import { getUSerInfo } from 'redux/user/selectors'
 import { getUserDevices } from 'redux/device/selectors'
 
 import {
@@ -31,21 +30,12 @@ import { View } from 'components/app-view'
 import { fetchUserDevices } from 'services/devices'
 import { setUserDevices } from 'redux/device/actions'
 
-type SensorBroadcastedMeasure = {
-  [key: string]: {
-    temperature?: string,
-    moisture?: string,
-    humidity?: string
-  }
-}
-
 export const Home = () => {
   const userInfo = useSelector(getUSerInfo)
   const userDevices = useSelector(getUserDevices)
   const { token, firstName } = userInfo
 
   const dispatch = useDispatch()
-  const navigate = useNavigate()
 
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState({ type: '' })

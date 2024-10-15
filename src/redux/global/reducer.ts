@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import { GlobalState } from './interface'
 
 const initialState = {

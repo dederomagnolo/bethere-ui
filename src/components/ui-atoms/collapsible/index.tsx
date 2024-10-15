@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import Collapsible from 'react-collapsible';
 
 import { 

@@ -24,10 +24,6 @@ const minutesToHours = (valueInMinutes: number) => {
   return hours < 1 ? 1 : hours
 }
 
-const hoursToMinutes = (valueInHours: number) => {
-  return valueInHours * 60
-}
-
 export const AutoWateringConfig = ({
   automationSettings = {},
   saveChanges

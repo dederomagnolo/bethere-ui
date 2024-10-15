@@ -1,7 +1,3 @@
-import { 
-  HiCog as Cog
-} from 'react-icons/hi'
-
 import {
   BiStation as OnlineIcon
 } from 'react-icons/bi'

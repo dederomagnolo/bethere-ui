@@ -11,7 +11,7 @@ import { NEW_COMMANDS } from 'global/consts'
 
 import { Actuator, ActuatorRealTimeData, Settings } from 'types/interfaces'
 
-import { getStatusFromLocalStation, writeCommand } from 'services/local-station'
+import { writeCommand } from 'services/local-station'
 
 import { getToken } from 'redux/user/selectors'
 
@@ -62,44 +62,51 @@ export const ActuatorCard = ({
     }
   } = deviceSettings
 
+  const [dynamicLastActivated, setDynamicLastActivated] = useState(lastActivated)
   const [dynamicCountdownInMs, setDynamicCountdownInMs] = useState<number | undefined>(undefined)
   const [manualOperationEnabled, setManualOperationEnabled] = useState(manualRelayEnabled)
   const [autoModeEnabled, setAutoModeEnabled] = useState(autoWateringModeEnabled)
+
+  const setDynamicCountdownBasedOnAuto = () => {
+    const willEndAt = moment(lastActivated).add(deviceSettings.automation.duration, 'minutes')
+    const diff = moment(willEndAt).diff(moment(), 'milliseconds')
+
+    setDynamicCountdownInMs(diff)
+  }
+
+  const setDynamicCountdownBasedOnManual = () => {
+    const willEndAt = moment().add(deviceSettings.wateringTimer, 'minutes')
+    const diff = moment(willEndAt).diff(moment(), 'milliseconds')
+
+    setDynamicCountdownInMs(diff)
+  }
 
   useEffect(() => {
     if (!manualRelayEnabled && manualOperationEnabled) {
       setManualOperationEnabled(false)
     }
+
+    if (autoRelayEnabled) {
+      setDynamicCountdownBasedOnAuto()
+    }
   }, [autoRelayEnabled, manualRelayEnabled])
 
   useEffect(() => {
-
     if (manualOperationEnabled) {
-      const willEndAt = moment(lastActivated).add(deviceSettings.wateringTimer, 'minutes')
-      const diff = moment(willEndAt).diff(moment(), 'milliseconds')
-      // console.log({ 
-      //   willEndAt: willEndAt.format('hh:mm:ss'),
-      //   lastActivated, 
-      //   current: moment().format('hh:mm:ss') 
-      // })
-
-      setDynamicCountdownInMs(diff)
+      setDynamicCountdownBasedOnManual()
     }
 
-    console.log({ autoRelayEnabled})
-
     if (autoRelayEnabled) {
-      console.log({ lastActivated })
-      const willEndAt = moment(lastActivated).add(deviceSettings.automation.duration, 'minutes')
-      const diff = moment(willEndAt).diff(moment(), 'milliseconds')
+      setDynamicCountdownBasedOnAuto()
+    }
 
-      setDynamicCountdownInMs(diff)
+    if (!autoRelayEnabled || !manualOperationEnabled) {
+      setDynamicLastActivated(lastActivated)
     }
   }, [lastActivated])
 
-  const actuatorLastActivatedAt = actuator.lastActivated
-  const formattedLastActivated = moment(actuatorLastActivatedAt).isValid()
-    ? moment(actuatorLastActivatedAt).format("DD/MM/YY, HH:mm")
+  const formattedLastActivated = moment(dynamicLastActivated).isValid()
+    ? moment(dynamicLastActivated).format("DD/MM/YY, HH:mm")
     : 'Sem registro'
 
   const handleSendAutoCommand = async () => {
@@ -145,15 +152,7 @@ export const ActuatorCard = ({
       if (res) {
         setManualOperationEnabled(!manualOperationEnabled)
 
-        const willEndAt = moment().add(deviceSettings.wateringTimer, 'minutes')
-        const diff = moment(willEndAt).diff(moment(), 'milliseconds')
-        // console.log({ 
-        //   willEndAt: willEndAt.format('hh:mm:ss'),
-        //   lastActivated, 
-        //   current: moment().format('hh:mm:ss') 
-        // })
-
-        setDynamicCountdownInMs(diff)
+        setDynamicCountdownBasedOnManual()
       }
     }
   }

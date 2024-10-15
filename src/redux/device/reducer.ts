@@ -1,5 +1,3 @@
-import _ from 'lodash'
-
 interface DeviceState {
   userDevices: any
 }

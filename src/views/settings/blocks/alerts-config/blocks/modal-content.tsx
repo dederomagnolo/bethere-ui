@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import _, { set } from 'lodash'
+import _ from 'lodash'
 
 import { Checkbox, CustomSelect } from 'components'
 

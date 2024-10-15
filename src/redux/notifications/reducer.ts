@@ -1,5 +1,3 @@
-import _ from 'lodash'
-import { Notification } from 'types/interfaces'
 const initialState = {
   notifications: []
 }

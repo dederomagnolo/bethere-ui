@@ -1,5 +1,3 @@
-import _ from 'lodash'
-
 interface UserState {
   token: String
   username: String,

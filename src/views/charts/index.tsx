@@ -17,7 +17,7 @@ import * as XLSX from 'xlsx'
 import { saveAs } from 'file-saver'
 
 import './styles.scss'
-import { COMMAND_CATEGORIES, MEASURE_TYPES, NEW_COMMANDS } from 'global/consts'
+import { COMMAND_CATEGORIES, MEASURE_TYPES } from 'global/consts'
 import { ChartWithFilters } from './chart-with-filters'
 
 import { Filter, buildDataToPlot } from './utils/build-data-to-plot'
