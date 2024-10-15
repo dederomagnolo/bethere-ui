@@ -59,10 +59,10 @@ export const NotificationButton = () => {
           className='notifications-button__container'
           ref={containerRef}>
           <h2>Notificações</h2>
-          {_.isEmpty(notifications) ? <div>Você não possui notificações.</div> :
+          {!notificationsFromStore.length ? <div>Você não possui notificações.</div> :
             (<ul className='notifications-list'>
               {_.map(notificationsFromStore.slice(1,4), (item: Notification) => {
-                const { 
+                const {
                   isRead,
                   content: { 
                     title = '',
@@ -89,7 +89,9 @@ export const NotificationButton = () => {
             </ul>)}
           <NavLink
             className='navigation-link'
-            to='/notificacoes'>Ver mais</NavLink>
+            to='/notificacoes'>
+              Ver mais
+          </NavLink>
         </div>) : null}
     </div>
   )

@@ -5,15 +5,18 @@ const initialState = {
 }
 
 export const NotificationsReducer = (
-  state: any, 
+  state: any = {}, 
   action: any
 ) => {
   switch (action.type) {
     case('SET_NOTIFICATIONS'):
-      return { ...state, notifications: action.payload }
+      return {
+        ...state,
+        notifications: action.payload
+      }
     case('CLEAR_NOTIFICATIONS_STATE'):
       return { ...initialState }
     default:
-      return initialState
+      return state
   }
 }
