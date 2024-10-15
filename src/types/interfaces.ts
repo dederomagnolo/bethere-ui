@@ -1,3 +1,5 @@
+import { ParamType } from "./enums"
+
 export enum Operators {
   LESS_THAN = 0,
   GREATER_THAN = 1
@@ -7,7 +9,7 @@ export interface Alert {
   _id: string
   alertId: string
   sensorId: string
-  paramType: string
+  paramType: ParamType
   alertValue: string
   alertName: string
   operator: Operators

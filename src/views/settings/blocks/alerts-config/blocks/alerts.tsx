@@ -3,6 +3,7 @@ import { SENSORS } from 'global/consts'
 
 import { Alert, Sensor, Operators } from 'types/interfaces'
 import { getOperatorLabel } from 'views/settings/functions'
+import { getParamTypeFromNumber } from 'types/functions'
 
 type AlertsListProps = {
   alerts: Alert[],
@@ -34,12 +35,12 @@ export const Alerts = ({
 
     const sensorInfo = model ? SENSORS[model] : {}
     const sensorParamsAvailable = _.get(sensorInfo, 'params')
-
+    
     const paramTypeInfos =
-      _.find(sensorParamsAvailable, (param) => param.type === paramType)
+    _.find(sensorParamsAvailable, (param) => param.type === getParamTypeFromNumber(paramType))
     
     const unity = paramTypeInfos?.unity
-    const translatedParamType = paramTypeInfos.translatedTypeName || ''
+    const translatedParamType = paramTypeInfos?.translatedTypeName || ''
 
     return (
       <div

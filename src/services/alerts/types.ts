@@ -1,3 +1,5 @@
+import { ParamType } from 'types/enums'
+
 export type FetchAlertsProps = { 
   token: string,
   deviceId?: string
@@ -6,7 +8,7 @@ export type FetchAlertsProps = {
 export type CreateAlertProps = FetchAlertsProps & {
   sensorId: string,
   alertName: string,
-  paramType: string,
+  paramType: ParamType,
   value: string,
   operator: number
 }

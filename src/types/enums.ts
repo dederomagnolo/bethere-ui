@@ -4,7 +4,8 @@ export enum AutomationType {
 }
 
 export enum ParamType {
-  TEMPERATURE = 'temperature',
-  RELATIVE_HUMIDITY = 'humidity',
-  MOISTURE = 'moisture'
+  UNDEFINED = -1,
+  TEMPERATURE = 0,
+  RELATIVE_HUMIDITY = 1,
+  MOISTURE = 2
 }

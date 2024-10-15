@@ -23,7 +23,7 @@ const alertInitialState = {
   _id: '',
   alertId: '',
   sensorId: '',
-  paramType: '',
+  paramType: -1,
   alertValue: '',
   alertName: '',
   value: '',

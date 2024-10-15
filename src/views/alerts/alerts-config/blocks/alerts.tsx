@@ -1,8 +1,9 @@
 import _ from 'lodash'
 import { SENSORS } from 'global/consts'
 
-import { Alert, Sensor, Operators } from 'types/interfaces'
+import { Alert, Sensor } from 'types/interfaces'
 import { getOperatorLabel } from 'views/settings/functions'
+import { getParamTypeFromNumber } from 'types/functions'
 
 type AlertsListProps = {
   alerts: Alert[],
@@ -32,7 +33,9 @@ export const Alerts = ({
     const sensorParamsAvailable = _.get(sensorInfo, 'params')
 
     const paramTypeInfos =
-      _.find(sensorParamsAvailable, (param) => param.type === paramType)
+      _.find(sensorParamsAvailable, (param) => param.type === getParamTypeFromNumber(paramType))
+    
+    console.log({paramTypeInfos})
     const unity = paramTypeInfos.unity
     const translatedParamType = paramTypeInfos.translatedTypeName || ''
 

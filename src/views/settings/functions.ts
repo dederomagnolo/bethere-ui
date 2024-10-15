@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import { SENSORS } from 'global/consts'
 import { Operators, Sensor } from 'types/interfaces'
+import { convertParamTypeToNumber } from 'types/functions';
 
 
 export const getTimeOptions = () => {
@@ -29,7 +30,7 @@ export const getSensorParamsSelectOptions = (model: string) => {
 
   const modelTypesAvailable = _.get(sensorInfoByModel, 'params')
   const sensorParamOptions = _.map(modelTypesAvailable, (param) => ({
-    value: param.type,
+    value: convertParamTypeToNumber(param.type), //TODO: migrate type from measures to remove this kind of conversion
     label: param.translatedTypeName
   }))
 
