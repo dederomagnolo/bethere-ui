@@ -3,6 +3,7 @@ export type CommandFromTo = {
   paramLabel: string
   from: string | number | boolean
   to: string | number | boolean
+  _id: string
 }
 
 export interface CommandType {

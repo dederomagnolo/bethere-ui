@@ -28,6 +28,8 @@ import '../styles.scss'
 import './styles.scss'
 import { DeviceRealTimeData } from 'types/interfaces'
 import { View } from 'components/app-view'
+import { fetchUserDevices } from 'services/devices'
+import { setUserDevices } from 'redux/device/actions'
 
 type SensorBroadcastedMeasure = {
   [key: string]: {
@@ -60,6 +62,11 @@ export const Home = () => {
     if (!connectionTimedOut) {
       setLoading(true)
       await getStatusFromLocalStation({ token })
+      const res = await fetchUserDevices({ token })
+
+      if (res) {
+        dispatch(setUserDevices(res))
+      }
     }
   }, [connectionTimedOut])
 

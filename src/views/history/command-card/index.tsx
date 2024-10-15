@@ -55,7 +55,7 @@ export const CommandCard: React.FC<CommandCardProps> = ({ command }) => {
 
   const statusClassName = `command-card__info--${STATE ? commandStatusType[STATE] : ''}`
 
-  const mappedCommandHistory = _.map(changedValues, ({ from, to, paramLabel, paramPath }) => {
+  const mappedCommandHistory = _.map(changedValues, ({ from, to, paramLabel, paramPath, _id }) => {
     const unity = _.get(PARAM_UNITIES, paramPath)
 
     let normalizedFromTo = { from, to }
@@ -70,7 +70,7 @@ export const CommandCard: React.FC<CommandCardProps> = ({ command }) => {
     const showUnity = unity === 'minutes' || unity === 'hours'
 
     return (
-      <div className='command-history__container'>
+      <div className='command-history__container' key={_id}>
         <div className='command-history__param'>
           <span className='command-history__title'>Parâmetro alterado: </span>
           <span>{paramLabel}</span>

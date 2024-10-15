@@ -9,7 +9,7 @@ import { AppCard, Button, Loading, Toggle } from 'components'
 
 import { NEW_COMMANDS } from 'global/consts'
 
-import { Actuator, ActuatorRealTimeData, DeviceRealTimeData, Settings } from 'types/interfaces'
+import { Actuator, ActuatorRealTimeData, Settings } from 'types/interfaces'
 
 import { getStatusFromLocalStation, writeCommand } from 'services/local-station'
 
@@ -82,6 +82,16 @@ export const ActuatorCard = ({
       //   lastActivated, 
       //   current: moment().format('hh:mm:ss') 
       // })
+
+      setDynamicCountdownInMs(diff)
+    }
+
+    console.log({ autoRelayEnabled})
+
+    if (autoRelayEnabled) {
+      console.log({ lastActivated })
+      const willEndAt = moment(lastActivated).add(deviceSettings.automation.duration, 'minutes')
+      const diff = moment(willEndAt).diff(moment(), 'milliseconds')
 
       setDynamicCountdownInMs(diff)
     }
