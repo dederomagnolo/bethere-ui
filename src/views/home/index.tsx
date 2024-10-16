@@ -48,7 +48,6 @@ export const Home = () => {
     data,
     loading: loadingOnGetStatus
   } = useFetch(async () => {
-
     if (!connectionTimedOut) {
       setLoading(true)
       await getStatusFromLocalStation({ token })
@@ -74,6 +73,8 @@ export const Home = () => {
         setLoading(true)
 
         // setTimeout(() => setConnectionTimedOut(true), 60000)
+      },
+      onClose: (oi: any) => {
       },
       onError: async (err: any) => {
         setError({ type: 'websocket'})

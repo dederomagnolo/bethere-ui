@@ -11,13 +11,17 @@ interface WriteCommandProps {
 }
 
 export const getStatusFromLocalStation = async ({ token }: { token: string }) => {
-  const res = await callApi({
-    method: 'GET',
-    service: '/local-station/status',
-    token
-  })
-
-  return res
+  try {
+    const res = await callApi({
+      method: 'GET',
+      service: '/local-station/status',
+      token
+    })
+  
+    return res
+  } catch (err) {
+    throw(err)
+  }
 }
 
 export const writeCommand = async({ token, payload }: WriteCommandProps) => {

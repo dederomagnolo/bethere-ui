@@ -39,7 +39,7 @@ async function callApi({
           return content
         }
   
-        let error = new Error();
+        let error = new Error()
         const responseError = {
           status: res.status,
           message: content.error,
@@ -50,7 +50,12 @@ async function callApi({
         throw(error);
       }
     } catch (err: any) {
-      throw new Error(err.message)
+      throw ({
+        status: err.status,
+        message: err.error,
+        service: err.url,
+        error: true
+      })
     }
   }
 

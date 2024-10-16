@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { setGlobalError } from 'redux/global/actions'
 import { getToken } from 'redux/user/selectors'
+import { clearUserState } from 'redux/user/actions'
 
 export const useFetch = (fetchService: Function, dependencies: any[] = [], serviceProps?: any) => {
   const dispatch = useDispatch()
@@ -18,7 +19,7 @@ export const useFetch = (fetchService: Function, dependencies: any[] = [], servi
       setLoading(true)
       try {
         const res = await fetchService({ token, ...serviceProps })
-        if (res) {            
+        if (res) {          
           if (res.error) {
             if (res.status === 401) {
               return navigate('/login')
@@ -32,12 +33,18 @@ export const useFetch = (fetchService: Function, dependencies: any[] = [], servi
         
         setLoading(false)
       } catch (err: any) {
-        console.error(err)
+
+        if (err.status === 401) {
+          dispatch(setGlobalError({ message: err, service: '' }))
+          dispatch(clearUserState())
+        }
+
         dispatch(setGlobalError({ message: err, service: '' }))
         setLoading(false)
         setError(true)
       }
     }
+
     callService()
   }, [...dependencies])
 
