@@ -1,4 +1,5 @@
 import callApi from 'services/callApi'
+import CallService from 'services/service'
 
 interface WriteCommandProps {
   token: string
@@ -10,12 +11,10 @@ interface WriteCommandProps {
   }
 }
 
-export const getStatusFromLocalStation = async ({ token }: { token: string }) => {
+export const getStatusFromLocalStation = async () => {
   try {
-    const res = await callApi({
-      method: 'GET',
-      service: '/local-station/status',
-      token
+    const res = CallService.get({
+      service: '/local-station/status'
     })
   
     return res

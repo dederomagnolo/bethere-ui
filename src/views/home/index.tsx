@@ -50,7 +50,7 @@ export const Home = () => {
   } = useFetch(async () => {
     if (!connectionTimedOut) {
       setLoading(true)
-      await getStatusFromLocalStation({ token })
+      await getStatusFromLocalStation()
       const res = await fetchUserDevices({ token })
 
       if (res) {

@@ -10,6 +10,7 @@ import {
 } from 'react-icons/bs'
 
 import callApi from 'services/callApi'
+import LoginService from 'services/login'
 
 import { Button, Input, Loading } from 'components/ui-atoms'
 
@@ -53,6 +54,8 @@ export const Login = () => {
   const handleLoginRequest = async () => { // need to add this call to fetch collection
     try {
       setLoading(true)
+      const newRes = await LoginService.authenticate({ username, password })
+
       const res = await callApi({
         method: 'POST',
         payload: { username, password },

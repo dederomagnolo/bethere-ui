@@ -1,5 +1,6 @@
 import { toast } from 'react-toastify'
 import callApi from 'services/callApi'
+import CallService from 'services/service'
 
 export const fetchUserNotifications = async ({
   token,
@@ -11,11 +12,9 @@ export const fetchUserNotifications = async ({
   const useQuery = 
     limit !== undefined || page !== undefined ? queryParams : ''
   try {
-    const res = await callApi({
+    const res = CallService.post({
       payload: { limit },
-      method: 'POST',
-      service: `/notification/all${useQuery}`,
-      token
+      service: `/notification/all${useQuery}`
     })
 
     if (res) {
